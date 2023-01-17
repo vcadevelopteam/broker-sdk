@@ -3,7 +3,7 @@ class FormField {
   String? inputValidation;
   String? label;
   String? placeholder;
-  String? required;
+  bool? required;
   String? type;
   String? validationText;
   FormField(

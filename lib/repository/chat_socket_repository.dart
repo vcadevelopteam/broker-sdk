@@ -8,7 +8,8 @@ class ChatSocketRepository {
   static Future<IntegrationResponse> getIntegration(
       String integrationId) async {
     IntegrationResponse integrationResponse;
-    var response = await ApiManager.get(SocketUrls.baseBrokerEndpoint);
+    var response = await ApiManager.get(
+        '${SocketUrls.baseBrokerEndpoint}integrations/$integrationId');
     return IntegrationResponse.fromJson(jsonDecode(response.body));
   }
 }

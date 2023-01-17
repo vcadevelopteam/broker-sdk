@@ -27,7 +27,7 @@ class CustomMetadata {
     Map<String, dynamic> extraJson = json["extra"];
     Map<String, dynamic> iconsJson = json["icons"];
     Map<String, dynamic> personalizationJson = json["personalization"];
-    List<Map<String, dynamic>> formJsonList = json["form"];
+    List<dynamic> formJsonList = json["form"];
 
     return CustomMetadata(
         applicationId: json["applicationId"] ?? 0,

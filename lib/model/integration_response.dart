@@ -24,13 +24,15 @@ class IntegrationResponse {
     return IntegrationResponse(
         id: json["id"] ?? "",
         applicationId: json["applicationId"] ?? "",
-        createdAt: DateTime.now(),
+        createdAt:
+            DateTime.fromMillisecondsSinceEpoch(json["createdAt"] * 1000),
         name: json["name"] ?? "",
         status: json["status"] ?? "",
         type: json["type"] ?? "",
-        updatedAt: DateTime.now(),
+        updatedAt:
+            DateTime.fromMillisecondsSinceEpoch(json["updatedAt"] * 1000),
         metadata: CustomMetadata.fromJson(
-          json["metada"],
+          json["metadata"],
         ));
   }
 }
