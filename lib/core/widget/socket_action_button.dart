@@ -1,4 +1,5 @@
 import 'package:brokersdk/core/chat_socket.dart';
+import 'package:brokersdk/core/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 
 class SocketActionButton extends StatefulWidget {
@@ -11,6 +12,7 @@ class SocketActionButton extends StatefulWidget {
 
 class _SocketActionButtonState extends State<SocketActionButton> {
   ChatSocket? socket;
+  bool isInitialized = false;
   @override
   void initState() {
     _initchatSocket();
@@ -19,14 +21,24 @@ class _SocketActionButtonState extends State<SocketActionButton> {
 
   _initchatSocket() async {
     socket = await ChatSocket.getInstance(widget.integrationId!);
+
     socket!.connect();
+    setState(() {
+      isInitialized = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      child: const Icon(Icons.read_more),
-      onPressed: () {},
+      child: isInitialized ? Icon(Icons.house) : CircularProgressIndicator(),
+      onPressed: () {
+        Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ChatPage(socket!)))
+            .then((value) async {
+          var a = await socket!.channel!.ready;
+        });
+      },
     );
   }
 }

@@ -10,7 +10,7 @@ class ChatSocket {
   final String? _integrationId;
   late final WebSocketChannel? channel;
   IntegrationResponse? integrationResponse;
-
+  Stream<dynamic>? intermaditateStream;
   ChatSocket(this._integrationId, this.integrationResponse);
 
   static Future<ChatSocket> getInstance(String integrationId) async {
@@ -20,16 +20,21 @@ class ChatSocket {
     return ChatSocket(integrationId, integrationResponse);
   }
 
-  void connect() {
-    var userId = _generateRandomId(IdentifierType.userId);
-    var sessionId = _generateRandomId(IdentifierType.sessionId);
+  void connect() async {
+    var userId = await _generateRandomId(IdentifierType.userId);
+    var sessionId = await _generateRandomId(IdentifierType.sessionId);
     channel = WebSocketChannel.connect(
       Uri.parse('${SocketUrls.baseSocketEndpoint}$userId/$sessionId'),
     );
+    intermaditateStream = channel!.stream.asBroadcastStream();
+    print('${SocketUrls.baseSocketEndpoint}$userId/$sessionId');
   }
 
   Future<String> _generateRandomId(IdentifierType idType) async {
     final pref = await SharedPreferences.getInstance();
+    if (pref.getString(idType.name) != null) {
+      return pref.getString(idType.name)!;
+    }
     final id = const Uuid().v4();
     pref.setString(idType.name, id);
     return id;
