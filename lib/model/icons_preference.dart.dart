@@ -1,11 +1,11 @@
-class Icons {
+class IconsPreference {
   String? chatbotImage;
   String? chatHeaderImage;
   String? chatOpenImage;
-  Icons({this.chatbotImage, this.chatHeaderImage, this.chatOpenImage});
+  IconsPreference({this.chatbotImage, this.chatHeaderImage, this.chatOpenImage});
 
-  factory Icons.fromJson(Map<String, dynamic> json) {
-    return Icons(
+  factory IconsPreference.fromJson(Map<String, dynamic> json) {
+    return IconsPreference(
       chatHeaderImage: json["chatHeaderImage"] ?? "",
       chatOpenImage: json["chatOpenImage"] ?? "",
       chatbotImage: json["chatBotImage"] ?? "",

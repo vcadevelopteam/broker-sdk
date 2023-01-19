@@ -1,14 +1,18 @@
 import 'dart:ui';
 
+import 'package:brokersdk/helpers/color_convert.dart';
 import 'package:brokersdk/model/message_response.dart';
+import 'package:brokersdk/model/models.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/message.dart';
 
 class MessageBubble extends StatelessWidget {
   final MessageResponse message;
   final int indx;
-  const MessageBubble(this.message, this.indx);
+  final ColorPreference color;
+  const MessageBubble(this.message, this.indx, this.color);
 
   String parseTime(int time) {
     var dt = DateTime.fromMillisecondsSinceEpoch(time);
@@ -17,6 +21,7 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final f = new DateFormat('hh:mm');
     var _screenWidth = MediaQuery.of(context).size.width;
     return Align(
       alignment:
@@ -27,8 +32,8 @@ class MessageBubble extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: _screenWidth * 0.7, minWidth: 10),
         decoration: BoxDecoration(
             color: message.isUser!
-                ? Color.fromRGBO(79, 77, 140, 1)
-                : Color.fromRGBO(143, 142, 191, 1),
+                ? HexColor(color.messageClientColor.toString())
+                : HexColor(color.messageBotColor.toString()),
             borderRadius: BorderRadius.only(
                 topRight:
                     !message.isUser! ? Radius.circular(10) : Radius.circular(0),
@@ -47,7 +52,7 @@ class MessageBubble extends StatelessWidget {
               style: TextStyle(color: Colors.white),
             ),
             Container(
-              constraints: BoxConstraints(maxWidth: _screenWidth * 0.2),
+              // constraints: BoxConstraints(maxWidth: _screenWidth * 0.2),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -57,20 +62,18 @@ class MessageBubble extends StatelessWidget {
                         : MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        parseTime(message.receptionDate!),
-                        textAlign: TextAlign.end,
-                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      Padding(
+                        padding: const EdgeInsets.only(top:8.0),
+                        child: Text(
+
+                          f.format(DateTime.parse(parseTime(message.receptionDate!))),
+
+                          
+                          textAlign: TextAlign.end,
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
                       ),
-                      /* if (!message.isUser)
-                        Container(
-                          margin: EdgeInsets.all(5),
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.all(Radius.circular(10))),
-                        )*/
+                     
                     ],
                   ),
                 ],

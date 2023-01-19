@@ -1,16 +1,16 @@
-import 'color.dart';
+import 'color_preference.dart';
 import 'extra.dart';
 import 'form_field.dart';
-import 'icons.dart';
+import 'icons_preference.dart.dart';
 import 'personalization.dart';
 
 class CustomMetadata {
   int? applicationId;
   int? integrationId;
-  Color? color;
+  ColorPreference? color;
   Extra? extra;
   List<FormField>? form;
-  Icons? icons;
+  IconsPreference? icons;
   Personalization? personalization;
 
   CustomMetadata(
@@ -32,9 +32,9 @@ class CustomMetadata {
     return CustomMetadata(
         applicationId: json["applicationid"] ?? 0,
         integrationId: json["integrationid"] ?? 0,
-        color: Color.fromJson(colorJson),
+        color: ColorPreference.fromJson(colorJson),
         extra: Extra.fromJson(extraJson),
-        icons: Icons.fromJson(iconsJson),
+        icons: IconsPreference.fromJson(iconsJson),
         personalization: Personalization.fromJson(personalizationJson),
         form: formJsonList.map((e) => FormField.fromJson(e)).toList());
   }
