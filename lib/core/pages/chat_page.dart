@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:brokersdk/core/chat_socket.dart';
 import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/message.dart';
+import 'package:brokersdk/model/message_request.dart';
+import 'package:brokersdk/model/message_response.dart';
 import 'package:brokersdk/repository/chat_socket_repository.dart';
 
 import 'package:flutter/material.dart';
@@ -26,28 +30,25 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     scrollController = new ScrollController()..addListener(_scrollListener);
-    ChatSocketRepository.sendMessage("hola", MessageType.text);
 
     super.initState();
   }
 
   @override
   void dispose() async {
-    widget.socket.channel!.stream.listen((event) {
-      print(event);
-    });
+    // widget.socket.channel!.stream.listen((event) {
+    //   print(event);
+    // });
     scrollController!.removeListener(_scrollListener);
     super.dispose();
   }
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
-      // Future.delayed(Duration(seconds: 2)).then((value) {
-      //   messagesBloc
-      //       .sendMessage(_textController.text)
-      //       .then((value) => {scrollDown(), FocusScope.of(context).unfocus()});
-      //   _textController.clear();
-      // });
+      var response = await ChatSocketRepository.sendMessage(
+          _textController.text, MessageType.text);
+      if (response.statusCode != 500 || response.statusCode != 400)
+        _textController.clear();
     }
   }
 
@@ -98,7 +99,9 @@ class _ChatPageState extends State<ChatPage> {
         stream: widget.socket.intermaditateStream,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
-            var messages = snapshot.data as List<Message>;
+            var messages = [];
+            var message = MessageResponse.fromJson(jsonDecode(snapshot.data));
+            messages.add(message);
             return messages.length > 0
                 ? Column(
                     children: [
@@ -110,15 +113,15 @@ class _ChatPageState extends State<ChatPage> {
                             itemBuilder: (ctx, indx) {
                               Widget _labelday = SizedBox();
 
-                              if (indx == 0) {
-                                _labelday = _labelDay(messages[0].date!);
-                              }
+                              // if (indx == 0) {
+                              //   _labelday = _labelDay(messages[0].date!);
+                              // }
 
-                              if (indx != 0 &&
-                                  messages[indx].date !=
-                                      messages[indx - 1].date) {
-                                _labelday = _labelDay(messages[indx].date!);
-                              }
+                              // if (indx != 0 &&
+                              //     messages[indx].date !=
+                              //         messages[indx - 1].date) {
+                              //   _labelday = _labelDay(messages[indx].date!);
+                              // }
 
                               return Column(
                                 children: [
@@ -130,12 +133,9 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       if (_isLoading)
                         Container(
-                            width: double.infinity - 100,
+                            width: 40,
                             height: 40,
-                            child: Image.asset(
-                              'assets/img/loading-nobackground.gif',
-                              fit: BoxFit.cover,
-                            ))
+                            child: CircularProgressIndicator())
                     ],
                   )
                 : Row(

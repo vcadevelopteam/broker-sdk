@@ -1,28 +1,18 @@
 import 'dart:ui';
 
+import 'package:brokersdk/model/message_response.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/message.dart';
 
 class MessageBubble extends StatelessWidget {
-  final Message message;
+  final MessageResponse message;
   final int indx;
   const MessageBubble(this.message, this.indx);
 
-  String parseTime(String time) {
-    var timeparse = time.split(":");
-    print(timeparse);
-
-    var hour = int.parse(timeparse[0]);
-    var decoration;
-    if (hour > 12) {
-      decoration = "pm";
-    } else {
-      decoration = "am";
-    }
-    var newTime = timeparse[0] + ":" + timeparse[1] + " ${decoration}";
-
-    return newTime;
+  String parseTime(int time) {
+    var dt = DateTime.fromMillisecondsSinceEpoch(time);
+    return dt.toString();
   }
 
   @override
@@ -53,20 +43,9 @@ class MessageBubble extends StatelessWidget {
               : CrossAxisAlignment.start,
           children: [
             Text(
-              message.text!,
+              message.message!.data!.message!,
               style: TextStyle(color: Colors.white),
             ),
-            if (message.url!.length > 14)
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                width: _screenWidth * 0.7,
-                height: 150,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(message.url!), fit: BoxFit.cover),
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(143, 142, 191, 1)),
-              ),
             Container(
               constraints: BoxConstraints(maxWidth: _screenWidth * 0.2),
               child: Column(
@@ -79,7 +58,7 @@ class MessageBubble extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        parseTime(message.time!),
+                        parseTime(message.receptionDate!),
                         textAlign: TextAlign.end,
                         style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
