@@ -16,13 +16,13 @@ class FormField {
       this.validationText});
   factory FormField.fromJson(Map<String, dynamic> json) {
     return FormField(
-      fielId: json["fieId"] ?? "",
-      inputValidation: json["inputValidation"] ?? "",
+      fielId: json["field"] ?? "",
+      inputValidation: json["inputvalidation"] ?? "",
       label: json["label"] ?? "",
       placeholder: json["placeholder"] ?? "",
       required: json["required"] ?? "",
       type: json["type"] ?? "",
-      validationText: json["validationText"] ?? "",
+      validationText: json["validationtext"] ?? "",
     );
   }
 }

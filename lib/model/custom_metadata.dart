@@ -30,8 +30,8 @@ class CustomMetadata {
     List<dynamic> formJsonList = json["form"];
 
     return CustomMetadata(
-        applicationId: json["applicationId"] ?? 0,
-        integrationId: json["integrationId"] ?? 0,
+        applicationId: json["applicationid"] ?? 0,
+        integrationId: json["integrationid"] ?? 0,
         color: Color.fromJson(colorJson),
         extra: Extra.fromJson(extraJson),
         icons: Icons.fromJson(iconsJson),

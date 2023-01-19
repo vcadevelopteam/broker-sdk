@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,23 @@ class ApiManager {
     final headers = await _getHeaders(RequestType.get);
     final response = await http
         .get(uri, headers: headers)
+        .timeout(const Duration(seconds: 300), onTimeout: () {
+      return decorateResponse(http.Response('Time out exception', 504));
+    });
+    return decorateResponse(response);
+  }
+
+  static Future<http.Response> post(
+    String path, {
+    Map<String, dynamic> params = const {},
+    String body = "",
+    bool tokenRequired = true,
+  }) async {
+    var uri = Uri.parse(path);
+    uri.replace(queryParameters: params);
+    final headers = await _getHeaders(RequestType.post);
+    final response = await http
+        .post(uri, headers: headers, body: body)
         .timeout(const Duration(seconds: 300), onTimeout: () {
       return decorateResponse(http.Response('Time out exception', 504));
     });

@@ -6,7 +6,7 @@ class Personalization {
   factory Personalization.fromJson(Map<String, dynamic> json) {
     return Personalization(
       headerTitle: json["headerTitle"] ?? "",
-      headerSubtitle: json["headerSubtitle"] ?? "",
+      headerSubtitle: json["headerSubTitle"] ?? "",
     );
   }
 }

@@ -8,7 +8,7 @@ class Icons {
     return Icons(
       chatHeaderImage: json["chatHeaderImage"] ?? "",
       chatOpenImage: json["chatOpenImage"] ?? "",
-      chatbotImage: json["chatbotImage"] ?? "",
+      chatbotImage: json["chatBotImage"] ?? "",
     );
   }
 }

@@ -1,1 +1,1 @@
-enum IdentifierType { userId, sessionId }
+enum IdentifierType { userId, sessionId, integrationId }

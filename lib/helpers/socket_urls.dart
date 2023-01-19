@@ -12,4 +12,6 @@ class SocketUrls {
   static const audioAlertUrl = "${baseResourceEndpoint}Audio/Alert.mp3";
   static const chatOpenUrl = "${baseResourceEndpoint}Image/Chat.png";
   static const chatBotUrl = "${baseResourceEndpoint}Image/Bot.png";
+
+  static const sendMessageEndpoint = "messages/send";
 }

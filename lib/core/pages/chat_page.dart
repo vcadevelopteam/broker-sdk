@@ -1,5 +1,7 @@
 import 'package:brokersdk/core/chat_socket.dart';
+import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/message.dart';
+import 'package:brokersdk/repository/chat_socket_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -24,11 +26,16 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     scrollController = new ScrollController()..addListener(_scrollListener);
+    ChatSocketRepository.sendMessage("hola", MessageType.text);
+
     super.initState();
   }
 
   @override
   void dispose() async {
+    widget.socket.channel!.stream.listen((event) {
+      print(event);
+    });
     scrollController!.removeListener(_scrollListener);
     super.dispose();
   }

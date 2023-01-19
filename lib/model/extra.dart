@@ -1,16 +1,17 @@
 class Extra {
   String? cssBody;
   String? cssHeader;
-  String? enableFormHistory;
-  String? inputAlwaysActive;
-  String? playerAlertSound;
-  String? showChatRestart;
-  String? showLaraigoLogo;
-  String? showPlatformLogo;
-  String? uploadAudio;
-  String? uploadFile;
-  String? uploadImage;
-  String? uploadVideo;
+  String? jsscript;
+  bool? enableFormHistory;
+  bool? inputAlwaysActive;
+  bool? playerAlertSound;
+  bool? showChatRestart;
+  bool? showLaraigoLogo;
+  bool? showPlatformLogo;
+  bool? uploadAudio;
+  bool? uploadFile;
+  bool? uploadImage;
+  bool? uploadVideo;
   Extra(
       {this.cssBody,
       this.cssHeader,
@@ -22,23 +23,25 @@ class Extra {
       this.showPlatformLogo,
       this.uploadAudio,
       this.uploadFile,
+      this.jsscript,
       this.uploadImage,
       this.uploadVideo});
 
   factory Extra.fromJson(Map<String, dynamic> json) {
     return Extra(
-      cssBody: json["cssBody"] ?? "",
-      cssHeader: json["cssHeader"] ?? "",
-      enableFormHistory: json["enableFormHistory"] ?? "",
-      inputAlwaysActive: json["inputAlwaysActive"] ?? "",
-      playerAlertSound: json["playerAlertSound"] ?? "",
-      showChatRestart: json["showChatRestart"] ?? "",
-      showLaraigoLogo: json["showLaraigoLogo"] ?? "",
-      showPlatformLogo: json["showPlatformLogo"] ?? "",
-      uploadAudio: json["uploadAudio"] ?? "",
-      uploadFile: json["uploadFile"] ?? "",
-      uploadImage: json["uploadImage"] ?? "",
-      uploadVideo: json["uploadVideo"] ?? "",
+      cssBody: json["cssbody"] ?? "",
+      jsscript: json["jsscript"] ?? "",
+      cssHeader: json["cssheader"] ?? "",
+      enableFormHistory: json["enableformhistory"] ?? false,
+      inputAlwaysActive: json["inputalwaysactive"] ?? "",
+      playerAlertSound: json["playalertsound"] ?? "",
+      showChatRestart: json["showchatrestart"] ?? "",
+      showLaraigoLogo: json["showlaraigologo"] ?? "",
+      showPlatformLogo: json["showplatformlogo"] ?? "",
+      uploadAudio: json["uploadaudio"] ?? "",
+      uploadFile: json["uploadfile"] ?? "",
+      uploadImage: json["uploadimage"] ?? "",
+      uploadVideo: json["uploadvideo"] ?? "",
     );
   }
 }
