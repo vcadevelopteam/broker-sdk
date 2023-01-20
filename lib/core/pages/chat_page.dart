@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:brokersdk/core/chat_socket.dart';
+import 'package:brokersdk/core/widget/messages_area.dart';
 import 'package:brokersdk/helpers/color_convert.dart';
 import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/helpers/sender_type.dart';
@@ -57,13 +58,6 @@ class _ChatPageState extends State<ChatPage> {
 
   initSocket() async {
     await widget.socket.connect();
-    widget.socket.channel!.stream.asBroadcastStream().listen((event) {
-      setState(() {
-        var decodedJson = jsonDecode(event);
-        decodedJson['sender'] = SenderType.chat.name;
-        widget.socket.controller!.sink.add(decodedJson);
-      });
-    });
   }
 
   void sendMessage() async {
@@ -84,24 +78,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Widget _labelDay(String date) {
-    if (f.format(DateTime.parse(
-            MessageBubble.parseTime(messages[0].messageDate!))) ==
-        date) {
-      date = "Hoy";
-    }
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-      decoration: BoxDecoration(
-          color: Color.fromRGBO(106, 194, 194, 1),
-          borderRadius: BorderRadius.circular(10)),
-      child: Text(
-        date,
-        style: TextStyle(color: Colors.black),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var _screenWidth = MediaQuery.of(context).size.width;
@@ -114,79 +90,6 @@ class _ChatPageState extends State<ChatPage> {
         widget.socket.integrationResponse!.metadata!.icons!;
     Personalization header =
         widget.socket.integrationResponse!.metadata!.personalization!;
-
-    Widget _messagesArea() {
-      return StreamBuilder(
-        stream: widget.socket.controller!.stream,
-        builder: (ctx, snapshot) {
-          if (snapshot.hasData) {
-            var message = Message.fromJson(snapshot.data);
-            messages.add(message);
-            ChatSocketRepository.saveMessageInLocal(messages);
-            return messages.isNotEmpty
-                ? Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                            controller: scrollController,
-                            shrinkWrap: true,
-                            reverse: false,
-                            itemCount: messages.length,
-                            itemBuilder: (ctx, indx) {
-                              Widget separator = SizedBox();
-
-                              if (indx == messages.length - 1) {
-                                separator = _labelDay(f.format(DateTime.parse(
-                                    MessageBubble.parseTime(
-                                        messages[0].messageDate!))));
-                              }
-                              if (indx != 0 &&
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                              messages[indx].messageDate!)
-                                          .day !=
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                              messages[indx - 1].messageDate!)
-                                          .day) {
-                                separator = _labelDay(f.format(DateTime.parse(
-                                    MessageBubble.parseTime(
-                                        messages[indx].messageDate!))));
-                              }
-
-                              return Column(
-                                children: [
-                                  separator,
-                                  MessageBubble(
-                                      messages[indx], indx, colorPreference)
-                                ],
-                              );
-                            }),
-                      ),
-                      if (_isLoading)
-                        Container(
-                            width: 40,
-                            height: 40,
-                            child: CircularProgressIndicator())
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.message,
-                        color: Theme.of(context).textTheme.bodyText1!.color,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("No ha creado mensajes")
-                    ],
-                  );
-          } else {
-            return Center(child: Container());
-          }
-        },
-      );
-    }
 
     Widget _messageInput() {
       return SafeArea(
@@ -209,7 +112,7 @@ class _ChatPageState extends State<ChatPage> {
                                 Theme.of(context).textTheme.bodyText1!.color),
                         decoration: InputDecoration(
                           // contentPadding: EdgeInsets.all(0),
-                         
+
                           // prefix:Column(
                           //   mainAxisAlignment: MainAxisAlignment.end,
                           //   mainAxisSize: MainAxisSize.max,
@@ -218,7 +121,11 @@ class _ChatPageState extends State<ChatPage> {
 
                           //   ],
                           // ),
-                          prefixIcon: IconButton(onPressed: (){print('hola');}, icon: Icon(Icons.add_box )),
+                          prefixIcon: IconButton(
+                              onPressed: () {
+                                print('hola');
+                              },
+                              icon: Icon(Icons.add_box)),
                           hintText: "¡Escribe Algo!",
                           hintStyle: TextStyle(
                               color:
@@ -324,7 +231,7 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             Container(
                               child: widget.socket.channel != null
-                                  ? _messagesArea()
+                                  ? MessagesArea(widget.socket)
                                   : Container(),
                             ),
                           ],
