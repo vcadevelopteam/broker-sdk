@@ -130,7 +130,7 @@ class _ChatPageState extends State<ChatPage> {
                         child: ListView.builder(
                             controller: scrollController,
                             shrinkWrap: true,
-                            reverse: true,
+                            reverse: false,
                             itemCount: messages.length,
                             itemBuilder: (ctx, indx) {
                               Widget separator = SizedBox();
@@ -208,6 +208,17 @@ class _ChatPageState extends State<ChatPage> {
                             color:
                                 Theme.of(context).textTheme.bodyText1!.color),
                         decoration: InputDecoration(
+                          // contentPadding: EdgeInsets.all(0),
+                         
+                          // prefix:Column(
+                          //   mainAxisAlignment: MainAxisAlignment.end,
+                          //   mainAxisSize: MainAxisSize.max,
+                          //   children: [
+                          //     GestureDetector(child:Icon(Icons.add) ,),
+
+                          //   ],
+                          // ),
+                          prefixIcon: IconButton(onPressed: (){print('hola');}, icon: Icon(Icons.add_box )),
                           hintText: "¡Escribe Algo!",
                           hintStyle: TextStyle(
                               color:

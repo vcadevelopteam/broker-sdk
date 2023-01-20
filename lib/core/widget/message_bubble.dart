@@ -63,35 +63,46 @@ class MessageBubble extends StatelessWidget {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                Text(
-                  message.message!,
-                  style: TextStyle(color: textColor),
-                ),
-                Container(
-                  // constraints: BoxConstraints(maxWidth: _screenWidth * 0.2),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: message.isUser!
-                            ? MainAxisAlignment.end
-                            : MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              f.format(DateTime.parse(
-                                  parseTime(message.messageDate!))),
-                              textAlign: TextAlign.end,
-                              style: TextStyle(color: textColor, fontSize: 12),
-                            ),
-                          ),
-                        ],
+                Stack(
+                  children: [
+                    Text(
+                      message.message!,
+                      style: TextStyle(color: textColor),
+                    ),
+                    SizedBox(height: 40, width: 50,),
+
+                    Positioned(
+                      left: message.isUser! ? 0 : 10,
+                      right:message.isUser! ? 10 : 0 ,
+                      bottom: 0,
+                      child: Text(
+                        f.format(
+                            DateTime.parse(parseTime(message.messageDate!))),
+                        textAlign: TextAlign.end,
+                        style: TextStyle(color: textColor, fontSize: 12),
                       ),
-                    ],
-                  ),
-                ),
+                    )
+                  ],
+                )
+
+                // Row(
+                //         mainAxisSize:MainAxisSize.max,
+                //         mainAxisAlignment: message.isUser!
+                //             ? MainAxisAlignment.end
+                //             : MainAxisAlignment.start,
+
+                //         children: [
+                //           Padding(
+                //             padding: const EdgeInsets.only(top: 8.0),
+                //             child: Text(
+                //               f.format(DateTime.parse(
+                //                   parseTime(message.messageDate!))),
+                //               textAlign: TextAlign.end,
+                //               style: TextStyle(color: textColor, fontSize: 12),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
               ],
             ),
           ),
