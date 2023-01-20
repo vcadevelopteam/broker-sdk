@@ -6,7 +6,6 @@ import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/models.dart';
 import 'package:brokersdk/model/personalization.dart';
 
-
 import 'package:brokersdk/repository/chat_socket_repository.dart';
 
 import 'package:flutter/material.dart';
@@ -18,17 +17,12 @@ import '../../model/message_response.dart';
 import '../widget/message_bubble.dart';
 
 class ChatPage extends StatefulWidget {
-
   const ChatPage({
     Key? key,
     required this.socket,
-    
   }) : super(key: key);
 
- 
-
   final ChatSocket socket;
-
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -37,31 +31,36 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   var _textController = TextEditingController();
   bool _visible = true;
+  var messages = [];
+
   bool _isLoading = false;
   ScrollController? scrollController;
 
   @override
   void initState() {
-    scrollController = new ScrollController()..addListener(_scrollListener);
-
+    initSocket();
     super.initState();
   }
 
   @override
-  void dispose() async {
-    // widget.socket.channel!.stream.listen((event) {
-    //   print(event);
-    // });
-    scrollController!.removeListener(_scrollListener);
+  void dispose() {
+    disposeSocket();
     super.dispose();
+  }
+
+  disposeSocket() async {
+    widget.socket.disconnect();
+  }
+
+  initSocket() async {
+    await widget.socket.connect();
   }
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
       var response = await ChatSocketRepository.sendMessage(
           _textController.text, MessageType.text);
-      if (response.statusCode != 500 || response.statusCode != 400)
-        _textController.clear();
+      _textController.clear();
     }
   }
 
@@ -88,37 +87,32 @@ class _ChatPageState extends State<ChatPage> {
 
   void _scrollListener() {
     if (scrollController!.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      setState(() {
-        _visible = false;
-      });
-    }
+        ScrollDirection.reverse) {}
     if (scrollController!.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      setState(() {
-        _visible = true;
-      });
-    }
+        ScrollDirection.forward) {}
   }
 
   @override
   Widget build(BuildContext context) {
     var _screenWidth = MediaQuery.of(context).size.width;
     var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
-    ColorPreference colorPreference = widget.socket.integrationResponse!.metadata!.color!;
-    Color backgroundColor = HexColor(colorPreference.chatBackgroundColor.toString() ) ;
-    IconsPreference headerIcons= widget.socket.integrationResponse!.metadata!.icons!;
-    Personalization header= widget.socket.integrationResponse!.metadata!.personalization!;
+    ColorPreference colorPreference =
+        widget.socket.integrationResponse!.metadata!.color!;
+    Color backgroundColor =
+        HexColor(colorPreference.chatBackgroundColor.toString());
+    IconsPreference headerIcons =
+        widget.socket.integrationResponse!.metadata!.icons!;
+    Personalization header =
+        widget.socket.integrationResponse!.metadata!.personalization!;
 
     // var backgroundColor = Theme.of(context).dialogBackgroundColor;
 
     Widget _messagesArea() {
       return StreamBuilder(
-        stream: widget.socket.intermaditateStream,
+        stream: widget.socket.channel!.stream,
         builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            var messages = [];
-            var message = MessageResponse.fromJson(jsonDecode(snapshot.data));
+          if (snapshot.hasData) {
+            var message = Message.fromJson(jsonDecode(snapshot.data));
             messages.add(message);
             return messages.length > 0
                 ? Column(
@@ -144,14 +138,14 @@ class _ChatPageState extends State<ChatPage> {
                               return Column(
                                 children: [
                                   _labelday,
-                                  MessageBubble(messages[indx], indx, colorPreference)
+                                  MessageBubble(
+                                      messages[indx], indx, colorPreference)
                                 ],
                               );
                             }),
                       ),
                       if (_isLoading)
                         Container(
-
                             width: 40,
                             height: 40,
                             child: CircularProgressIndicator())
@@ -171,12 +165,7 @@ class _ChatPageState extends State<ChatPage> {
                     ],
                   );
           } else {
-            return Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.white,
-                valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue),
-              ),
-            );
+            return Center(child: Container());
           }
         },
       );
@@ -199,7 +188,8 @@ class _ChatPageState extends State<ChatPage> {
                         onChanged: (val) {},
                         style: TextStyle(
                             fontSize: 18,
-                            color: Theme.of(context).textTheme.bodyText1!.color),
+                            color:
+                                Theme.of(context).textTheme.bodyText1!.color),
                         decoration: InputDecoration(
                           hintText: "¡Escribe Algo!",
                           hintStyle: TextStyle(
@@ -294,38 +284,39 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-
-            backgroundColor:HexColor(colorPreference.chatHeaderColor.toString()) ,
+            backgroundColor:
+                HexColor(colorPreference.chatHeaderColor.toString()),
             title: Row(
               children: [
-             
                 CircleAvatar(
-                 backgroundImage:  NetworkImage(headerIcons.chatHeaderImage!) ,
-              
-                 backgroundColor: HexColor(colorPreference.chatHeaderColor.toString()),
-
+                  backgroundImage: NetworkImage(headerIcons.chatHeaderImage!),
+                  backgroundColor:
+                      HexColor(colorPreference.chatHeaderColor.toString()),
                 ),
-                SizedBox(width: 10,),
+                SizedBox(
+                  width: 10,
+                ),
                 Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              
-
-              children: [
-                Text(header.headerTitle.toString() , style: const TextStyle(fontSize: 20),),
-                if(header.headerSubtitle!=null)
-                Text(header.headerSubtitle.toString(), style: const TextStyle(fontSize: 15),)
-              ],
-
-            ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      header.headerTitle.toString(),
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    if (header.headerSubtitle != null)
+                      Text(
+                        header.headerSubtitle.toString(),
+                        style: const TextStyle(fontSize: 15),
+                      )
+                  ],
+                ),
               ],
             ),
             elevation: 1,
             centerTitle: false,
-
-
           ),
-          backgroundColor: HexColor(colorPreference.chatBackgroundColor.toString()),
+          backgroundColor:
+              HexColor(colorPreference.chatBackgroundColor.toString()),
           body: Container(
             decoration: BoxDecoration(color: backgroundColor),
             child: Container(
@@ -339,7 +330,9 @@ class _ChatPageState extends State<ChatPage> {
                         child: Stack(
                           children: [
                             Container(
-                              child: _messagesArea(),
+                              child: widget.socket.channel != null
+                                  ? _messagesArea()
+                                  : Container(),
                             ),
                             /*
                         ElevatedButton(
@@ -347,7 +340,7 @@ class _ChatPageState extends State<ChatPage> {
                               MessagesDb().deleteDftabase();
                             },
                             child: Text("Bajarse DB")),*/
-                            //downButton,
+                            downButton,
                           ],
                         ),
                       ),

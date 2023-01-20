@@ -14,7 +14,7 @@ class SocketActionButton extends StatefulWidget {
 class _SocketActionButtonState extends State<SocketActionButton> {
   ChatSocket? socket;
   bool isInitialized = false;
-  ColorPreference colorPreference=ColorPreference();
+  ColorPreference colorPreference = ColorPreference();
   @override
   void initState() {
     _initchatSocket();
@@ -23,30 +23,18 @@ class _SocketActionButtonState extends State<SocketActionButton> {
 
   _initchatSocket() async {
     socket = await ChatSocket.getInstance(widget.integrationId!);
-    colorPreference= socket!.integrationResponse!.metadata!.color!;
-
-
-    socket!.connect();
-    setState(() {
-      isInitialized = true;
-    });
-
+    colorPreference = socket!.integrationResponse!.metadata!.color!;
   }
-  
 
   @override
   Widget build(BuildContext context) {
-
     return FloatingActionButton(
       child: isInitialized ? Icon(Icons.house) : CircularProgressIndicator(),
       onPressed: () {
         print('print color:');
         print(colorPreference.chatBackgroundColor);
-        Navigator.push(context, 
-                MaterialPageRoute( builder: (context) => ChatPage(socket: socket!)))
-            .then((value) async {
-          var a = await socket!.channel!.ready;
-        });
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ChatPage(socket: socket!)));
       },
     );
   }
