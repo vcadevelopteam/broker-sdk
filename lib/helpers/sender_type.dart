@@ -1,0 +1,1 @@
+enum SenderType { chat, user }

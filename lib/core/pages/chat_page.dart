@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:brokersdk/core/chat_socket.dart';
 import 'package:brokersdk/helpers/color_convert.dart';
 import 'package:brokersdk/helpers/message_type.dart';
+import 'package:brokersdk/helpers/sender_type.dart';
 import 'package:brokersdk/model/models.dart';
 import 'package:brokersdk/model/personalization.dart';
 
@@ -10,6 +11,7 @@ import 'package:brokersdk/repository/chat_socket_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import '../../model/color_preference.dart';
@@ -31,7 +33,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   var _textController = TextEditingController();
   bool _visible = true;
-  var messages = [];
+  List<Message> messages = [];
+  final f = new DateFormat('dd/mm/yyyy');
 
   bool _isLoading = false;
   ScrollController? scrollController;
@@ -54,17 +57,40 @@ class _ChatPageState extends State<ChatPage> {
 
   initSocket() async {
     await widget.socket.connect();
+    widget.socket.channel!.stream.asBroadcastStream().listen((event) {
+      print(event);
+      setState(() {
+        var decodedJson = jsonDecode(event);
+        decodedJson['sender'] = SenderType.chat.name;
+        widget.socket.controller!.sink.add(decodedJson);
+      });
+    });
   }
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
       var response = await ChatSocketRepository.sendMessage(
           _textController.text, MessageType.text);
+
+      var messageSent = {
+        'message': _textController.text,
+        'messageDate': DateTime.now().millisecondsSinceEpoch,
+        'sender': SenderType.user
+      };
+      setState(() {
+        widget.socket.controller!.sink.add(messageSent);
+      });
+
       _textController.clear();
     }
   }
 
   Widget _labelDay(String date) {
+    if (f.format(DateTime.parse(
+            MessageBubble.parseTime(messages[0].messageDate!))) ==
+        date) {
+      date = "Hoy";
+    }
     return Container(
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
       decoration: BoxDecoration(
@@ -74,14 +100,6 @@ class _ChatPageState extends State<ChatPage> {
         date,
         style: TextStyle(color: Colors.black),
       ),
-    );
-  }
-
-  void scrollDown() {
-    scrollController!.animateTo(
-      scrollController!.position.maxScrollExtent,
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 200),
     );
   }
 
@@ -105,15 +123,14 @@ class _ChatPageState extends State<ChatPage> {
     Personalization header =
         widget.socket.integrationResponse!.metadata!.personalization!;
 
-    // var backgroundColor = Theme.of(context).dialogBackgroundColor;
-
     Widget _messagesArea() {
       return StreamBuilder(
-        stream: widget.socket.channel!.stream,
+        stream: widget.socket.controller!.stream,
         builder: (ctx, snapshot) {
           if (snapshot.hasData) {
-            var message = Message.fromJson(jsonDecode(snapshot.data));
+            var message = Message.fromJson(snapshot.data);
             messages.add(message);
+
             return messages.length > 0
                 ? Column(
                     children: [
@@ -121,23 +138,40 @@ class _ChatPageState extends State<ChatPage> {
                         child: ListView.builder(
                             controller: scrollController,
                             shrinkWrap: true,
+                            reverse: true,
                             itemCount: messages.length,
                             itemBuilder: (ctx, indx) {
-                              Widget _labelday = SizedBox();
+                              // Widget _labelday = SizedBox();
+                              Widget separator = SizedBox();
 
-                              // if (indx == 0) {
-                              //   _labelday = _labelDay(messages[0].date!);
-                              // }
+                              if (indx == messages.length - 1) {
+                                separator = _labelDay(f.format(DateTime.parse(
+                                    MessageBubble.parseTime(
+                                        messages[0].messageDate!))));
+                              }
 
                               // if (indx != 0 &&
-                              //     messages[indx].date !=
-                              //         messages[indx - 1].date) {
-                              //   _labelday = _labelDay(messages[indx].date!);
+                              //     messages[indx].messageDate !=
+                              //         messages[indx - 1].messageDate) {
+                              //   _labelday = _labelDay(f.format(DateTime.parse(
+                              //       MessageBubble.parseTime(
+                              //           messages[indx].messageDate!))));
                               // }
+                              if (indx != 0 &&
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                              messages[indx].messageDate!)
+                                          .day !=
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                              messages[indx - 1].messageDate!)
+                                          .day) {
+                                separator = _labelDay(f.format(DateTime.parse(
+                                    MessageBubble.parseTime(
+                                        messages[indx].messageDate!))));
+                              }
 
                               return Column(
                                 children: [
-                                  _labelday,
+                                  separator,
                                   MessageBubble(
                                       messages[indx], indx, colorPreference)
                                 ],
@@ -227,15 +261,6 @@ class _ChatPageState extends State<ChatPage> {
                           onPressed: () async {
                             if (_textController.text.length > 0) {
                               sendMessage();
-                              setState(() {
-                                _isLoading = true;
-                              });
-                              await Future.delayed(Duration(seconds: 2))
-                                  .then((value) {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                              });
                             }
                           },
                           child: Icon(
@@ -249,32 +274,6 @@ class _ChatPageState extends State<ChatPage> {
         ),
       );
     }
-
-    Widget downButton = Positioned(
-      left: 0,
-      child: AnimatedOpacity(
-        duration: Duration(milliseconds: 500),
-        opacity: _visible ? 1.0 : 0.0,
-        child: Transform.rotate(
-          angle: 270 * math.pi / 180,
-          child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
-                primary: Color.fromRGBO(106, 194, 194, 1),
-                padding: EdgeInsets.all(0),
-              ),
-              onPressed: () {
-                scrollController!.animateTo(
-                  scrollController!.position.maxScrollExtent,
-                  curve: Curves.easeOut,
-                  duration: const Duration(milliseconds: 500),
-                );
-              },
-              icon: Icon(Icons.arrow_back),
-              label: Text("")),
-        ),
-      ),
-    );
 
     return WillPopScope(
       onWillPop: () async {
@@ -340,7 +339,6 @@ class _ChatPageState extends State<ChatPage> {
                               MessagesDb().deleteDftabase();
                             },
                             child: Text("Bajarse DB")),*/
-                            downButton,
                           ],
                         ),
                       ),

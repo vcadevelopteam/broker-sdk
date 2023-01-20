@@ -13,6 +13,7 @@ class ChatSocket {
   final String? _integrationId;
   WebSocketChannel? channel = null;
   IntegrationResponse? integrationResponse;
+  StreamController? controller = StreamController();
   ChatSocket(this._integrationId, this.integrationResponse);
 
   static Future<ChatSocket> getInstance(String integrationId) async {
@@ -29,12 +30,13 @@ class ChatSocket {
     channel = WebSocketChannel.connect(
       Uri.parse('${SocketUrls.baseSocketEndpoint}$userId/$sessionId'),
     );
-
+    controller = StreamController();
     print('${SocketUrls.baseSocketEndpoint}$userId/$sessionId');
   }
 
   void disconnect() {
     channel = null;
+    controller = null;
   }
 
   Future<String> _generateRandomId(IdentifierType idType) async {

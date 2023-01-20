@@ -24,6 +24,9 @@ class _SocketActionButtonState extends State<SocketActionButton> {
   _initchatSocket() async {
     socket = await ChatSocket.getInstance(widget.integrationId!);
     colorPreference = socket!.integrationResponse!.metadata!.color!;
+    setState(() {
+      isInitialized = true;
+    });
   }
 
   @override
