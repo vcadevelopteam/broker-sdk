@@ -6,6 +6,7 @@ import 'package:brokersdk/helpers/identifier_type.dart';
 import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/helpers/socket_urls.dart';
 import 'package:brokersdk/model/integration_response.dart';
+import 'package:brokersdk/model/message.dart';
 import 'package:brokersdk/model/message_request.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -42,5 +43,16 @@ class ChatSocketRepository {
         '${SocketUrls.baseBrokerEndpoint}${SocketUrls.sendMessageEndpoint}',
         body: jsonEncode(encoded));
     return response;
+  }
+
+  static Future<void> saveMessageInLocal(List<Message> messages) async {
+    final pref = await SharedPreferences.getInstance();
+
+    var encodedMessages = messages.map((e) => e.toJson()).toList();
+    pref.setString('messages', jsonEncode(encodedMessages));
+
+    var validateMessages = pref.getString('messages');
+    List decodedList = jsonDecode(validateMessages!);
+    print("Size del arreglo " + decodedList.length.toString());
   }
 }

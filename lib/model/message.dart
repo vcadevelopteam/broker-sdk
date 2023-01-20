@@ -27,6 +27,10 @@ class Message {
     return message;
   }
 
+  Map<String, dynamic> toJson() {
+    return {'isUser': isUser, 'message': message, 'messageDate': messageDate};
+  }
+
   // Map<String, dynamic> ToJson(Message message) {
   //   return {
   //     'id': message.id,

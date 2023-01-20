@@ -34,8 +34,6 @@ class _SocketActionButtonState extends State<SocketActionButton> {
     return FloatingActionButton(
       child: isInitialized ? Icon(Icons.house) : CircularProgressIndicator(),
       onPressed: () {
-        print('print color:');
-        print(colorPreference.chatBackgroundColor);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ChatPage(socket: socket!)));
       },

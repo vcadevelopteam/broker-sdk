@@ -58,7 +58,6 @@ class _ChatPageState extends State<ChatPage> {
   initSocket() async {
     await widget.socket.connect();
     widget.socket.channel!.stream.asBroadcastStream().listen((event) {
-      print(event);
       setState(() {
         var decodedJson = jsonDecode(event);
         decodedJson['sender'] = SenderType.chat.name;
@@ -103,13 +102,6 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void _scrollListener() {
-    if (scrollController!.position.userScrollDirection ==
-        ScrollDirection.reverse) {}
-    if (scrollController!.position.userScrollDirection ==
-        ScrollDirection.forward) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     var _screenWidth = MediaQuery.of(context).size.width;
@@ -130,8 +122,8 @@ class _ChatPageState extends State<ChatPage> {
           if (snapshot.hasData) {
             var message = Message.fromJson(snapshot.data);
             messages.add(message);
-
-            return messages.length > 0
+            ChatSocketRepository.saveMessageInLocal(messages);
+            return messages.isNotEmpty
                 ? Column(
                     children: [
                       Expanded(
@@ -141,7 +133,6 @@ class _ChatPageState extends State<ChatPage> {
                             reverse: true,
                             itemCount: messages.length,
                             itemBuilder: (ctx, indx) {
-                              // Widget _labelday = SizedBox();
                               Widget separator = SizedBox();
 
                               if (indx == messages.length - 1) {
@@ -149,14 +140,6 @@ class _ChatPageState extends State<ChatPage> {
                                     MessageBubble.parseTime(
                                         messages[0].messageDate!))));
                               }
-
-                              // if (indx != 0 &&
-                              //     messages[indx].messageDate !=
-                              //         messages[indx - 1].messageDate) {
-                              //   _labelday = _labelDay(f.format(DateTime.parse(
-                              //       MessageBubble.parseTime(
-                              //           messages[indx].messageDate!))));
-                              // }
                               if (indx != 0 &&
                                   DateTime.fromMillisecondsSinceEpoch(
                                               messages[indx].messageDate!)
@@ -333,12 +316,6 @@ class _ChatPageState extends State<ChatPage> {
                                   ? _messagesArea()
                                   : Container(),
                             ),
-                            /*
-                        ElevatedButton(
-                            onPressed: () {
-                              MessagesDb().deleteDftabase();
-                            },
-                            child: Text("Bajarse DB")),*/
                           ],
                         ),
                       ),
