@@ -15,7 +15,8 @@ class MessageBubble extends StatelessWidget {
   final int indx;
   final ColorPreference color;
   final Color textColor = Colors.black;
-  const MessageBubble(this.message, this.indx, this.color);
+  final String imageUrl;
+  const MessageBubble(this.message, this.indx, this.color, this.imageUrl);
 
   static String parseTime(int time) {
     var dt = DateTime.fromMillisecondsSinceEpoch(time);
@@ -24,7 +25,19 @@ class MessageBubble extends StatelessWidget {
 
   Widget _getMessage(Message message) {
     if (message.type == MessageType.text) {
-      return Text(message.message!, style: TextStyle(color: textColor));
+      return Text(message.message!,
+          style: TextStyle(
+              color: message.isUser!
+                  ? HexColor(color.messageClientColor.toString())
+                              .computeLuminance() >
+                          0.5
+                      ? Colors.black
+                      : Colors.white
+                  : HexColor(color.messageBotColor.toString())
+                              .computeLuminance() >
+                          0.5
+                      ? Colors.black
+                      : Colors.white));
     } else {
       return MessageCarousel(message.data!);
     }
@@ -39,25 +52,19 @@ class MessageBubble extends StatelessWidget {
           !message.isUser! ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
         margin: EdgeInsets.all(5),
-        child: Material(
-          borderRadius: BorderRadius.only(
-              topRight:
-                  !message.isUser! ? Radius.circular(10) : Radius.circular(0),
-              bottomLeft: Radius.circular(10),
-              topLeft:
-                  message.isUser! ? Radius.circular(10) : Radius.circular(0),
-              bottomRight: Radius.circular(10)),
-          elevation: 10,
-          child: Container(
-            padding: EdgeInsets.all(10),
-            constraints:
-                BoxConstraints(maxWidth: _screenWidth * 0.7, minWidth: 10),
-            decoration: BoxDecoration(
-                color: message.isUser!
-                    ? HexColor(color.messageClientColor.toString())
-                    : HexColor(color.messageBotColor.toString()),
-                border: Border.all(
-                    color: HexColor(color.chatBorderColor.toString())),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!message.isUser!)
+              CircleAvatar(
+                backgroundImage: NetworkImage(imageUrl),
+                // backgroundColor:
+                //     HexColor(colorPreference.chatHeaderColor.toString()),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Material(
                 borderRadius: BorderRadius.only(
                     topRight: !message.isUser!
                         ? Radius.circular(10)
@@ -66,55 +73,99 @@ class MessageBubble extends StatelessWidget {
                     topLeft: message.isUser!
                         ? Radius.circular(10)
                         : Radius.circular(0),
-                    bottomRight: Radius.circular(10))),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: message.isUser!
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    _getMessage(message),
-                    SizedBox(
-                      height: 40,
-                      width: 50,
-                    ),
-                    Positioned(
-                      left: message.isUser! ? 0 : 10,
-                      right: message.isUser! ? 10 : 0,
-                      bottom: 0,
-                      child: Text(
-                        f.format(
-                            DateTime.parse(parseTime(message.messageDate!))),
-                        textAlign: TextAlign.end,
-                        style: TextStyle(color: textColor, fontSize: 12),
-                      ),
-                    )
-                  ],
-                )
+                    bottomRight: Radius.circular(10)),
+                elevation: 10,
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  constraints: BoxConstraints(
+                      maxWidth: _screenWidth * 0.7, minWidth: 10),
+                  decoration: BoxDecoration(
+                      color: message.isUser!
+                          ? HexColor(color.messageClientColor.toString())
+                          : HexColor(color.messageBotColor.toString()),
+                      // border: Border.all(
+                      //     color: HexColor(color.chatBorderColor.toString())),
+                      borderRadius: BorderRadius.only(
+                          topRight: !message.isUser!
+                              ? Radius.circular(10)
+                              : Radius.circular(0),
+                          bottomLeft: Radius.circular(10),
+                          topLeft: message.isUser!
+                              ? Radius.circular(10)
+                              : Radius.circular(0),
+                          bottomRight: Radius.circular(10))),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: message.isUser!
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          _getMessage(message),
+                          SizedBox(
+                            height: 40,
+                            width: 50,
+                          ),
+                          Positioned(
+                            left: message.isUser! ? 0 : 10,
+                            right: message.isUser! ? 10 : 0,
+                            bottom: 0,
+                            child: Text(
+                              f.format(DateTime.parse(
+                                  parseTime(message.messageDate!))),
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  color: message.isUser!
+                                      ? HexColor(color.messageClientColor
+                                                      .toString())
+                                                  .computeLuminance() >
+                                              0.5
+                                          ? Colors.black
+                                          : Colors.white
+                                      : HexColor(color.messageBotColor
+                                                      .toString())
+                                                  .computeLuminance() >
+                                              0.5
+                                          ? Colors.black
+                                          : Colors.white,
+                                  fontSize: 12),
+                            ),
+                          )
+                        ],
+                      )
 
-                // Row(
-                //         mainAxisSize:MainAxisSize.max,
-                //         mainAxisAlignment: message.isUser!
-                //             ? MainAxisAlignment.end
-                //             : MainAxisAlignment.start,
+                      // Row(
+                      //         mainAxisSize:MainAxisSize.max,
+                      //         mainAxisAlignment: message.isUser!
+                      //             ? MainAxisAlignment.end
+                      //             : MainAxisAlignment.start,
 
-                //         children: [
-                //           Padding(
-                //             padding: const EdgeInsets.only(top: 8.0),
-                //             child: Text(
-                //               f.format(DateTime.parse(
-                //                   parseTime(message.messageDate!))),
-                //               textAlign: TextAlign.end,
-                //               style: TextStyle(color: textColor, fontSize: 12),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-              ],
+                      //         children: [
+                      //           Padding(
+                      //             padding: const EdgeInsets.only(top: 8.0),
+                      //             child: Text(
+                      //               f.format(DateTime.parse(
+                      //                   parseTime(message.messageDate!))),
+                      //               textAlign: TextAlign.end,
+                      //               style: TextStyle(color: textColor, fontSize: 12),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+            if (message.isUser!)
+              CircleAvatar(
+                backgroundImage: AssetImage('assets/user_default.png',),
+                
+                backgroundColor: Colors.white,
+                
+              ),
+          ],
         ),
       ),
     );

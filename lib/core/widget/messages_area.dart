@@ -69,12 +69,13 @@ class _MessagesAreaState extends State<MessagesArea> {
                             //       MessageBubble.parseTime(
                             //           messages[indx].messageDate!))));
                             // }
+                           
 
                             return Column(
                               children: [
                                 separator,
                                 MessageBubble(
-                                    messages[indx], indx, colorPreference)
+                                    messages[indx], indx, colorPreference,widget.socket.integrationResponse!.metadata!.icons!.chatHeaderImage! )
                               ],
                             );
                           }),

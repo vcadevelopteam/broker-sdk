@@ -40,9 +40,11 @@ class _ChatPageState extends State<ChatPage> {
   bool _isLoading = false;
   ScrollController? scrollController;
 
+
   @override
   void initState() {
     initSocket();
+    
     super.initState();
   }
 
@@ -91,10 +93,15 @@ class _ChatPageState extends State<ChatPage> {
         widget.socket.integrationResponse!.metadata!.icons!;
     Personalization header =
         widget.socket.integrationResponse!.metadata!.personalization!;
+    Color textColor = backgroundColor.computeLuminance() > 0.5 ?Colors.black:Colors.white;
+
+
+    
 
     Widget _messageInput() {
       return SafeArea(
         child: Container(
+          
           color: backgroundColor,
           width: _screenWidth,
           child: Row(
@@ -103,47 +110,54 @@ class _ChatPageState extends State<ChatPage> {
                   flex: 5,
                   child: Container(
                     child: StreamBuilder(builder: (context, snapshot) {
-                      return TextFormField(
-                        controller: _textController,
-                        textAlign: TextAlign.left,
-                        onChanged: (val) {},
-                        style: TextStyle(
-                            fontSize: 18,
-                            color:
-                                Theme.of(context).textTheme.bodyText1!.color),
-                        decoration: InputDecoration(
-                          // contentPadding: EdgeInsets.all(0),
+                      return Row(
+                        children: [
 
-                          // prefix:Column(
-                          //   mainAxisAlignment: MainAxisAlignment.end,
-                          //   mainAxisSize: MainAxisSize.max,
-                          //   children: [
-                          //     GestureDetector(child:Icon(Icons.add) ,),
-
-                          //   ],
-                          // ),
-                          prefixIcon: IconButton(
-                              onPressed: () {
-                                print('hola');
-                              },
-                              icon: Icon(Icons.add_box)),
-                          hintText: "¡Escribe Algo!",
-                          hintStyle: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color),
-                          labelStyle: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+                           ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(15),
+                            // maximumSize: Size(30, 30)
                           ),
-                          disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+                          onPressed: ()  {
+                            print('hola');
+                          },
+                          child: Icon(Icons.add_box,
+                            color: Colors.black,
+                          )),
+                          
+                          Expanded(
+                            child: TextFormField(
+                              controller: _textController,
+                              textAlign: TextAlign.left,
+                              onChanged: (val) {},
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color:
+                                      Theme.of(context).textTheme.bodyText1!.color),
+                              decoration: InputDecoration(
+                                
+                                hintText: "¡Escribe Algo!",
+                                hintStyle: TextStyle(
+                                    color:
+                                        Theme.of(context).textTheme.bodyText1!.color),
+                                labelStyle: TextStyle(
+                                    color:
+                                        Theme.of(context).textTheme.bodyText1!.color),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                              ),
+                            ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                        ),
+                        ],
                       );
                     }),
                   )),
@@ -176,6 +190,9 @@ class _ChatPageState extends State<ChatPage> {
         ),
       );
     }
+  
+    
+        
 
     return WillPopScope(
       onWillPop: () async {
@@ -185,6 +202,8 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: Scaffold(
           appBar: AppBar(
+            iconTheme: IconThemeData(color: textColor),
+           
             backgroundColor:
                 HexColor(colorPreference.chatHeaderColor.toString()),
             title: Row(
@@ -202,12 +221,12 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     Text(
                       header.headerTitle.toString(),
-                      style: const TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20, color:textColor ),
                     ),
                     if (header.headerSubtitle != null)
                       Text(
                         header.headerSubtitle.toString(),
-                        style: const TextStyle(fontSize: 15),
+                        style: TextStyle(fontSize: 15, color:textColor)
                       )
                   ],
                 ),
