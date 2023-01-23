@@ -68,7 +68,8 @@ class _ChatPageState extends State<ChatPage> {
       var messageSent = {
         'message': _textController.text,
         'messageDate': DateTime.now().millisecondsSinceEpoch,
-        'sender': SenderType.user
+        'sender': SenderType.user,
+        "type": MessageType.text
       };
       setState(() {
         widget.socket.controller!.sink.add(messageSent);
@@ -223,6 +224,8 @@ class _ChatPageState extends State<ChatPage> {
                 child: Stack(
               children: [
                 Container(
+                  width: _screenWidth,
+                  height: _screenHeight,
                   padding: EdgeInsets.all(10),
                   child: Column(
                     children: [

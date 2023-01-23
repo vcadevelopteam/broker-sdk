@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:brokersdk/core/widget/message_carousel.dart';
 import 'package:brokersdk/helpers/color_convert.dart';
+import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/message_response.dart';
 import 'package:brokersdk/model/models.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,14 @@ class MessageBubble extends StatelessWidget {
   static String parseTime(int time) {
     var dt = DateTime.fromMillisecondsSinceEpoch(time);
     return dt.toString();
+  }
+
+  Widget _getMessage(Message message) {
+    if (message.type == MessageType.text) {
+      return Text(message.message!, style: TextStyle(color: textColor));
+    } else {
+      return MessageCarousel(message.data!);
+    }
   }
 
   @override
@@ -65,15 +75,14 @@ class MessageBubble extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    Text(
-                      message.message!,
-                      style: TextStyle(color: textColor),
+                    _getMessage(message),
+                    SizedBox(
+                      height: 40,
+                      width: 50,
                     ),
-                    SizedBox(height: 40, width: 50,),
-
                     Positioned(
                       left: message.isUser! ? 0 : 10,
-                      right:message.isUser! ? 10 : 0 ,
+                      right: message.isUser! ? 10 : 0,
                       bottom: 0,
                       child: Text(
                         f.format(
