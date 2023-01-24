@@ -13,6 +13,7 @@ import 'package:brokersdk/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:math' as math;
 
 import '../../model/color_preference.dart';
@@ -40,12 +41,10 @@ class _ChatPageState extends State<ChatPage> {
   bool _isLoading = false;
   ScrollController? scrollController;
 
-
   @override
   void initState() {
-    initSocket();
-    
     super.initState();
+    initSocket();
   }
 
   @override
@@ -60,6 +59,25 @@ class _ChatPageState extends State<ChatPage> {
 
   initSocket() async {
     await widget.socket.connect();
+    initChat();
+    await fillWithChatHistory();
+  }
+
+  initChat() async {
+    widget.socket.channel!.stream.asBroadcastStream().listen((event) {
+      var decodedJson = jsonDecode(event);
+      decodedJson['sender'] = SenderType.chat.name;
+      widget.socket.controller!.sink.add(decodedJson);
+    });
+  }
+
+  fillWithChatHistory() async {
+    setState(() {});
+    //Setea el estado para actualizar el stream a que responda
+    var savedMessages = await ChatSocketRepository.getLocalMessages();
+    await Future.delayed(Duration(seconds: 1));
+    //Agrega una lista de mensajes
+    widget.socket.controller!.sink.add(savedMessages);
   }
 
   void sendMessage() async {
@@ -67,12 +85,24 @@ class _ChatPageState extends State<ChatPage> {
       var response = await ChatSocketRepository.sendMessage(
           _textController.text, MessageType.text);
 
-      var messageSent = {
-        'message': _textController.text,
-        'messageDate': DateTime.now().millisecondsSinceEpoch,
-        'sender': SenderType.user,
-        "type": MessageType.text
-      };
+      //Envia un mensaje unico como una respuesta para reutilizar
+      // el from json del stream de mensajes recibidos
+      List<MessageResponseData> data = [];
+      data.add(MessageResponseData(
+        message: _textController.text,
+      ));
+      var messageSent = MessageResponse(
+              type: MessageType.text.name,
+              isUser: true,
+              error: false,
+              message: MessageSingleResponse(
+                  createdAt: DateTime.now().millisecondsSinceEpoch,
+                  data: data,
+                  type: MessageType.text.name,
+                  id: Uuid().v4().toString()),
+              receptionDate: DateTime.now().millisecondsSinceEpoch)
+          .toJson();
+
       setState(() {
         widget.socket.controller!.sink.add(messageSent);
       });
@@ -93,15 +123,12 @@ class _ChatPageState extends State<ChatPage> {
         widget.socket.integrationResponse!.metadata!.icons!;
     Personalization header =
         widget.socket.integrationResponse!.metadata!.personalization!;
-    Color textColor = backgroundColor.computeLuminance() > 0.5 ?Colors.black:Colors.white;
-
-
-    
+    Color textColor =
+        backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
     Widget _messageInput() {
       return SafeArea(
         child: Container(
-          
           color: backgroundColor,
           width: _screenWidth,
           child: Row(
@@ -112,21 +139,19 @@ class _ChatPageState extends State<ChatPage> {
                     child: StreamBuilder(builder: (context, snapshot) {
                       return Row(
                         children: [
-
-                           ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(15),
-                            // maximumSize: Size(30, 30)
-                          ),
-                          onPressed: ()  {
-                            print('hola');
-                          },
-                          child: Icon(Icons.add_box,
-                            color: Colors.black,
-                          )),
-                          
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(),
+                                padding: EdgeInsets.all(15),
+                                // maximumSize: Size(30, 30)
+                              ),
+                              onPressed: () {
+                                print('hola');
+                              },
+                              child: Icon(
+                                Icons.add_box,
+                                color: Colors.black,
+                              )),
                           Expanded(
                             child: TextFormField(
                               controller: _textController,
@@ -134,17 +159,22 @@ class _ChatPageState extends State<ChatPage> {
                               onChanged: (val) {},
                               style: TextStyle(
                                   fontSize: 18,
-                                  color:
-                                      Theme.of(context).textTheme.bodyText1!.color),
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color),
                               decoration: InputDecoration(
-                                
                                 hintText: "¡Escribe Algo!",
                                 hintStyle: TextStyle(
-                                    color:
-                                        Theme.of(context).textTheme.bodyText1!.color),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .color),
                                 labelStyle: TextStyle(
-                                    color:
-                                        Theme.of(context).textTheme.bodyText1!.color),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .color),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15.0),
                                 ),
@@ -190,9 +220,6 @@ class _ChatPageState extends State<ChatPage> {
         ),
       );
     }
-  
-    
-        
 
     return WillPopScope(
       onWillPop: () async {
@@ -203,7 +230,6 @@ class _ChatPageState extends State<ChatPage> {
       child: Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(color: textColor),
-           
             backgroundColor:
                 HexColor(colorPreference.chatHeaderColor.toString()),
             title: Row(
@@ -221,13 +247,11 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     Text(
                       header.headerTitle.toString(),
-                      style: TextStyle(fontSize: 20, color:textColor ),
+                      style: TextStyle(fontSize: 20, color: textColor),
                     ),
                     if (header.headerSubtitle != null)
-                      Text(
-                        header.headerSubtitle.toString(),
-                        style: TextStyle(fontSize: 15, color:textColor)
-                      )
+                      Text(header.headerSubtitle.toString(),
+                          style: TextStyle(fontSize: 15, color: textColor))
                   ],
                 ),
               ],

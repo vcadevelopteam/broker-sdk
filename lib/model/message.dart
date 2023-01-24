@@ -7,7 +7,7 @@ class Message {
   bool? isUser;
   int? messageDate;
   String? message;
-  MessageType? type;
+  MessageType type;
   List<MessageResponseData>? data;
   Message(
       {required this.isUser,
@@ -18,12 +18,14 @@ class Message {
 
   static Message fromJson(Map<String, dynamic> json) {
     Message? message;
-    if (json["sender"] == SenderType.user) {
+    // MessageResponse response = MessageResponse.fromJson(json);
+
+    if (json['isUser']) {
       message = Message(
-          type: json["type"],
-          isUser: true,
-          message: json["message"],
-          messageDate: json["messageDate"]);
+          type: MessageType.text,
+          isUser: json['isUser'],
+          message: json['message'],
+          messageDate: json['messageDate'] ?? json['receptionDate']);
     } else {
       MessageResponse response = MessageResponse.fromJson(json);
       if (response.type == MessageType.text.name) {
@@ -45,6 +47,18 @@ class Message {
   }
 
   Map<String, dynamic> toJson() {
-    return {'isUser': isUser, 'message': message, 'messageDate': messageDate};
+    var messageToSend;
+    if (type == MessageType.text) {
+      messageToSend = message;
+    } else {
+      messageToSend = data;
+    }
+
+    return {
+      'isUser': isUser,
+      'message': messageToSend,
+      'messageDate': messageDate,
+      'type': type!.name,
+    };
   }
 }

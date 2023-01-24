@@ -4,7 +4,7 @@ import 'package:brokersdk/model/carousel_button.dart';
 class MessageResponse {
   MessageSingleResponse? message;
   bool? error;
-  bool isUser = false;
+  bool? isUser;
   int? receptionDate;
   String type;
   String? method;
@@ -12,6 +12,7 @@ class MessageResponse {
   MessageResponse(
       {this.message,
       this.error,
+      this.isUser,
       this.receptionDate,
       this.method,
       required this.type});
@@ -22,8 +23,26 @@ class MessageResponse {
         error: json["error"] ?? false,
         receptionDate: json["receptionDate"] ?? 0,
         method: json["method"] ?? "",
+        isUser: json["isUser"],
         type: message.type.toString(),
         message: message);
+  }
+
+  toJson() {
+    var messageToSend;
+    if (type == MessageType.text.name) {
+      messageToSend = message!.data![0].message;
+    } else {
+      messageToSend = message!.toJson();
+    }
+    return {
+      'isUser': isUser,
+      'message': messageToSend,
+      'error': error,
+      'receptionDate': receptionDate,
+      'method': method,
+      'type': type
+    };
   }
 }
 
@@ -46,8 +65,27 @@ class MessageSingleResponse {
       this.sessionUuid,
       this.type});
 
+  toJson() {
+    var dataToSend;
+    if (type == MessageType.text.name) {
+      dataToSend = data!.map((e) => e.toJson()).toList()[0];
+    } else {
+      dataToSend = data!.map((e) => e.toJson()).toList();
+    }
+
+    return {
+      'senderId': senderId,
+      'createdAt': createdAt,
+      'type': type,
+      'integrationId': integrationId,
+      'sessionId': sessionUuid,
+      'data': dataToSend,
+    };
+  }
+
   factory MessageSingleResponse.fromJson(Map<String, dynamic> json) {
     var type = json["type"] as String;
+
     if (type == MessageType.text.name) {
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,
@@ -88,6 +126,18 @@ class MessageResponseData {
       this.title,
       this.action,
       this.buttons});
+
+  toJson() {
+    return {
+      'message': message,
+      'description': description,
+      'mediaUrl': mediaUrl,
+      'title': title,
+      'action': action,
+      'buttons': []
+    };
+  }
+
   factory MessageResponseData.text(Map<String, dynamic> json) {
     return MessageResponseData(message: json["message"] ?? "");
   }

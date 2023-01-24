@@ -160,10 +160,10 @@ class MessageBubble extends StatelessWidget {
             ),
             if (message.isUser!)
               CircleAvatar(
-                backgroundImage: AssetImage('assets/user_default.png',),
-                
+                backgroundImage: AssetImage(
+                  'assets/user_default.png',
+                ),
                 backgroundColor: Colors.white,
-                
               ),
           ],
         ),

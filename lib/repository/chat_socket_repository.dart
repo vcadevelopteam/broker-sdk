@@ -45,14 +45,40 @@ class ChatSocketRepository {
     return response;
   }
 
-  static Future<void> saveMessageInLocal(List<Message> messages) async {
+  static Future<void> saveMessageInLocal(Message message) async {
     final pref = await SharedPreferences.getInstance();
+    var validateMessages = pref.getString('messages');
+    List<Message> messagesToSave = [];
 
-    var encodedMessages = messages.map((e) => e.toJson()).toList();
+    if (validateMessages == null) {
+      messagesToSave.add(message);
+    } else {
+      List decodedList = jsonDecode(validateMessages);
+      messagesToSave = decodedList.map((e) => Message.fromJson(e)).toList();
+
+      messagesToSave.firstWhere(
+        (element) => element.messageDate == message.messageDate,
+        orElse: () {
+          messagesToSave.add(message);
+          return message;
+        },
+      );
+    }
+    var encodedMessages = messagesToSave.map((e) => e.toJson()).toList();
     pref.setString('messages', jsonEncode(encodedMessages));
 
-    var validateMessages = pref.getString('messages');
-    List decodedList = jsonDecode(validateMessages!);
-    print("Size del arreglo " + decodedList.length.toString());
+    print("Size del arreglo " + encodedMessages.length.toString());
+  }
+
+  static Future<List<dynamic>> getLocalMessages() async {
+    final pref = await SharedPreferences.getInstance();
+
+    if (pref.getString('messages') != null) {
+      var encodedMessages = pref.getString('messages');
+      List decodedList = jsonDecode(encodedMessages!);
+
+      return Future.value(decodedList);
+    }
+    return [];
   }
 }

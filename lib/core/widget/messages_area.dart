@@ -25,21 +25,51 @@ class _MessagesAreaState extends State<MessagesArea> {
   var mystreambuilder;
   @override
   void initState() {
-    initChar();
-    initStreambuilder();
     super.initState();
   }
 
-  initStreambuilder() {
+  final f = new DateFormat('dd/mm/yyyy');
+  Widget _labelDay(String date) {
+    if (f.format(DateTime.parse(
+            MessageBubble.parseTime(messages[0].messageDate!))) ==
+        date) {
+      date = "Hoy";
+    }
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+      decoration: BoxDecoration(
+          color: Color.fromRGBO(106, 194, 194, 1),
+          borderRadius: BorderRadius.circular(10)),
+      child: Text(
+        date,
+        style: TextStyle(color: Colors.black),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ColorPreference colorPreference =
         widget.socket.integrationResponse!.metadata!.color!;
-    mystreambuilder = StreamBuilder(
+    return StreamBuilder(
       stream: widget.socket.controller!.stream,
       builder: (ctx, snapshot) {
         if (snapshot.hasData) {
-          var message = Message.fromJson(snapshot.data);
-          messages.add(message);
-          ChatSocketRepository.saveMessageInLocal(messages);
+          //Valida si lo recibido es una lista o un mensaje
+          //Si es una lista va a agregar a cada mensaje de la lista al arreglo local
+          if (snapshot.data.runtimeType == List) {
+            var recievedMessages = snapshot.data as List;
+            recievedMessages.forEach((element) {
+              var message = Message.fromJson(element);
+              messages.add(message);
+            });
+          } else {
+            //Si no es una lista solo va a agregar el mensaje al arreglo
+            var message = Message.fromJson(snapshot.data);
+            messages.add(message);
+            ChatSocketRepository.saveMessageInLocal(message);
+          }
+
           return messages.isNotEmpty
               ? Column(
                   children: [
@@ -69,13 +99,16 @@ class _MessagesAreaState extends State<MessagesArea> {
                             //       MessageBubble.parseTime(
                             //           messages[indx].messageDate!))));
                             // }
-                           
 
                             return Column(
                               children: [
                                 separator,
                                 MessageBubble(
-                                    messages[indx], indx, colorPreference,widget.socket.integrationResponse!.metadata!.icons!.chatHeaderImage! )
+                                    messages[indx],
+                                    indx,
+                                    colorPreference,
+                                    widget.socket.integrationResponse!.metadata!
+                                        .icons!.chatHeaderImage!)
                               ],
                             );
                           }),
@@ -101,41 +134,10 @@ class _MessagesAreaState extends State<MessagesArea> {
                   ],
                 );
         } else {
-          return Center(child: Container());
+          return Center(child: CircularProgressIndicator());
         }
       },
     );
-  }
-
-  initChar() {
-    widget.socket.channel!.stream.asBroadcastStream().listen((event) {
-      var decodedJson = jsonDecode(event);
-      decodedJson['sender'] = SenderType.chat.name;
-      widget.socket.controller!.sink.add(decodedJson);
-    });
-  }
-
-  final f = new DateFormat('dd/mm/yyyy');
-  Widget _labelDay(String date) {
-    if (f.format(DateTime.parse(
-            MessageBubble.parseTime(messages[0].messageDate!))) ==
-        date) {
-      date = "Hoy";
-    }
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-      decoration: BoxDecoration(
-          color: Color.fromRGBO(106, 194, 194, 1),
-          borderRadius: BorderRadius.circular(10)),
-      child: Text(
-        date,
-        style: TextStyle(color: Colors.black),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return mystreambuilder;
+    ;
   }
 }
