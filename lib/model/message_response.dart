@@ -7,6 +7,7 @@ class MessageResponse {
   bool? isUser;
   int? receptionDate;
   String type;
+  String? sender;
   String? method;
 
   MessageResponse(
@@ -15,6 +16,7 @@ class MessageResponse {
       this.isUser,
       this.receptionDate,
       this.method,
+      this.sender,
       required this.type});
 
   factory MessageResponse.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class MessageResponse {
         receptionDate: json["receptionDate"] ?? 0,
         method: json["method"] ?? "",
         isUser: json["isUser"],
+        sender: json["sender"] ?? "",
         type: message.type.toString(),
         message: message);
   }

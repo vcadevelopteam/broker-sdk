@@ -2,6 +2,7 @@ import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/helpers/sender_type.dart';
 import 'package:brokersdk/model/message_request.dart';
 import 'package:brokersdk/model/message_response.dart';
+import 'package:flutter/foundation.dart';
 
 class Message {
   bool? isUser;
@@ -19,8 +20,8 @@ class Message {
   static Message fromJson(Map<String, dynamic> json) {
     Message? message;
     // MessageResponse response = MessageResponse.fromJson(json);
-
-    if (json['isUser']) {
+    var sender = json["isUser"] != null ? true : false;
+    if (sender) {
       message = Message(
           type: MessageType.text,
           isUser: json['isUser'],
