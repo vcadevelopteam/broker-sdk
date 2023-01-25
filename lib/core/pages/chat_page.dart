@@ -140,9 +140,14 @@ class _ChatPageState extends State<ChatPage> {
                       return Row(
                         children: [
                           ElevatedButton(
+                            
                               style: ElevatedButton.styleFrom(
+                                elevation: 0,
                                 shape: CircleBorder(),
                                 padding: EdgeInsets.all(15),
+                                primary: HexColor(
+                                    colorPreference.chatHeaderColor.toString()),
+
                                 // maximumSize: Size(30, 30)
                               ),
                               onPressed: () {
@@ -150,7 +155,8 @@ class _ChatPageState extends State<ChatPage> {
                               },
                               child: Icon(
                                 Icons.add_box,
-                                color: Colors.black,
+                                color:
+                                    HexColor(colorPreference.messageBotColor!),
                               )),
                           Expanded(
                             child: TextFormField(
@@ -164,6 +170,9 @@ class _ChatPageState extends State<ChatPage> {
                                       .bodyText1!
                                       .color),
                               decoration: InputDecoration(
+                                filled: true,
+                                fillColor: HexColor(
+                                    colorPreference.chatHeaderColor.toString()),
                                 hintText: "¡Escribe Algo!",
                                 hintStyle: TextStyle(
                                     color: Theme.of(context)
@@ -177,6 +186,10 @@ class _ChatPageState extends State<ChatPage> {
                                         .color),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    
+                                  ),
                                 ),
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15.0),
@@ -198,10 +211,10 @@ class _ChatPageState extends State<ChatPage> {
                     child: StreamBuilder(builder: (context, snapshot) {
                       return ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             shape: CircleBorder(),
-                            primary: _textController.text.length > 0
-                                ? Color.fromRGBO(106, 194, 194, 1)
-                                : Colors.grey,
+                            primary: HexColor(
+                                colorPreference.chatHeaderColor.toString()),
                             padding: EdgeInsets.all(15),
                           ),
                           onPressed: () async {
@@ -211,7 +224,7 @@ class _ChatPageState extends State<ChatPage> {
                           },
                           child: Icon(
                             Icons.send,
-                            color: Colors.black,
+                            color: HexColor(colorPreference.messageBotColor!),
                           ));
                     }),
                   ))
