@@ -39,7 +39,7 @@ class MessageBubble extends StatelessWidget {
                       ? Colors.black
                       : Colors.white));
     } else {
-      return MessageCarousel(message.data!);
+      return MessageCarousel(message.data!, color);
     }
   }
 
