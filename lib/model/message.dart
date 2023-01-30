@@ -41,7 +41,7 @@ class Message {
               isUser: json['isUser'],
               message: json['message'],
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else {
+        } else if (json["type"] == MessageType.carousel.name) {
           var messages = json["message"] as List;
           message = Message(
               type: MessageType.carousel,
@@ -49,6 +49,15 @@ class Message {
               isUser: json['isUser'],
               data:
                   messages.map((e) => MessageResponseData.carousel(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+          message = Message(
+              type: MessageType.buttons,
+              isSaved: true,
+              isUser: json['isUser'],
+              data:
+                  messages.map((e) => MessageResponseData.buttons(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
       }
@@ -73,9 +82,16 @@ class Message {
                 isSaved: true,
                 message: response.message!.data![0].message,
                 messageDate: response.receptionDate);
-          } else {
+          } else if (response.type == MessageType.carousel.name) {
             message = Message(
                 type: MessageType.carousel,
+                isUser: false,
+                isSaved: true,
+                data: response.message!.data,
+                messageDate: response.receptionDate);
+          } else {
+            message = Message(
+                type: MessageType.buttons,
                 isUser: false,
                 isSaved: true,
                 data: response.message!.data,
@@ -92,9 +108,16 @@ class Message {
               isSaved: true,
               message: response.message!.data![0].message,
               messageDate: response.receptionDate);
-        } else {
+        } else if (response.type == MessageType.carousel.name) {
           message = Message(
               type: MessageType.carousel,
+              isUser: false,
+              isSaved: true,
+              data: response.message!.data,
+              messageDate: response.receptionDate);
+        } else {
+          message = Message(
+              type: MessageType.buttons,
               isUser: false,
               isSaved: true,
               data: response.message!.data,

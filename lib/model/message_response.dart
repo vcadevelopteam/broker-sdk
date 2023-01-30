@@ -1,3 +1,4 @@
+import 'package:brokersdk/core/widget/messages_area.dart';
 import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/carousel_button.dart';
 
@@ -33,7 +34,7 @@ class MessageResponse {
 
   toJson() {
     var messageToSend;
-    if (type == MessageType.text.name) {
+    if (type == MessageType.text.name || type == MessageType.buttons.name) {
       messageToSend = message!.data![0].message;
     } else {
       messageToSend = message!.toJson();
@@ -70,7 +71,7 @@ class MessageSingleResponse {
 
   toJson() {
     var dataToSend;
-    if (type == MessageType.text.name) {
+    if (type == MessageType.text.name || type == MessageType.buttons.name) {
       dataToSend = data!.map((e) => e.toJson()).toList()[0];
     } else {
       dataToSend = data!.map((e) => e.toJson()).toList();
@@ -99,7 +100,7 @@ class MessageSingleResponse {
           type: json["type"] ?? "",
           data: [MessageResponseData.text(json["data"])],
           sessionUuid: json["sessionUuid"] ?? "");
-    } else {
+    } else if (type == MessageType.carousel.name) {
       var data = json["data"] as List;
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,
@@ -109,6 +110,17 @@ class MessageSingleResponse {
           senderId: json["senderId"] ?? "",
           type: json["type"] ?? "",
           data: data.map((e) => MessageResponseData.carousel(e)).toList(),
+          sessionUuid: json["sessionUuid"] ?? "");
+    } else {
+      var data = json["data"] as Map<String, dynamic>;
+      return MessageSingleResponse(
+          createdAt: json["createdAt"] ?? 0,
+          id: json["id"] ?? "",
+          integrationId: json["integrationId"] ?? "",
+          recipientId: json["recipientId"] ?? "",
+          senderId: json["senderId"] ?? "",
+          type: json["type"] ?? "",
+          data: [MessageResponseData.buttons(data)],
           sessionUuid: json["sessionUuid"] ?? "");
     }
   }
@@ -154,5 +166,14 @@ class MessageResponseData {
         title: json["title"],
         buttons: buttons.map((e) => CarouselButton.fromJson(e)).toList(),
         action: json['actions']);
+  }
+
+  factory MessageResponseData.buttons(Map<String, dynamic> json) {
+    var buttons = json["buttons"] as List;
+
+    return MessageResponseData(
+      message: json["message"],
+      buttons: buttons.map((e) => CarouselButton.fromJson(e)).toList(),
+    );
   }
 }

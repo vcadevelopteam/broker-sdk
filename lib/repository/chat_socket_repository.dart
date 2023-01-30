@@ -53,7 +53,11 @@ class ChatSocketRepository {
       messagesToSave.add(message);
     } else {
       List decodedList = jsonDecode(validateMessages);
-      messagesToSave = decodedList.map((e) => Message.fromJson(e)).toList();
+      try {
+        messagesToSave = decodedList.map((e) => Message.fromJson(e)).toList();
+      } catch (ex) {
+        messagesToSave = [];
+      }
 
       messagesToSave.firstWhere(
         (element) => element.messageDate == message.messageDate,

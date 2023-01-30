@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:brokersdk/core/widget/message_buttons.dart';
 import 'package:brokersdk/core/widget/message_carousel.dart';
 import 'package:brokersdk/helpers/color_convert.dart';
 import 'package:brokersdk/helpers/message_type.dart';
@@ -38,8 +39,10 @@ class MessageBubble extends StatelessWidget {
                           0.5
                       ? Colors.black
                       : Colors.white));
-    } else {
+    } else if (message.type == MessageType.carousel) {
       return MessageCarousel(message.data!, color);
+    } else {
+      return MessageButtons(message.data!, color);
     }
   }
 

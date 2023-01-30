@@ -140,7 +140,6 @@ class _ChatPageState extends State<ChatPage> {
                       return Row(
                         children: [
                           ElevatedButton(
-                            
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
                                 shape: CircleBorder(),
@@ -188,7 +187,6 @@ class _ChatPageState extends State<ChatPage> {
                                   borderRadius: BorderRadius.circular(15.0),
                                   borderSide: BorderSide(
                                     color: Colors.transparent,
-                                    
                                   ),
                                 ),
                                 disabledBorder: OutlineInputBorder(
