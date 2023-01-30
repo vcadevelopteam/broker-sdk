@@ -34,7 +34,9 @@ class MessageResponse {
 
   toJson() {
     var messageToSend;
-    if (type == MessageType.text.name || type == MessageType.buttons.name) {
+    if (type == MessageType.text.name ||
+        type == MessageType.buttons.name ||
+        type == MessageType.image.name) {
       messageToSend = message!.data![0].message;
     } else {
       messageToSend = message!.toJson();
@@ -71,7 +73,9 @@ class MessageSingleResponse {
 
   toJson() {
     var dataToSend;
-    if (type == MessageType.text.name || type == MessageType.buttons.name) {
+    if (type == MessageType.text.name ||
+        type == MessageType.buttons.name ||
+        type == MessageType.image.name) {
       dataToSend = data!.map((e) => e.toJson()).toList()[0];
     } else {
       dataToSend = data!.map((e) => e.toJson()).toList();
@@ -111,7 +115,7 @@ class MessageSingleResponse {
           type: json["type"] ?? "",
           data: data.map((e) => MessageResponseData.carousel(e)).toList(),
           sessionUuid: json["sessionUuid"] ?? "");
-    } else {
+    } else if (type == MessageType.buttons.name) {
       var data = json["data"] as Map<String, dynamic>;
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,
@@ -121,6 +125,17 @@ class MessageSingleResponse {
           senderId: json["senderId"] ?? "",
           type: json["type"] ?? "",
           data: [MessageResponseData.buttons(data)],
+          sessionUuid: json["sessionUuid"] ?? "");
+    } else {
+      var data = json["data"] as Map<String, dynamic>;
+      return MessageSingleResponse(
+          createdAt: json["createdAt"] ?? 0,
+          id: json["id"] ?? "",
+          integrationId: json["integrationId"] ?? "",
+          recipientId: json["recipientId"] ?? "",
+          senderId: json["senderId"] ?? "",
+          type: json["type"] ?? "",
+          data: [MessageResponseData.image(data)],
           sessionUuid: json["sessionUuid"] ?? "");
     }
   }
@@ -132,6 +147,10 @@ class MessageResponseData {
   String? mediaUrl;
   String? title;
   String? action;
+  String? filename;
+  int? height;
+  int? width;
+  String? mimeType;
   List<CarouselButton>? buttons;
 
   MessageResponseData(
@@ -139,17 +158,25 @@ class MessageResponseData {
       this.description,
       this.mediaUrl,
       this.title,
+      this.mimeType,
+      this.filename,
+      this.height,
+      this.width,
       this.action,
       this.buttons});
 
   toJson() {
     return {
+      'height': height,
+      'width': width,
+      'mimeType': mimeType,
+      'fileName': filename,
       'message': message,
       'description': description,
       'mediaUrl': mediaUrl,
       'title': title,
       'action': action,
-      'buttons': buttons!.map((e) => e.toJson()).toList()
+      'buttons': buttons != null ? buttons!.map((e) => e.toJson()).toList() : []
     };
   }
 
@@ -175,5 +202,14 @@ class MessageResponseData {
       message: json["message"],
       buttons: buttons.map((e) => CarouselButton.fromJson(e)).toList(),
     );
+  }
+
+  factory MessageResponseData.image(Map<String, dynamic> json) {
+    return MessageResponseData(
+        mimeType: json['mimeType'],
+        height: json["height"],
+        filename: json["fileName"],
+        width: json["width"],
+        mediaUrl: json["mediaUrl"]);
   }
 }

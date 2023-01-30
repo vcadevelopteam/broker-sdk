@@ -50,7 +50,7 @@ class Message {
               data:
                   messages.map((e) => MessageResponseData.carousel(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else {
+        } else if (json["type"] == MessageType.buttons.name) {
           var messages = json["message"] as List;
           message = Message(
               type: MessageType.buttons,
@@ -58,6 +58,14 @@ class Message {
               isUser: json['isUser'],
               data:
                   messages.map((e) => MessageResponseData.buttons(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+          message = Message(
+              type: MessageType.image,
+              isSaved: true,
+              isUser: json['isUser'],
+              data: messages.map((e) => MessageResponseData.image(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
       }
@@ -89,9 +97,16 @@ class Message {
                 isSaved: true,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
-          } else {
+          } else if (response.type == MessageType.buttons.name) {
             message = Message(
                 type: MessageType.buttons,
+                isUser: false,
+                isSaved: true,
+                data: response.message!.data,
+                messageDate: response.receptionDate);
+          } else {
+            message = Message(
+                type: MessageType.image,
                 isUser: false,
                 isSaved: true,
                 data: response.message!.data,
@@ -115,9 +130,16 @@ class Message {
               isSaved: true,
               data: response.message!.data,
               messageDate: response.receptionDate);
-        } else {
+        } else if (response.type == MessageType.buttons.name) {
           message = Message(
               type: MessageType.buttons,
+              isUser: false,
+              isSaved: true,
+              data: response.message!.data,
+              messageDate: response.receptionDate);
+        } else {
+          message = Message(
+              type: MessageType.image,
               isUser: false,
               isSaved: true,
               data: response.message!.data,

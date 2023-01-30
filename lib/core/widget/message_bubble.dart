@@ -24,7 +24,7 @@ class MessageBubble extends StatelessWidget {
     return dt.toString();
   }
 
-  Widget _getMessage(Message message) {
+  Widget _getMessage(Message message, _screenHeight) {
     if (message.type == MessageType.text) {
       return Text(message.message!,
           style: TextStyle(
@@ -41,6 +41,14 @@ class MessageBubble extends StatelessWidget {
                       : Colors.white));
     } else if (message.type == MessageType.carousel) {
       return MessageCarousel(message.data!, color);
+    } else if (message.type == MessageType.image) {
+      return Container(
+        width: double.infinity,
+        height: _screenHeight * 0.25,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: NetworkImage(message.data![0].mediaUrl!))),
+      );
     } else {
       return MessageButtons(message.data!, color);
     }
@@ -50,6 +58,8 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final f = new DateFormat('hh:mm');
     var _screenWidth = MediaQuery.of(context).size.width;
+    var _screenHeight = MediaQuery.of(context).size.height;
+
     return Align(
       alignment:
           !message.isUser! ? Alignment.centerLeft : Alignment.centerRight,
@@ -81,7 +91,9 @@ class MessageBubble extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(10),
                   constraints: BoxConstraints(
-                      maxWidth: _screenWidth * 0.7, minWidth: 10),
+                      maxWidth: _screenWidth * 0.7,
+                      minWidth: 10,
+                      maxHeight: _screenHeight * 0.3),
                   decoration: BoxDecoration(
                       color: message.isUser!
                           ? HexColor(color.messageClientColor.toString())
@@ -105,7 +117,7 @@ class MessageBubble extends StatelessWidget {
                     children: [
                       Stack(
                         children: [
-                          _getMessage(message),
+                          _getMessage(message, _screenHeight),
                           SizedBox(
                             height: 40,
                             width: 50,
