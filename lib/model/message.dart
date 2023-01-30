@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 class Message {
   bool? isUser;
+  bool isSaved = false;
   int? messageDate;
   String? message;
   MessageType type;
@@ -15,32 +16,90 @@ class Message {
       this.message,
       required this.messageDate,
       this.data,
+      required this.isSaved,
       required this.type});
 
   static Message fromJson(Map<String, dynamic> json) {
     Message? message;
-    // MessageResponse response = MessageResponse.fromJson(json);
-    var sender = json["isUser"] != null ? true : false;
-    if (sender) {
-      message = Message(
-          type: MessageType.text,
-          isUser: json['isUser'],
-          message: json['message'],
-          messageDate: json['messageDate'] ?? json['receptionDate']);
-    } else {
-      MessageResponse response = MessageResponse.fromJson(json);
-      if (response.type == MessageType.text.name) {
+    //VERIFICAR SI EL MENSAJE SE LEE DESDE EL SERVIDOR O DESDE
+    // EL GUARDADO LOCAL
+    if (json['isSaved'] != null) {
+      //VERIFICAR SI ES DEL USUARIO O DEL CHAT / BOT
+      if (json["isUser"]) {
         message = Message(
             type: MessageType.text,
-            isUser: false,
-            message: response.message!.data![0].message,
-            messageDate: response.receptionDate);
+            isUser: json['isUser'],
+            isSaved: true,
+            message: json['message'],
+            messageDate: json['messageDate'] ?? json['receptionDate']);
       } else {
-        message = Message(
-            type: MessageType.carousel,
-            isUser: false,
-            data: response.message!.data,
-            messageDate: response.receptionDate);
+        //VERIFICAR EL TIPO DE MENSAJE
+        if (json["type"] == MessageType.text.name) {
+          message = Message(
+              type: MessageType.text,
+              isSaved: true,
+              isUser: json['isUser'],
+              message: json['message'],
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+          message = Message(
+              type: MessageType.carousel,
+              isSaved: true,
+              isUser: json['isUser'],
+              data:
+                  messages.map((e) => MessageResponseData.carousel(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        }
+      }
+    } else {
+      var senderExists = json['isUser'] != null ? true : false;
+      if (senderExists) {
+        //VERIFICAR SI ES DEL USUARIO
+        if (json["isUser"]) {
+          message = Message(
+              type: MessageType.text,
+              isUser: json['isUser'],
+              isSaved: true,
+              message: json['message'],
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          //RECIBIR LAS RESPUESTAS DEL SERVIDOR
+          MessageResponse response = MessageResponse.fromJson(json);
+          if (response.type == MessageType.text.name) {
+            message = Message(
+                type: MessageType.text,
+                isUser: false,
+                isSaved: true,
+                message: response.message!.data![0].message,
+                messageDate: response.receptionDate);
+          } else {
+            message = Message(
+                type: MessageType.carousel,
+                isUser: false,
+                isSaved: true,
+                data: response.message!.data,
+                messageDate: response.receptionDate);
+          }
+        }
+      } else {
+        //RECIBIR LAS RESPUESTAS DEL SERVIDOR PARA NO CAER EN NULOS
+        MessageResponse response = MessageResponse.fromJson(json);
+        if (response.type == MessageType.text.name) {
+          message = Message(
+              type: MessageType.text,
+              isUser: false,
+              isSaved: true,
+              message: response.message!.data![0].message,
+              messageDate: response.receptionDate);
+        } else {
+          message = Message(
+              type: MessageType.carousel,
+              isUser: false,
+              isSaved: true,
+              data: response.message!.data,
+              messageDate: response.receptionDate);
+        }
       }
     }
 
@@ -59,7 +118,8 @@ class Message {
       'isUser': isUser,
       'message': messageToSend,
       'messageDate': messageDate,
-      'type': type!.name,
+      'type': type.name,
+      'isSaved': isSaved
     };
   }
 }

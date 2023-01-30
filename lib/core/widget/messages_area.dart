@@ -67,6 +67,7 @@ class _MessagesAreaState extends State<MessagesArea> {
             //Si no es una lista solo va a agregar el mensaje al arreglo
             var message = Message.fromJson(snapshot.data);
             messages.add(message);
+            message.isSaved = true;
             ChatSocketRepository.saveMessageInLocal(message);
           }
 

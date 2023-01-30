@@ -49,7 +49,6 @@ class ChatSocketRepository {
     final pref = await SharedPreferences.getInstance();
     var validateMessages = pref.getString('messages');
     List<Message> messagesToSave = [];
-
     if (validateMessages == null) {
       messagesToSave.add(message);
     } else {

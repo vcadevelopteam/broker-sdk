@@ -137,7 +137,7 @@ class MessageResponseData {
       'mediaUrl': mediaUrl,
       'title': title,
       'action': action,
-      'buttons': []
+      'buttons': buttons!.map((e) => e.toJson()).toList()
     };
   }
 

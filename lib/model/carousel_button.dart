@@ -12,4 +12,7 @@ class CarouselButton {
         type: json["type"] ?? "",
         uri: json["uri"] ?? "");
   }
+  toJson() {
+    return {'payload': payload, 'text': text, 'type': type, 'uri': uri};
+  }
 }
