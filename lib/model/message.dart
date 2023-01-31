@@ -26,12 +26,23 @@ class Message {
     if (json['isSaved'] != null) {
       //VERIFICAR SI ES DEL USUARIO O DEL CHAT / BOT
       if (json["isUser"]) {
-        message = Message(
-            type: MessageType.text,
-            isUser: json['isUser'],
-            isSaved: true,
-            message: json['message'],
-            messageDate: json['messageDate'] ?? json['receptionDate']);
+        if (json["type"] == MessageType.text.name) {
+          message = Message(
+              type: MessageType.text,
+              isUser: json['isUser'],
+              isSaved: true,
+              message: json['message'],
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+
+          message = Message(
+              type: MessageType.image,
+              isUser: json['isUser'],
+              isSaved: true,
+              data: messages.map((e) => MessageResponseData.image(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        }
       } else {
         //VERIFICAR EL TIPO DE MENSAJE
         if (json["type"] == MessageType.text.name) {
@@ -74,12 +85,22 @@ class Message {
       if (senderExists) {
         //VERIFICAR SI ES DEL USUARIO
         if (json["isUser"]) {
-          message = Message(
-              type: MessageType.text,
-              isUser: json['isUser'],
-              isSaved: true,
-              message: json['message'],
-              messageDate: json['messageDate'] ?? json['receptionDate']);
+          if (json["type"] == MessageType.text.name) {
+            message = Message(
+                type: MessageType.text,
+                isUser: json['isUser'],
+                isSaved: true,
+                message: json['message'],
+                messageDate: json['messageDate'] ?? json['receptionDate']);
+          } else {
+            var messagedata = json['message'] as MessageResponseData;
+            message = Message(
+                type: MessageType.image,
+                isUser: json['isUser'],
+                isSaved: true,
+                data: [MessageResponseData.image(messagedata.toJson())],
+                messageDate: json['messageDate'] ?? json['receptionDate']);
+          }
         } else {
           //RECIBIR LAS RESPUESTAS DEL SERVIDOR
           MessageResponse response = MessageResponse.fromJson(json);

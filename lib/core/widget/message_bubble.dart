@@ -47,27 +47,32 @@ class MessageBubble extends StatelessWidget {
           showDialog(
               context: context,
               builder: (ctx) {
-                return Dialog(
-                  insetPadding: EdgeInsets.all(0),
-                  backgroundColor: Colors.transparent,
-                  child: Container(
-                    width: _screenWidth,
-                    height: _screenHeight * 0.3,
-                    child: PageView.builder(
-                        physics: BouncingScrollPhysics(),
-                        controller: PageController(viewportFraction: 0.95),
-                        itemCount: 1,
-                        itemBuilder: (ctx, indx) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                image: DecorationImage(
-                                    fit: BoxFit.contain,
-                                    image: NetworkImage(
-                                        message.data![0].mediaUrl!))),
-                          );
-                        }),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Dialog(
+                    insetPadding: EdgeInsets.all(0),
+                    backgroundColor: Colors.transparent,
+                    child: Container(
+                      width: _screenWidth,
+                      height: _screenHeight,
+                      child: PageView.builder(
+                          physics: BouncingScrollPhysics(),
+                          controller: PageController(viewportFraction: 0.95),
+                          itemCount: 1,
+                          itemBuilder: (ctx, indx) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  image: DecorationImage(
+                                      fit: BoxFit.contain,
+                                      image: NetworkImage(
+                                          message.data![0].mediaUrl!))),
+                            );
+                          }),
+                    ),
                   ),
                 );
               });
@@ -122,9 +127,9 @@ class MessageBubble extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(10),
                   constraints: BoxConstraints(
-                      maxWidth: _screenWidth * 0.7,
-                      minWidth: 10,
-                      maxHeight: _screenHeight * 0.3),
+                    maxWidth: _screenWidth * 0.7,
+                    minWidth: 10,
+                  ),
                   decoration: BoxDecoration(
                       color: message.isUser!
                           ? HexColor(color.messageClientColor.toString())
@@ -141,67 +146,66 @@ class MessageBubble extends StatelessWidget {
                               : Radius.circular(0),
                           bottomRight: Radius.circular(10))),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: message.isUser!
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          _getMessage(
-                              message, _screenHeight, _screenWidth, context),
-                          SizedBox(
-                            height: 40,
-                            width: 50,
-                          ),
-                          Positioned(
-                            left: message.isUser! ? 0 : 10,
-                            right: message.isUser! ? 10 : 0,
-                            bottom: 0,
-                            child: Text(
-                              f.format(DateTime.parse(
-                                  parseTime(message.messageDate!))),
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  color: message.isUser!
-                                      ? HexColor(color.messageClientColor
-                                                      .toString())
-                                                  .computeLuminance() >
-                                              0.5
-                                          ? Colors.black
-                                          : Colors.white
-                                      : HexColor(color.messageBotColor
-                                                      .toString())
-                                                  .computeLuminance() >
-                                              0.5
-                                          ? Colors.black
-                                          : Colors.white,
-                                  fontSize: 12),
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: message.isUser!
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            _getMessage(
+                                message, _screenHeight, _screenWidth, context),
+                            SizedBox(
+                              height: 40,
+                              width: 50,
                             ),
-                          )
-                        ],
-                      )
+                            Positioned(
+                              left: message.isUser! ? 0 : 10,
+                              right: message.isUser! ? 10 : 0,
+                              bottom: 0,
+                              child: Text(
+                                f.format(DateTime.parse(
+                                    parseTime(message.messageDate!))),
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                    color: message.isUser!
+                                        ? HexColor(color.messageClientColor
+                                                        .toString())
+                                                    .computeLuminance() >
+                                                0.5
+                                            ? Colors.black
+                                            : Colors.white
+                                        : HexColor(color.messageBotColor
+                                                        .toString())
+                                                    .computeLuminance() >
+                                                0.5
+                                            ? Colors.black
+                                            : Colors.white,
+                                    fontSize: 12),
+                              ),
+                            )
+                          ],
+                        )
 
-                      // Row(
-                      //         mainAxisSize:MainAxisSize.max,
-                      //         mainAxisAlignment: message.isUser!
-                      //             ? MainAxisAlignment.end
-                      //             : MainAxisAlignment.start,
+                        // Row(
+                        //         mainAxisSize:MainAxisSize.max,
+                        //         mainAxisAlignment: message.isUser!
+                        //             ? MainAxisAlignment.end
+                        //             : MainAxisAlignment.start,
 
-                      //         children: [
-                      //           Padding(
-                      //             padding: const EdgeInsets.only(top: 8.0),
-                      //             child: Text(
-                      //               f.format(DateTime.parse(
-                      //                   parseTime(message.messageDate!))),
-                      //               textAlign: TextAlign.end,
-                      //               style: TextStyle(color: textColor, fontSize: 12),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                    ],
-                  ),
+                        //         children: [
+                        //           Padding(
+                        //             padding: const EdgeInsets.only(top: 8.0),
+                        //             child: Text(
+                        //               f.format(DateTime.parse(
+                        //                   parseTime(message.messageDate!))),
+                        //               textAlign: TextAlign.end,
+                        //               style: TextStyle(color: textColor, fontSize: 12),
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                      ]),
                 ),
               ),
             ),

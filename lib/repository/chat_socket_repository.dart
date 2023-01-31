@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:mime/mime.dart';
 
 import 'package:brokersdk/core/chat_socket.dart';
 import 'package:brokersdk/helpers/api_manager.dart';
@@ -32,6 +33,34 @@ class ChatSocketRepository {
     MessageRequest request = MessageRequest(
         type: type.name,
         data: MessageRequestData(message: message, title: "null"),
+        metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        senderId: pref.getString(IdentifierType.userId.name),
+        sessionUuid: pref.getString(IdentifierType.sessionId.name),
+        recipinetId: "HOOK",
+        integrationId: pref.getString(IdentifierType.integrationId.name));
+
+    var encoded = request.toJson();
+
+    var response = await ApiManager.post(
+        '${SocketUrls.baseBrokerEndpoint}${SocketUrls.sendMessageEndpoint}',
+        body: jsonEncode(encoded));
+    return response;
+  }
+
+  static Future<Response> sendMediaMessage(String url, MessageType type) async {
+    final pref = await SharedPreferences.getInstance();
+
+    var parseName = url.split("/");
+
+    final mimeType = lookupMimeType(url);
+
+    MessageRequest request = MessageRequest(
+        type: type.name,
+        data: MessageRequestData(
+            mediaUrl: url,
+            mimeType: mimeType,
+            fileName: parseName[parseName.length - 1]),
         metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
         createdAt: DateTime.now().millisecondsSinceEpoch,
         senderId: pref.getString(IdentifierType.userId.name),

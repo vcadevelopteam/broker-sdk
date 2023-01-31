@@ -37,7 +37,7 @@ class MessageResponse {
     if (type == MessageType.text.name ||
         type == MessageType.button.name ||
         type == MessageType.image.name) {
-      messageToSend = message!.data![0].message;
+      messageToSend = message!.data![0].message ?? message!.data![0];
     } else {
       messageToSend = message!.toJson();
     }

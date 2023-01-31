@@ -34,10 +34,20 @@ class MessageRequest {
 
 class MessageRequestData {
   String? message;
+  String? fileName;
+  String? mimeType;
+  String? mediaUrl;
   String? title;
-  MessageRequestData({this.message, this.title});
+  MessageRequestData(
+      {this.message, this.title, this.fileName, this.mimeType, this.mediaUrl});
   toJson() {
-    return {"message": message, "title": title};
+    return {
+      "message": message,
+      "title": title,
+      "fileName": fileName,
+      "mimeTye": mimeType,
+      "mediaUrl": mediaUrl
+    };
   }
 }
 

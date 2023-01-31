@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:uuid/uuid.dart';
 
 class MessageInput extends StatefulWidget {
@@ -58,6 +61,37 @@ class _MessageInputState extends State<MessageInput> {
     }
   }
 
+  void sendMediaMessage(List media, MessageType type) async {
+    media.forEach((element) async {
+      var response = await ChatSocketRepository.sendMediaMessage(element, type);
+      var parseName = element.split("/");
+      final mimeType = lookupMimeType(element);
+
+      if (response.statusCode != 500 || response.statusCode != 400) {
+        List<MessageResponseData> data = [];
+        data.add(MessageResponseData(
+            mediaUrl: element,
+            mimeType: mimeType,
+            filename: parseName[parseName.length - 1]));
+        var messageSent = MessageResponse(
+                type: MessageType.image.name,
+                isUser: true,
+                error: false,
+                message: MessageSingleResponse(
+                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    data: data,
+                    type: MessageType.image.name,
+                    id: Uuid().v4().toString()),
+                receptionDate: DateTime.now().millisecondsSinceEpoch)
+            .toJson();
+
+        setState(() {
+          widget.socket.controller!.sink.add(messageSent);
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var _screenWidth = MediaQuery.of(context).size.width;
@@ -96,64 +130,64 @@ class _MessageInputState extends State<MessageInput> {
                             ),
                             onPressed: () {
                               showModalBottomSheet(
-                                  backgroundColor: HexColor(colorPreference
-                                      .chatBackgroundColor
-                                      .toString()),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          12)), //for the round edges
-                                  builder: (context) {
-                                    return Container(
-                                      padding: EdgeInsets.all(10),
-                                      child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Escoja una opción',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
-                                                  color: HexColor(colorPreference
-                                                                  .chatBackgroundColor
-                                                                  .toString())
-                                                              .computeLuminance() >
-                                                          0.5
-                                                      ? Colors.black
-                                                      : Colors.white),
-                                            ),
-                                            TextButton(
-                                                onPressed: (() async {
-                                                  final ImagePicker _picker =
-                                                      ImagePicker();
+                                      backgroundColor: HexColor(colorPreference
+                                          .chatBackgroundColor
+                                          .toString()),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              12)), //for the round edges
+                                      builder: (modalBottomSheetContext) {
+                                        return Container(
+                                          padding: EdgeInsets.all(10),
+                                          child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Escoja una opción',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20,
+                                                      color: HexColor(colorPreference
+                                                                      .chatBackgroundColor
+                                                                      .toString())
+                                                                  .computeLuminance() >
+                                                              0.5
+                                                          ? Colors.black
+                                                          : Colors.white),
+                                                ),
+                                                TextButton(
+                                                    onPressed: (() async {
+                                                      final ImagePicker
+                                                          _picker =
+                                                          ImagePicker();
 
-                                                  final List<XFile> images =
-                                                      await _picker
-                                                          .pickMultiImage();
+                                                      final List<XFile> images =
+                                                          await _picker
+                                                              .pickMultiImage();
 
-                                                  if (images.isNotEmpty) {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (ctx) {
-                                                          return StatefulBuilder(
-                                                              builder: (context,
-                                                                  setStateCustom) {
-                                                            return Dialog(
-                                                              insetPadding:
-                                                                  const EdgeInsets
-                                                                      .all(0),
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              child: SizedBox(
-                                                                  width:
-                                                                      _screenWidth,
-                                                                  height:
-                                                                      _screenHeight *
-                                                                          0.5,
-                                                                  child: Stack(
-                                                                      children: [
+                                                      if (images.isNotEmpty) {
+                                                        showDialog(
+                                                            context:
+                                                                modalBottomSheetContext,
+                                                            builder:
+                                                                (dialogContext) {
+                                                              return StatefulBuilder(builder:
+                                                                  (dialogContext,
+                                                                      setStateCustom) {
+                                                                return Dialog(
+                                                                  insetPadding:
+                                                                      const EdgeInsets
+                                                                          .all(0),
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  child: SizedBox(
+                                                                      width: _screenWidth,
+                                                                      height: _screenHeight * 0.5,
+                                                                      child: Stack(children: [
                                                                         PageView.builder(
                                                                             physics: const BouncingScrollPhysics(),
                                                                             controller: PageController(viewportFraction: 0.95),
@@ -165,7 +199,9 @@ class _MessageInputState extends State<MessageInput> {
                                                                               );
                                                                             }),
                                                                         isSendingMessage
-                                                                            ? const CircularProgressIndicator()
+                                                                            ? Align(
+                                                                                alignment: Alignment.center,
+                                                                                child: Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white), padding: const EdgeInsets.all(10), child: const CircularProgressIndicator()))
                                                                             : Align(
                                                                                 alignment: Alignment.bottomCenter,
                                                                                 child: Row(
@@ -178,7 +214,7 @@ class _MessageInputState extends State<MessageInput> {
                                                                                         radius: 30,
                                                                                         child: IconButton(
                                                                                             onPressed: () {
-                                                                                              Navigator.pop(context);
+                                                                                              Navigator.pop(dialogContext, []);
                                                                                             },
                                                                                             icon: const Icon(
                                                                                               Icons.close,
@@ -192,18 +228,22 @@ class _MessageInputState extends State<MessageInput> {
                                                                                         backgroundColor: Colors.green[800],
                                                                                         radius: 30,
                                                                                         child: IconButton(
-                                                                                            onPressed: () {
+                                                                                            onPressed: () async {
                                                                                               setStateCustom(() {
                                                                                                 isSendingMessage = true;
                                                                                               });
-                                                                                              images.forEach((element) async {
+                                                                                              var responseUrls = [];
+
+                                                                                              for (var element in images) {
                                                                                                 var resp = await ChatSocketRepository.uploadFile(element);
                                                                                                 var decodedJson = jsonDecode(resp.body);
-                                                                                                print(decodedJson["url"]);
-                                                                                              });
+                                                                                                responseUrls.add(decodedJson["url"]);
+                                                                                              }
+                                                                                              await Future.delayed(Duration(seconds: 2));
                                                                                               setStateCustom(() {
                                                                                                 isSendingMessage = false;
                                                                                               });
+                                                                                              Navigator.pop(dialogContext, responseUrls);
                                                                                             },
                                                                                             icon: const Icon(
                                                                                               Icons.check,
@@ -215,53 +255,73 @@ class _MessageInputState extends State<MessageInput> {
                                                                                 ),
                                                                               ),
                                                                       ])),
-                                                            );
-                                                          });
+                                                                );
+                                                              });
+                                                            }).then((valueInDialog) {
+                                                          var valueListinBottomSheet =
+                                                              valueInDialog
+                                                                  as List;
+
+                                                          if (valueListinBottomSheet
+                                                              .isNotEmpty) {
+                                                            Navigator.pop(
+                                                                context,
+                                                                valueListinBottomSheet);
+                                                          }
                                                         });
-                                                  }
-                                                }),
-                                                child: Text(
-                                                  'Abrir galería',
-                                                  style: TextStyle(
-                                                      color: HexColor(colorPreference
-                                                                      .chatBackgroundColor
-                                                                      .toString())
-                                                                  .computeLuminance() >
-                                                              0.5
-                                                          ? Colors.black
-                                                          : Colors.white),
-                                                )),
-                                            TextButton(
-                                                onPressed: (() {}),
-                                                child: Text(
-                                                  'Compartir un archivo',
-                                                  style: TextStyle(
-                                                      color: HexColor(colorPreference
-                                                                      .chatBackgroundColor
-                                                                      .toString())
-                                                                  .computeLuminance() >
-                                                              0.5
-                                                          ? Colors.black
-                                                          : Colors.white),
-                                                )),
-                                            TextButton(
-                                                onPressed: (() {}),
-                                                child: Text(
-                                                    'Compartir ubicación',
-                                                    style: TextStyle(
-                                                        color: HexColor(colorPreference
-                                                                        .chatBackgroundColor
-                                                                        .toString())
-                                                                    .computeLuminance() >
-                                                                0.5
-                                                            ? Colors.black
-                                                            : Colors.white)))
-                                          ]),
-                                    );
-                                  },
-                                  context: context,
-                                  isDismissible: true,
-                                  isScrollControlled: false);
+                                                      }
+                                                    }),
+                                                    child: Text(
+                                                      'Abrir galería',
+                                                      style: TextStyle(
+                                                          color: HexColor(colorPreference
+                                                                          .chatBackgroundColor
+                                                                          .toString())
+                                                                      .computeLuminance() >
+                                                                  0.5
+                                                              ? Colors.black
+                                                              : Colors.white),
+                                                    )),
+                                                TextButton(
+                                                    onPressed: (() {}),
+                                                    child: Text(
+                                                      'Compartir un archivo',
+                                                      style: TextStyle(
+                                                          color: HexColor(colorPreference
+                                                                          .chatBackgroundColor
+                                                                          .toString())
+                                                                      .computeLuminance() >
+                                                                  0.5
+                                                              ? Colors.black
+                                                              : Colors.white),
+                                                    )),
+                                                TextButton(
+                                                    onPressed: (() {}),
+                                                    child: Text(
+                                                        'Compartir ubicación',
+                                                        style: TextStyle(
+                                                            color: HexColor(colorPreference
+                                                                            .chatBackgroundColor
+                                                                            .toString())
+                                                                        .computeLuminance() >
+                                                                    0.5
+                                                                ? Colors.black
+                                                                : Colors
+                                                                    .white)))
+                                              ]),
+                                        );
+                                      },
+                                      context: context,
+                                      isDismissible: true,
+                                      isScrollControlled: false)
+                                  .then((valueInBottomSheet) {
+                                var listvalueInBottomSheet =
+                                    valueInBottomSheet as List;
+                                if (listvalueInBottomSheet.isNotEmpty) {
+                                  sendMediaMessage(listvalueInBottomSheet,
+                                      MessageType.image);
+                                }
+                              });
                             },
                             child: Icon(
                               Icons.add_box,
