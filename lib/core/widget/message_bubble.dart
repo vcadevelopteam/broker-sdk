@@ -24,7 +24,7 @@ class MessageBubble extends StatelessWidget {
     return dt.toString();
   }
 
-  Widget _getMessage(Message message, _screenHeight) {
+  Widget _getMessage(Message message, _screenHeight, _screenWidth, context) {
     if (message.type == MessageType.text) {
       return Text(message.message!,
           style: TextStyle(
@@ -42,12 +42,43 @@ class MessageBubble extends StatelessWidget {
     } else if (message.type == MessageType.carousel) {
       return MessageCarousel(message.data!, color);
     } else if (message.type == MessageType.image) {
-      return Container(
-        width: double.infinity,
-        height: _screenHeight * 0.25,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: NetworkImage(message.data![0].mediaUrl!))),
+      return GestureDetector(
+        onTap: () {
+          showDialog(
+              context: context,
+              builder: (ctx) {
+                return Dialog(
+                  insetPadding: EdgeInsets.all(0),
+                  backgroundColor: Colors.transparent,
+                  child: Container(
+                    width: _screenWidth,
+                    height: _screenHeight * 0.3,
+                    child: PageView.builder(
+                        physics: BouncingScrollPhysics(),
+                        controller: PageController(viewportFraction: 0.95),
+                        itemCount: 1,
+                        itemBuilder: (ctx, indx) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                image: DecorationImage(
+                                    fit: BoxFit.contain,
+                                    image: NetworkImage(
+                                        message.data![0].mediaUrl!))),
+                          );
+                        }),
+                  ),
+                );
+              });
+        },
+        child: Container(
+          width: double.infinity,
+          height: _screenHeight * 0.25,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: NetworkImage(message.data![0].mediaUrl!))),
+        ),
       );
     } else {
       return MessageButtons(message.data!, color);
@@ -117,7 +148,8 @@ class MessageBubble extends StatelessWidget {
                     children: [
                       Stack(
                         children: [
-                          _getMessage(message, _screenHeight),
+                          _getMessage(
+                              message, _screenHeight, _screenWidth, context),
                           SizedBox(
                             height: 40,
                             width: 50,

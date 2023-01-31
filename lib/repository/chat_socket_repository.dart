@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:brokersdk/core/chat_socket.dart';
 import 'package:brokersdk/helpers/api_manager.dart';
@@ -10,6 +11,7 @@ import 'package:brokersdk/model/message.dart';
 import 'package:brokersdk/model/message_request.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -42,6 +44,20 @@ class ChatSocketRepository {
     var response = await ApiManager.post(
         '${SocketUrls.baseBrokerEndpoint}${SocketUrls.sendMessageEndpoint}',
         body: jsonEncode(encoded));
+    return response;
+  }
+
+  static Future<Response> uploadFile(XFile file) async {
+    File fileToSend = File(file.path);
+    List<int> imageBytes = fileToSend.readAsBytesSync();
+    String base64Image = base64Encode(imageBytes);
+    var requestBody = {
+      "fileName": 'EXTERNAL/${file.name}',
+      "fileData": base64Image
+    };
+
+    var response = await ApiManager.post(SocketUrls.baseFileUploadEndpoint,
+        body: jsonEncode(requestBody));
     return response;
   }
 

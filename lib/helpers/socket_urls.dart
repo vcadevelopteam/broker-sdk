@@ -1,6 +1,6 @@
 class SocketUrls {
   static const baseFileUploadEndpoint =
-      "https://zyxmelinux2.zyxmeapp.com/zyxmetest/bridge/";
+      "https://zyxmelinux2.zyxmeapp.com/zyxmetest/bridge/api/processzyxme/uploadfile";
   static const baseResourceEndpoint =
       "https://zyxmelinux.zyxmeapp.com/zyxme/chat/";
   static const baseBrokerEndpoint = "https://goo.zyxmeapp.com/api/";

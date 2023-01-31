@@ -5,8 +5,6 @@ import 'package:brokersdk/helpers/sender_type.dart';
 import 'package:brokersdk/model/color_preference.dart';
 import 'package:brokersdk/model/message.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
 
 import '../../repository/chat_socket_repository.dart';

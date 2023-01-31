@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:brokersdk/core/chat_socket.dart';
+import 'package:brokersdk/core/widget/message_input.dart';
 import 'package:brokersdk/core/widget/messages_area.dart';
 import 'package:brokersdk/helpers/color_convert.dart';
 import 'package:brokersdk/helpers/message_type.dart';
@@ -12,6 +14,7 @@ import 'package:brokersdk/repository/chat_socket_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math' as math;
@@ -33,7 +36,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  var _textController = TextEditingController();
   bool _visible = true;
   List<Message> messages = [];
   final f = new DateFormat('dd/mm/yyyy');
@@ -71,37 +73,6 @@ class _ChatPageState extends State<ChatPage> {
     widget.socket.controller!.sink.add(savedMessages);
   }
 
-  void sendMessage() async {
-    if (_textController.text.isNotEmpty) {
-      var response = await ChatSocketRepository.sendMessage(
-          _textController.text, MessageType.text);
-
-      //Envia un mensaje unico como una respuesta para reutilizar
-      // el from json del stream de mensajes recibidos
-      List<MessageResponseData> data = [];
-      data.add(MessageResponseData(
-        message: _textController.text,
-      ));
-      var messageSent = MessageResponse(
-              type: MessageType.text.name,
-              isUser: true,
-              error: false,
-              message: MessageSingleResponse(
-                  createdAt: DateTime.now().millisecondsSinceEpoch,
-                  data: data,
-                  type: MessageType.text.name,
-                  id: Uuid().v4().toString()),
-              receptionDate: DateTime.now().millisecondsSinceEpoch)
-          .toJson();
-
-      setState(() {
-        widget.socket.controller!.sink.add(messageSent);
-      });
-
-      _textController.clear();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var _screenWidth = MediaQuery.of(context).size.width;
@@ -116,185 +87,6 @@ class _ChatPageState extends State<ChatPage> {
         widget.socket.integrationResponse!.metadata!.personalization!;
     Color textColor =
         backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-
-    Widget _messageInput() {
-      return SafeArea(
-        child: Container(
-          color: backgroundColor,
-          width: _screenWidth,
-          child: Row(
-            children: [
-              Flexible(
-                  flex: 5,
-                  child: Container(
-                    child: StreamBuilder(builder: (context, snapshot) {
-                      return Row(
-                        children: [
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(15),
-                                primary: HexColor(
-                                    colorPreference.chatHeaderColor.toString()),
-
-                                // maximumSize: Size(30, 30)
-                              ),
-                              onPressed: () {
-                                showModalBottomSheet(
-                                    backgroundColor: HexColor(colorPreference
-                                        .chatBackgroundColor
-                                        .toString()),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            12)), //for the round edges
-                                    builder: (context) {
-                                      return Container(
-                                        padding: EdgeInsets.all(10),
-                                        child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Escoja una opción',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20, color: HexColor(colorPreference
-                                                                        .chatBackgroundColor
-                                                                        .toString())
-                                                                    .computeLuminance() >
-                                                                0.5
-                                                            ? Colors.black
-                                                            : Colors.white ),
-                                              ),
-                                              TextButton(
-                                                  onPressed: (() {}),
-                                                  child: Text(
-                                                    'Abrir galería',
-                                                    style: TextStyle(
-                                                        color: HexColor(colorPreference
-                                                                        .chatBackgroundColor
-                                                                        .toString())
-                                                                    .computeLuminance() >
-                                                                0.5
-                                                            ? Colors.black
-                                                            : Colors.white),
-                                                  )),
-                                              TextButton(
-                                                  onPressed: (() {}),
-                                                  child: Text(
-                                                      'Compartir un archivo',
-                                                      style: TextStyle(
-                                                          color:HexColor(colorPreference
-                                                                        .chatBackgroundColor
-                                                                        .toString())
-                                                                    .computeLuminance() >
-                                                                0.5
-                                                            ? Colors.black
-                                                            : Colors.white),)),
-                                              TextButton(
-                                                  onPressed: (() {}),
-                                                  child: Text(
-                                                      'Compartir ubicación',
-                                                      style: TextStyle(
-                                                          color: HexColor(colorPreference
-                                                                        .chatBackgroundColor
-                                                                        .toString())
-                                                                    .computeLuminance() >
-                                                                0.5
-                                                            ? Colors.black
-                                                            : Colors.white
-                                                          
-                                                          
-                                                          
-                                                          )))
-                                            ]),
-                                      );
-                                    },
-                                    context: context,
-                                    isDismissible: true,
-                                    isScrollControlled: false);
-                              },
-                              child: Icon(
-                                Icons.add_box,
-                                color:
-                                    HexColor(colorPreference.messageBotColor!),
-                              )),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _textController,
-                              textAlign: TextAlign.left,
-                              onChanged: (val) {},
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color),
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: HexColor(
-                                    colorPreference.chatHeaderColor.toString()),
-                                hintText: "¡Escribe Algo!",
-                                hintStyle: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color),
-                                labelStyle: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                  ),
-                                ),
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-                  )),
-              Flexible(
-                  flex: 1,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 10),
-                    child: StreamBuilder(builder: (context, snapshot) {
-                      return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            shape: CircleBorder(),
-                            primary: HexColor(
-                                colorPreference.chatHeaderColor.toString()),
-                            padding: EdgeInsets.all(15),
-                          ),
-                          onPressed: () async {
-                            if (_textController.text.length > 0) {
-                              sendMessage();
-                            }
-                          },
-                          child: Icon(
-                            Icons.send,
-                            color: HexColor(colorPreference.messageBotColor!),
-                          ));
-                    }),
-                  ))
-            ],
-          ),
-        ),
-      );
-    }
 
     return WillPopScope(
       onWillPop: () async {
@@ -358,7 +150,7 @@ class _ChatPageState extends State<ChatPage> {
                           ],
                         ),
                       ),
-                      _messageInput()
+                      MessageInput(widget.socket)
                     ],
                   ),
                 ),
