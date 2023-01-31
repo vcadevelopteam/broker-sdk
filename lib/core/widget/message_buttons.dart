@@ -15,21 +15,23 @@ class MessageButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(data[0].message!, style: TextStyle( fontSize: 15 , color:  HexColor(color.messageBotColor.toString())
-                                      .computeLuminance() >
-                                  0.5
-                              ? Colors.black
-                              : Colors.white),),
-        SizedBox(height: 10,),
+        Text(
+          data[0].message!,
+          style: TextStyle(
+              fontSize: 15,
+              color: HexColor(color.messageBotColor.toString())
+                          .computeLuminance() >
+                      0.5
+                  ? Colors.black
+                  : Colors.white),
+        ),
+        SizedBox(
+          height: 10,
+        ),
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
-
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-
-            color: Colors.white
-
-          ),
+              borderRadius: BorderRadius.circular(10), color: Colors.white),
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: data[0].buttons!.length,
