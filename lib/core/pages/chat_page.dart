@@ -141,7 +141,80 @@ class _ChatPageState extends State<ChatPage> {
                                 // maximumSize: Size(30, 30)
                               ),
                               onPressed: () {
-                                print('hola');
+                                showModalBottomSheet(
+                                    backgroundColor: HexColor(colorPreference
+                                        .chatBackgroundColor
+                                        .toString()),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            12)), //for the round edges
+                                    builder: (context) {
+                                      return Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Escoja una opción',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20, color: HexColor(colorPreference
+                                                                        .chatBackgroundColor
+                                                                        .toString())
+                                                                    .computeLuminance() >
+                                                                0.5
+                                                            ? Colors.black
+                                                            : Colors.white ),
+                                              ),
+                                              TextButton(
+                                                  onPressed: (() {}),
+                                                  child: Text(
+                                                    'Abrir galería',
+                                                    style: TextStyle(
+                                                        color: HexColor(colorPreference
+                                                                        .chatBackgroundColor
+                                                                        .toString())
+                                                                    .computeLuminance() >
+                                                                0.5
+                                                            ? Colors.black
+                                                            : Colors.white),
+                                                  )),
+                                              TextButton(
+                                                  onPressed: (() {}),
+                                                  child: Text(
+                                                      'Compartir un archivo',
+                                                      style: TextStyle(
+                                                          color:HexColor(colorPreference
+                                                                        .chatBackgroundColor
+                                                                        .toString())
+                                                                    .computeLuminance() >
+                                                                0.5
+                                                            ? Colors.black
+                                                            : Colors.white),)),
+                                              TextButton(
+                                                  onPressed: (() {}),
+                                                  child: Text(
+                                                      'Compartir ubicación',
+                                                      style: TextStyle(
+                                                          color: HexColor(colorPreference
+                                                                        .chatBackgroundColor
+                                                                        .toString())
+                                                                    .computeLuminance() >
+                                                                0.5
+                                                            ? Colors.black
+                                                            : Colors.white
+                                                          
+                                                          
+                                                          
+                                                          )))
+                                            ]),
+                                      );
+                                    },
+                                    context: context,
+                                    isDismissible: true,
+                                    isScrollControlled: false);
                               },
                               child: Icon(
                                 Icons.add_box,
