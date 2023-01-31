@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:brokersdk/core/chat_socket.dart';
 import 'package:brokersdk/helpers/sender_type.dart';
 import 'package:brokersdk/model/color_preference.dart';
 import 'package:brokersdk/model/message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
 import '../../repository/chat_socket_repository.dart';
@@ -20,6 +22,8 @@ class MessagesArea extends StatefulWidget {
 
 class _MessagesAreaState extends State<MessagesArea> {
   List<Message> messages = [];
+  ScrollController? scrollController;
+  bool _visible = true;
 
   var mystreambuilder;
   @override
@@ -29,7 +33,38 @@ class _MessagesAreaState extends State<MessagesArea> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    scrollController!.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void scrollDown() {
+    scrollController!.animateTo(
+      scrollController!.position.maxScrollExtent,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 200),
+    );
+  }
+
+  void _scrollListener() {
+    if (scrollController?.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      setState(() {
+        _visible = false;
+      });
+    }
+    if (scrollController?.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      setState(() {
+        _visible = true;
+      });
+    }
+  }
+
   initStreamBuilder() {
+    scrollController = new ScrollController()..addListener(_scrollListener);
+
     ColorPreference colorPreference =
         widget.socket.integrationResponse!.metadata!.color!;
     mystreambuilder = StreamBuilder(
@@ -57,6 +92,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                   children: [
                     Expanded(
                       child: ListView.builder(
+                          controller: scrollController,
                           shrinkWrap: true,
                           reverse: false,
                           keyboardDismissBehavior:
@@ -151,6 +187,36 @@ class _MessagesAreaState extends State<MessagesArea> {
 
   @override
   Widget build(BuildContext context) {
-    return mystreambuilder;
+    Widget downButton = Positioned(
+      left: 0,
+      child: AnimatedOpacity(
+        duration: Duration(milliseconds: 500),
+        opacity: _visible ? 1.0 : 0.0,
+        child: Transform.rotate(
+          angle: 270 * math.pi / 180,
+          child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                primary: Color.fromRGBO(106, 194, 194, 1),
+                padding: EdgeInsets.all(0),
+              ),
+              onPressed: () {
+                scrollController!.animateTo(
+                  scrollController!.position.maxScrollExtent,
+                  curve: Curves.easeOut,
+                  duration: const Duration(milliseconds: 500),
+                );
+                setState(() {
+                  _visible = true;
+                });
+              },
+              icon: Icon(Icons.arrow_back),
+              label: Text("")),
+        ),
+      ),
+    );
+    return Stack(
+      children: [mystreambuilder, downButton],
+    );
   }
 }
