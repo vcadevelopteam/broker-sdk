@@ -35,7 +35,7 @@ class MessageResponse {
   toJson() {
     var messageToSend;
     if (type == MessageType.text.name ||
-        type == MessageType.buttons.name ||
+        type == MessageType.button.name ||
         type == MessageType.image.name) {
       messageToSend = message!.data![0].message;
     } else {
@@ -74,7 +74,7 @@ class MessageSingleResponse {
   toJson() {
     var dataToSend;
     if (type == MessageType.text.name ||
-        type == MessageType.buttons.name ||
+        type == MessageType.button.name ||
         type == MessageType.image.name) {
       dataToSend = data!.map((e) => e.toJson()).toList()[0];
     } else {
@@ -115,7 +115,7 @@ class MessageSingleResponse {
           type: json["type"] ?? "",
           data: data.map((e) => MessageResponseData.carousel(e)).toList(),
           sessionUuid: json["sessionUuid"] ?? "");
-    } else if (type == MessageType.buttons.name) {
+    } else if (type == MessageType.button.name) {
       var data = json["data"] as Map<String, dynamic>;
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,

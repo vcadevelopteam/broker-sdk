@@ -1,1 +1,1 @@
-enum MessageType { text, buttons, carousel, image }
+enum MessageType { text, button, carousel, image }
