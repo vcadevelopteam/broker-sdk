@@ -59,16 +59,7 @@ class _ChatPageState extends State<ChatPage> {
 
   initSocket() async {
     await widget.socket.connect();
-    initChat();
     await fillWithChatHistory();
-  }
-
-  initChat() async {
-    widget.socket.channel!.stream.asBroadcastStream().listen((event) {
-      var decodedJson = jsonDecode(event);
-      decodedJson['sender'] = SenderType.chat.name;
-      widget.socket.controller!.sink.add(decodedJson);
-    });
   }
 
   fillWithChatHistory() async {

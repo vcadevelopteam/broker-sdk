@@ -22,36 +22,19 @@ class MessagesArea extends StatefulWidget {
 
 class _MessagesAreaState extends State<MessagesArea> {
   List<Message> messages = [];
+
   var mystreambuilder;
   @override
   void initState() {
+    initStreamBuilder();
+    initChat();
     super.initState();
   }
 
-  final f = new DateFormat('dd/mm/yyyy');
-  Widget _labelDay(String date) {
-    if (f.format(DateTime.parse(
-            MessageBubble.parseTime(messages[0].messageDate!))) ==
-        date) {
-      date = "Hoy";
-    }
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-      decoration: BoxDecoration(
-          color: Color.fromRGBO(106, 194, 194, 1),
-          borderRadius: BorderRadius.circular(10)),
-      child: Text(
-        date,
-        style: TextStyle(color: Colors.black),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  initStreamBuilder() {
     ColorPreference colorPreference =
         widget.socket.integrationResponse!.metadata!.color!;
-    return StreamBuilder(
+    mystreambuilder = StreamBuilder(
       stream: widget.socket.controller!.stream,
       builder: (ctx, snapshot) {
         if (snapshot.hasData) {
@@ -139,6 +122,37 @@ class _MessagesAreaState extends State<MessagesArea> {
         }
       },
     );
-    ;
+  }
+
+  initChat() async {
+    widget.socket.channel!.stream.asBroadcastStream().listen((event) {
+      var decodedJson = jsonDecode(event);
+      decodedJson['sender'] = SenderType.chat.name;
+      widget.socket.controller!.sink.add(decodedJson);
+    });
+  }
+
+  final f = new DateFormat('dd/mm/yyyy');
+  Widget _labelDay(String date) {
+    if (f.format(DateTime.parse(
+            MessageBubble.parseTime(messages[0].messageDate!))) ==
+        date) {
+      date = "Hoy";
+    }
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+      decoration: BoxDecoration(
+          color: Color.fromRGBO(106, 194, 194, 1),
+          borderRadius: BorderRadius.circular(10)),
+      child: Text(
+        date,
+        style: TextStyle(color: Colors.black),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return mystreambuilder;
   }
 }
