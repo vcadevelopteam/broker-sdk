@@ -44,6 +44,7 @@ dependencies:
   intl: ^0.18.0
   image_picker: ^0.8.6+1
   mime: ^1.0.4
+  location: ^4.4.0
 
 dev_dependencies:
   flutter_test:
