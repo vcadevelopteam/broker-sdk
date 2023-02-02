@@ -38,15 +38,25 @@ class MessageRequestData {
   String? mimeType;
   String? mediaUrl;
   String? title;
+  double? long;
+  double? lat;
   MessageRequestData(
-      {this.message, this.title, this.fileName, this.mimeType, this.mediaUrl});
+      {this.message,
+      this.title,
+      this.fileName,
+      this.mimeType,
+      this.mediaUrl,
+      this.lat,
+      this.long});
   toJson() {
     return {
       "message": message,
       "title": title,
       "fileName": fileName,
       "mimeTye": mimeType,
-      "mediaUrl": mediaUrl
+      "mediaUrl": mediaUrl,
+      "longitude": long,
+      "latitude": lat
     };
   }
 }

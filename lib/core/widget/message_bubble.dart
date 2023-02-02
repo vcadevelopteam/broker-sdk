@@ -85,8 +85,12 @@ class MessageBubble extends StatelessWidget {
                   image: NetworkImage(message.data![0].mediaUrl!))),
         ),
       );
-    } else {
+    } else if (message.type == MessageType.button) {
       return MessageButtons(message.data!, color);
+    } else {
+      return Container(
+        child: Text(message.data![0].lat.toString()),
+      );
     }
   }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 
 import 'package:brokersdk/core/chat_socket.dart';
@@ -48,27 +49,56 @@ class ChatSocketRepository {
     return response;
   }
 
-  static Future<Response> sendMediaMessage(String url, MessageType type) async {
+  static Future<Response> sendMediaMessage(
+      dynamic data, MessageType type) async {
     final pref = await SharedPreferences.getInstance();
+    var encoded = {};
+    switch (type) {
+      case MessageType.image:
+        var url = data as String;
 
-    var parseName = url.split("/");
+        var parseName = url.split("/");
 
-    final mimeType = lookupMimeType(url);
+        final mimeType = lookupMimeType(url);
 
-    MessageRequest request = MessageRequest(
-        type: type.name,
-        data: MessageRequestData(
-            mediaUrl: url,
-            mimeType: mimeType,
-            fileName: parseName[parseName.length - 1]),
-        metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        senderId: pref.getString(IdentifierType.userId.name),
-        sessionUuid: pref.getString(IdentifierType.sessionId.name),
-        recipinetId: "HOOK",
-        integrationId: pref.getString(IdentifierType.integrationId.name));
+        MessageRequest request = MessageRequest(
+            type: type.name,
+            data: MessageRequestData(
+                mediaUrl: url,
+                mimeType: mimeType,
+                fileName: parseName[parseName.length - 1]),
+            metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+            senderId: pref.getString(IdentifierType.userId.name),
+            sessionUuid: pref.getString(IdentifierType.sessionId.name),
+            recipinetId: "HOOK",
+            integrationId: pref.getString(IdentifierType.integrationId.name));
+        encoded = request.toJson();
 
-    var encoded = request.toJson();
+        break;
+      case MessageType.location:
+        var position = data["data"] as Position;
+        MessageRequest request = MessageRequest(
+            type: type.name,
+            data: MessageRequestData(
+                lat: position.latitude,
+                long: position.longitude,
+                message: "Se envió data de localización"),
+            metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+            senderId: pref.getString(IdentifierType.userId.name),
+            sessionUuid: pref.getString(IdentifierType.sessionId.name),
+            recipinetId: "HOOK",
+            integrationId: pref.getString(IdentifierType.integrationId.name));
+        encoded = request.toJson();
+        break;
+      case MessageType.video:
+        // TODO: Handle this case.
+        break;
+      case MessageType.file:
+        // TODO: Handle this case.
+        break;
+    }
 
     var response = await ApiManager.post(
         '${SocketUrls.baseBrokerEndpoint}${SocketUrls.sendMessageEndpoint}',

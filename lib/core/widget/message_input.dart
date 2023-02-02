@@ -15,6 +15,7 @@ import 'package:brokersdk/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:uuid/uuid.dart';
@@ -61,13 +62,14 @@ class _MessageInputState extends State<MessageInput> {
     }
   }
 
-  void sendMediaMessage(List media, MessageType type) async {
+  void sendMediaMessage(Map media, MessageType type) async {
     List<MessageResponseData> data = [];
 
     switch (type) {
       case MessageType.image:
         {
-          media.forEach((element) async {
+          var toUse = media["data"];
+          toUse.forEach((element) async {
             var response =
                 await ChatSocketRepository.sendMediaMessage(element, type);
             var parseName = element.split("/");
@@ -97,7 +99,27 @@ class _MessageInputState extends State<MessageInput> {
         }
         break;
       case MessageType.location:
-        // TODO: Handle this case.
+        // var response = await ChatSocketRepository.sendMediaMessage(media, type);
+        var position = media["data"] as Position;
+        data.add(MessageResponseData(
+            lat: 123, long: 123, message: "Se envió data de localización"));
+        if (true) {
+          var messageSent = MessageResponse(
+                  type: type.name,
+                  isUser: true,
+                  error: false,
+                  message: MessageSingleResponse(
+                      createdAt: DateTime.now().millisecondsSinceEpoch,
+                      data: data,
+                      type: type.name,
+                      id: Uuid().v4().toString()),
+                  receptionDate: DateTime.now().millisecondsSinceEpoch)
+              .toJson();
+
+          setState(() {
+            widget.socket.controller!.sink.add(messageSent);
+          });
+        }
         break;
       case MessageType.video:
         // TODO: Handle this case.
@@ -169,12 +191,13 @@ class _MessageInputState extends State<MessageInput> {
 
                                     switch (dataType) {
                                       case MessageType.image:
-                                        sendMediaMessage(
-                                            mapValueInBottomSheet["data"],
+                                        sendMediaMessage(mapValueInBottomSheet,
                                             MessageType.image);
                                         break;
                                       case MessageType.location:
-                                        print("fasdfads");
+                                        sendMediaMessage(
+                                            mapValueInBottomSheet["data"],
+                                            MessageType.location);
                                         break;
                                       case MessageType.video:
                                         // TODO: Handle this case.

@@ -33,14 +33,22 @@ class Message {
               isSaved: true,
               message: json['message'],
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else {
+        } else if (json["type"] == MessageType.image.name) {
           var messages = json["message"] as List;
-
           message = Message(
               type: MessageType.image,
               isUser: json['isUser'],
               isSaved: true,
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+          message = Message(
+              type: MessageType.location,
+              isUser: json['isUser'],
+              isSaved: true,
+              data:
+                  messages.map((e) => MessageResponseData.location(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
       } else {
@@ -70,13 +78,22 @@ class Message {
               data:
                   messages.map((e) => MessageResponseData.buttons(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else {
+        } else if (json["type"] == MessageType.image.name) {
           var messages = json["message"] as List;
           message = Message(
               type: MessageType.image,
               isSaved: true,
               isUser: json['isUser'],
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+          message = Message(
+              type: MessageType.location,
+              isSaved: true,
+              isUser: json['isUser'],
+              data:
+                  messages.map((e) => MessageResponseData.location(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
       }
@@ -92,13 +109,21 @@ class Message {
                 isSaved: true,
                 message: json['message'],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
-          } else {
+          } else if (json["type"] == MessageType.image.name) {
             var messagedata = json['message'] as MessageResponseData;
             message = Message(
                 type: MessageType.image,
                 isUser: json['isUser'],
                 isSaved: true,
                 data: [MessageResponseData.image(messagedata.toJson())],
+                messageDate: json['messageDate'] ?? json['receptionDate']);
+          } else {
+            var messagedata = json['message'] as MessageResponseData;
+            message = Message(
+                type: MessageType.location,
+                isUser: json['isUser'],
+                isSaved: true,
+                data: [MessageResponseData.location(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
           }
         } else {
@@ -125,9 +150,16 @@ class Message {
                 isSaved: true,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
-          } else {
+          } else if (response.type == MessageType.image.name) {
             message = Message(
                 type: MessageType.image,
+                isUser: false,
+                isSaved: true,
+                data: response.message!.data,
+                messageDate: response.receptionDate);
+          } else {
+            message = Message(
+                type: MessageType.location,
                 isUser: false,
                 isSaved: true,
                 data: response.message!.data,
@@ -158,9 +190,16 @@ class Message {
               isSaved: true,
               data: response.message!.data,
               messageDate: response.receptionDate);
-        } else {
+        } else if (response.type == MessageType.image.name) {
           message = Message(
               type: MessageType.image,
+              isUser: false,
+              isSaved: true,
+              data: response.message!.data,
+              messageDate: response.receptionDate);
+        } else {
+          message = Message(
+              type: MessageType.location,
               isUser: false,
               isSaved: true,
               data: response.message!.data,

@@ -38,6 +38,8 @@ class MessageResponse {
         type == MessageType.button.name ||
         type == MessageType.image.name) {
       messageToSend = message!.data![0].message ?? message!.data![0];
+    } else if (type == MessageType.location.name) {
+      messageToSend = message!.data![0];
     } else {
       messageToSend = message!.toJson();
     }
@@ -126,7 +128,7 @@ class MessageSingleResponse {
           type: json["type"] ?? "",
           data: [MessageResponseData.buttons(data)],
           sessionUuid: json["sessionUuid"] ?? "");
-    } else {
+    } else if (type == MessageType.image.name) {
       var data = json["data"] as Map<String, dynamic>;
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,
@@ -136,6 +138,17 @@ class MessageSingleResponse {
           senderId: json["senderId"] ?? "",
           type: json["type"] ?? "",
           data: [MessageResponseData.image(data)],
+          sessionUuid: json["sessionUuid"] ?? "");
+    } else {
+      var data = json["data"] as Map<String, dynamic>;
+      return MessageSingleResponse(
+          createdAt: json["createdAt"] ?? 0,
+          id: json["id"] ?? "",
+          integrationId: json["integrationId"] ?? "",
+          recipientId: json["recipientId"] ?? "",
+          senderId: json["senderId"] ?? "",
+          type: json["type"] ?? "",
+          data: [MessageResponseData.location(data)],
           sessionUuid: json["sessionUuid"] ?? "");
     }
   }
@@ -150,6 +163,8 @@ class MessageResponseData {
   String? filename;
   int? height;
   int? width;
+  double? lat;
+  double? long;
   String? mimeType;
   List<CarouselButton>? buttons;
 
@@ -163,6 +178,8 @@ class MessageResponseData {
       this.height,
       this.width,
       this.action,
+      this.lat,
+      this.long,
       this.buttons});
 
   toJson() {
@@ -173,6 +190,8 @@ class MessageResponseData {
       'fileName': filename,
       'message': message,
       'description': description,
+      'latitude': lat,
+      'longitude': long,
       'mediaUrl': mediaUrl,
       'title': title,
       'action': action,
@@ -211,5 +230,11 @@ class MessageResponseData {
         filename: json["fileName"],
         width: json["width"],
         mediaUrl: json["mediaUrl"]);
+  }
+  factory MessageResponseData.location(Map<String, dynamic> json) {
+    return MessageResponseData(
+        message: json["message"] ?? "",
+        lat: json["latitude"] ?? 0.0,
+        long: json["longitude"] ?? 0.0);
   }
 }
