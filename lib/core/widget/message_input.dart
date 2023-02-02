@@ -127,7 +127,36 @@ class _MessageInputState extends State<MessageInput> {
         // TODO: Handle this case.
         break;
       case MessageType.file:
-        // TODO: Handle this case.
+        {
+          var toUse = media["data"];
+          toUse.forEach((element) async {
+            var response =
+                await ChatSocketRepository.sendMediaMessage(element, type);
+            var parseName = element.split("/");
+            final mimeType = lookupMimeType(element);
+            data.add(MessageResponseData(
+                mediaUrl: element,
+                mimeType: mimeType,
+                filename: parseName[parseName.length - 1]));
+            if (response.statusCode != 500 || response.statusCode != 400) {
+              var messageSent = MessageResponse(
+                      type: type.name,
+                      isUser: true,
+                      error: false,
+                      message: MessageSingleResponse(
+                          createdAt: DateTime.now().millisecondsSinceEpoch,
+                          data: data,
+                          type: type.name,
+                          id: Uuid().v4().toString()),
+                      receptionDate: DateTime.now().millisecondsSinceEpoch)
+                  .toJson();
+
+              setState(() {
+                widget.socket.controller!.sink.add(messageSent);
+              });
+            }
+          });
+        }
         break;
     }
   }
@@ -205,13 +234,13 @@ class _MessageInputState extends State<MessageInput> {
                                         // TODO: Handle this case.
                                         break;
                                       case MessageType.file:
-                                        // TODO: Handle this case.
+                                        sendMediaMessage(mapValueInBottomSheet,
+                                            MessageType.file);
                                         break;
                                     }
                                   }
                                 } catch (ex) {
-                                  print(
-                                      "Hubo error en el filtro de envio de multimedia");
+                                  print("No se envia nada");
                                 }
                               });
                             },

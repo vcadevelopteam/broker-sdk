@@ -41,7 +41,7 @@ class Message {
               isSaved: true,
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else {
+        } else if (json["type"] == MessageType.location.name) {
           var messages = json["message"] as List;
           message = Message(
               type: MessageType.location,
@@ -49,6 +49,14 @@ class Message {
               isSaved: true,
               data:
                   messages.map((e) => MessageResponseData.location(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+          message = Message(
+              type: MessageType.file,
+              isUser: json['isUser'],
+              isSaved: true,
+              data: messages.map((e) => MessageResponseData.file(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
       } else {
@@ -86,7 +94,7 @@ class Message {
               isUser: json['isUser'],
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else {
+        } else if (json["type"] == MessageType.location.name) {
           var messages = json["message"] as List;
           message = Message(
               type: MessageType.location,
@@ -94,6 +102,14 @@ class Message {
               isUser: json['isUser'],
               data:
                   messages.map((e) => MessageResponseData.location(e)).toList(),
+              messageDate: json['messageDate'] ?? json['receptionDate']);
+        } else {
+          var messages = json["message"] as List;
+          message = Message(
+              type: MessageType.file,
+              isSaved: true,
+              isUser: json['isUser'],
+              data: messages.map((e) => MessageResponseData.file(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
       }
@@ -117,13 +133,21 @@ class Message {
                 isSaved: true,
                 data: [MessageResponseData.image(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
-          } else {
+          } else if (json["type"] == MessageType.location.name) {
             var messagedata = json['message'] as MessageResponseData;
             message = Message(
                 type: MessageType.location,
                 isUser: json['isUser'],
                 isSaved: true,
                 data: [MessageResponseData.location(messagedata.toJson())],
+                messageDate: json['messageDate'] ?? json['receptionDate']);
+          } else {
+            var messagedata = json['message'] as MessageResponseData;
+            message = Message(
+                type: MessageType.file,
+                isUser: json['isUser'],
+                isSaved: true,
+                data: [MessageResponseData.file(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
           }
         } else {
@@ -153,6 +177,13 @@ class Message {
           } else if (response.type == MessageType.image.name) {
             message = Message(
                 type: MessageType.image,
+                isUser: false,
+                isSaved: true,
+                data: response.message!.data,
+                messageDate: response.receptionDate);
+          } else if (response.type == MessageType.file.name) {
+            message = Message(
+                type: MessageType.file,
                 isUser: false,
                 isSaved: true,
                 data: response.message!.data,
@@ -193,6 +224,13 @@ class Message {
         } else if (response.type == MessageType.image.name) {
           message = Message(
               type: MessageType.image,
+              isUser: false,
+              isSaved: true,
+              data: response.message!.data,
+              messageDate: response.receptionDate);
+        } else if (response.type == MessageType.file.name) {
+          message = Message(
+              type: MessageType.file,
               isUser: false,
               isSaved: true,
               data: response.message!.data,

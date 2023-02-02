@@ -36,7 +36,8 @@ class MessageResponse {
     var messageToSend;
     if (type == MessageType.text.name ||
         type == MessageType.button.name ||
-        type == MessageType.image.name) {
+        type == MessageType.image.name ||
+        type == MessageType.file.name) {
       messageToSend = message!.data![0].message ?? message!.data![0];
     } else if (type == MessageType.location.name) {
       messageToSend = message!.data![0];
@@ -77,7 +78,8 @@ class MessageSingleResponse {
     var dataToSend;
     if (type == MessageType.text.name ||
         type == MessageType.button.name ||
-        type == MessageType.image.name) {
+        type == MessageType.image.name ||
+        type == MessageType.file.name) {
       dataToSend = data!.map((e) => e.toJson()).toList()[0];
     } else {
       dataToSend = data!.map((e) => e.toJson()).toList();
@@ -139,7 +141,7 @@ class MessageSingleResponse {
           type: json["type"] ?? "",
           data: [MessageResponseData.image(data)],
           sessionUuid: json["sessionUuid"] ?? "");
-    } else {
+    } else if (type == MessageType.location.name) {
       var data = json["data"] as Map<String, dynamic>;
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,
@@ -149,6 +151,17 @@ class MessageSingleResponse {
           senderId: json["senderId"] ?? "",
           type: json["type"] ?? "",
           data: [MessageResponseData.location(data)],
+          sessionUuid: json["sessionUuid"] ?? "");
+    } else {
+      var data = json["data"] as Map<String, dynamic>;
+      return MessageSingleResponse(
+          createdAt: json["createdAt"] ?? 0,
+          id: json["id"] ?? "",
+          integrationId: json["integrationId"] ?? "",
+          recipientId: json["recipientId"] ?? "",
+          senderId: json["senderId"] ?? "",
+          type: json["type"] ?? "",
+          data: [MessageResponseData.file(data)],
           sessionUuid: json["sessionUuid"] ?? "");
     }
   }
@@ -231,6 +244,13 @@ class MessageResponseData {
         width: json["width"],
         mediaUrl: json["mediaUrl"]);
   }
+  factory MessageResponseData.file(Map<String, dynamic> json) {
+    return MessageResponseData(
+        mimeType: json['mimeType'],
+        filename: json["fileName"],
+        mediaUrl: json["mediaUrl"]);
+  }
+
   factory MessageResponseData.location(Map<String, dynamic> json) {
     return MessageResponseData(
         message: json["message"] ?? "",

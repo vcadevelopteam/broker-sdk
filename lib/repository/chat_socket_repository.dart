@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 
@@ -56,9 +57,7 @@ class ChatSocketRepository {
     switch (type) {
       case MessageType.image:
         var url = data as String;
-
         var parseName = url.split("/");
-
         final mimeType = lookupMimeType(url);
 
         MessageRequest request = MessageRequest(
@@ -96,7 +95,23 @@ class ChatSocketRepository {
         // TODO: Handle this case.
         break;
       case MessageType.file:
-        // TODO: Handle this case.
+        var url = data as String;
+        var parseName = url.split("/");
+        final mimeType = lookupMimeType(url);
+
+        MessageRequest request = MessageRequest(
+            type: type.name,
+            data: MessageRequestData(
+                mediaUrl: url,
+                mimeType: mimeType,
+                fileName: parseName[parseName.length - 1]),
+            metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+            senderId: pref.getString(IdentifierType.userId.name),
+            sessionUuid: pref.getString(IdentifierType.sessionId.name),
+            recipinetId: "HOOK",
+            integrationId: pref.getString(IdentifierType.integrationId.name));
+        encoded = request.toJson();
         break;
     }
 
@@ -106,9 +121,24 @@ class ChatSocketRepository {
     return response;
   }
 
-  static Future<Response> uploadFile(XFile file) async {
+  static Future<Response> uploadImage(XFile file) async {
     File fileToSend = File(file.path);
     List<int> imageBytes = fileToSend.readAsBytesSync();
+    String base64Image = base64Encode(imageBytes);
+    var requestBody = {
+      "fileName": 'EXTERNAL/${file.name}',
+      "fileData": base64Image
+    };
+
+    var response = await ApiManager.post(SocketUrls.baseFileUploadEndpoint,
+        body: jsonEncode(requestBody));
+    return response;
+  }
+
+  static Future<Response> uploadFile(PlatformFile file) async {
+    File fileToUpload = File(file.path!);
+
+    List<int> imageBytes = fileToUpload.readAsBytesSync();
     String base64Image = base64Encode(imageBytes);
     var requestBody = {
       "fileName": 'EXTERNAL/${file.name}',
