@@ -4,12 +4,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:brokersdk/helpers/color_convert.dart';
+import 'package:brokersdk/helpers/locationManager.dart';
 import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/color_preference.dart';
 import 'package:brokersdk/repository/chat_socket_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MediaInputModal extends StatefulWidget {
@@ -207,7 +210,33 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           : Colors.white),
                 )),
             TextButton(
-                onPressed: (() {}),
+                onPressed: (() async {
+                  showDialog(
+                      context: context,
+                      builder: (locationDialogContext) {
+                        return Dialog(
+                          child: Container(
+                            width: _screenWidth * 0.2,
+                            height: _screenHeight * 0.1,
+                            child: Center(
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Obteniendo Ubicacion..."),
+                                CircularProgressIndicator()
+                              ],
+                            )),
+                          ),
+                        );
+                      }).then((value) {
+                    Navigator.pop(
+                        context, {"type": MessageType.location, "data": value});
+                  });
+                  Position location = await LocationManager.determinePosition();
+
+                  Navigator.pop(context,
+                      {"type": MessageType.location, "data": location});
+                }),
                 child: Text('Compartir ubicación',
                     style: TextStyle(
                         color: HexColor(widget

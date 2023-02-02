@@ -159,28 +159,34 @@ class _MessageInputState extends State<MessageInput> {
                                       isDismissible: true,
                                       isScrollControlled: false)
                                   .then((valueInBottomSheet) {
-                                var mapValueInBottomSheet =
-                                    valueInBottomSheet as Map;
-                                if (mapValueInBottomSheet["data"].isNotEmpty) {
-                                  var dataType = mapValueInBottomSheet["type"]
-                                      as MessageType;
+                                try {
+                                  var mapValueInBottomSheet =
+                                      valueInBottomSheet as Map;
+                                  if (mapValueInBottomSheet["data"]
+                                      .isNotEmpty) {
+                                    var dataType = mapValueInBottomSheet["type"]
+                                        as MessageType;
 
-                                  switch (dataType) {
-                                    case MessageType.image:
-                                      sendMediaMessage(
-                                          mapValueInBottomSheet["data"],
-                                          MessageType.image);
-                                      break;
-                                    case MessageType.location:
-                                      // TODO: Handle this case.
-                                      break;
-                                    case MessageType.video:
-                                      // TODO: Handle this case.
-                                      break;
-                                    case MessageType.file:
-                                      // TODO: Handle this case.
-                                      break;
+                                    switch (dataType) {
+                                      case MessageType.image:
+                                        sendMediaMessage(
+                                            mapValueInBottomSheet["data"],
+                                            MessageType.image);
+                                        break;
+                                      case MessageType.location:
+                                        print("fasdfads");
+                                        break;
+                                      case MessageType.video:
+                                        // TODO: Handle this case.
+                                        break;
+                                      case MessageType.file:
+                                        // TODO: Handle this case.
+                                        break;
+                                    }
                                   }
+                                } catch (ex) {
+                                  print(
+                                      "Hubo error en el filtro de envio de multimedia");
                                 }
                               });
                             },
