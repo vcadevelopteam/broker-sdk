@@ -99,11 +99,13 @@ class _MessageInputState extends State<MessageInput> {
         }
         break;
       case MessageType.location:
-        // var response = await ChatSocketRepository.sendMediaMessage(media, type);
+        var response = await ChatSocketRepository.sendMediaMessage(media, type);
         var position = media["data"] as Position;
         data.add(MessageResponseData(
-            lat: 123, long: 123, message: "Se envió data de localización"));
-        if (true) {
+            lat: position.latitude,
+            long: position.longitude,
+            message: "Se envió data de localización"));
+        if (response.statusCode != 500 || response.statusCode != 400) {
           var messageSent = MessageResponse(
                   type: type.name,
                   isUser: true,
