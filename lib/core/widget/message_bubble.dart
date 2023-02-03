@@ -8,6 +8,7 @@ import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/message_response.dart';
 import 'package:brokersdk/model/models.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/message.dart';
@@ -95,11 +96,69 @@ class MessageBubble extends StatelessWidget {
       return MessageButtons(message.data!, color, _socket);
     } else if (message.type == MessageType.location) {
       return Container(
-        child: Text(message.data![0].lat.toString()),
+        width: _screenWidth * 0.5,
+        height: 150,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(message.data![0].lat!.toDouble(),
+                  message.data![0].long!.toDouble()),
+              zoom: 14.4746,
+            ),
+            zoomControlsEnabled: false,
+            rotateGesturesEnabled: false,
+            scrollGesturesEnabled: false,
+            markers: <Marker>{
+              Marker(
+                markerId: const MarkerId('place_name'),
+                position: LatLng(message.data![0].lat!.toDouble(),
+                    message.data![0].long!.toDouble()),
+                infoWindow: const InfoWindow(
+                  title: 'Mi ubicación',
+                ),
+              )
+            },
+            mapType: MapType.normal,
+          ),
+        ),
       );
     } else {
       return Container(
-        child: Text(message.data![0].filename.toString()),
+        
+        
+        child: Container(
+          
+          decoration: BoxDecoration( borderRadius: BorderRadius.circular(5), color: HexColor(color.messageClientColor
+                                                          .toString())
+                                                      .computeLuminance() <
+                                                  0.5
+                                              ? Colors.black
+                                              : Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.only(left:10.0, top: 20, bottom: 20, right: 10),
+            child: Row(
+
+              mainAxisSize: MainAxisSize.min,
+             
+              children: [
+              
+              Icon(Icons.file_copy_outlined, color: HexColor(color.messageClientColor
+                                                            .toString())
+                                                        .computeLuminance() >
+                                                    0.5
+                                                ? Colors.black
+                                                : Colors.white ,),
+
+              SizedBox(width: 10,),
+              Text(message.data![0].filename.toString(), style: TextStyle(color: HexColor(color.messageClientColor
+                                                            .toString())
+                                                        .computeLuminance() >
+                                                    0.5
+                                                ? Colors.black
+                                                : Colors.white),),],),
+          ),
+        )
       );
     }
   }
@@ -122,24 +181,22 @@ class MessageBubble extends StatelessWidget {
             if (!message.isUser!)
               CircleAvatar(
                 backgroundImage: NetworkImage(imageUrl),
-                // backgroundColor:
-                //     HexColor(colorPreference.chatHeaderColor.toString()),
               ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Material(
                 borderRadius: BorderRadius.only(
                     topRight: !message.isUser!
-                        ? Radius.circular(10)
-                        : Radius.circular(0),
+                        ? const Radius.circular(10)
+                        : const Radius.circular(0),
                     bottomLeft: Radius.circular(10),
                     topLeft: message.isUser!
-                        ? Radius.circular(10)
-                        : Radius.circular(0),
+                        ? const Radius.circular(10)
+                        : const Radius.circular(0),
                     bottomRight: Radius.circular(10)),
                 elevation: 10,
                 child: Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   constraints: BoxConstraints(
                     maxWidth: _screenWidth * 0.7,
                     minHeight: 10,
@@ -150,17 +207,15 @@ class MessageBubble extends StatelessWidget {
                       color: message.isUser!
                           ? HexColor(color.messageClientColor.toString())
                           : HexColor(color.messageBotColor.toString()),
-                      // border: Border.all(
-                      //     color: HexColor(color.chatBorderColor.toString())),
                       borderRadius: BorderRadius.only(
                           topRight: !message.isUser!
-                              ? Radius.circular(10)
-                              : Radius.circular(0),
-                          bottomLeft: Radius.circular(10),
+                              ? const Radius.circular(10)
+                              : const Radius.circular(0),
+                          bottomLeft: const Radius.circular(10),
                           topLeft: message.isUser!
-                              ? Radius.circular(10)
-                              : Radius.circular(0),
-                          bottomRight: Radius.circular(10))),
+                              ? const Radius.circular(10)
+                              : const Radius.circular(0),
+                          bottomRight: const Radius.circular(10))),
                   child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: message.isUser!
@@ -169,12 +224,17 @@ class MessageBubble extends StatelessWidget {
                       children: [
                         Stack(
                           children: [
-                            _getMessage(
-                                message, _screenHeight, _screenWidth, context),
-                            SizedBox(
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: _getMessage(
+                                  message, _screenHeight, _screenWidth, context),
+                            ),
+                                SizedBox(
                               height: 40,
                               width: 50,
+                              
                             ),
+                                 
                             Positioned(
                               left: message.isUser! ? 0 : 10,
                               right: message.isUser! ? 10 : 0,
@@ -202,31 +262,12 @@ class MessageBubble extends StatelessWidget {
                             )
                           ],
                         )
-
-                        // Row(
-                        //         mainAxisSize:MainAxisSize.max,
-                        //         mainAxisAlignment: message.isUser!
-                        //             ? MainAxisAlignment.end
-                        //             : MainAxisAlignment.start,
-
-                        //         children: [
-                        //           Padding(
-                        //             padding: const EdgeInsets.only(top: 8.0),
-                        //             child: Text(
-                        //               f.format(DateTime.parse(
-                        //                   parseTime(message.messageDate!))),
-                        //               textAlign: TextAlign.end,
-                        //               style: TextStyle(color: textColor, fontSize: 12),
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
                       ]),
                 ),
               ),
             ),
             if (message.isUser!)
-              CircleAvatar(
+              const CircleAvatar(
                 backgroundImage: AssetImage(
                   'assets/user_default.png',
                 ),

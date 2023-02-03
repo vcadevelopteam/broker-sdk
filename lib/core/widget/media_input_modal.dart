@@ -38,86 +38,100 @@ class _MediaInputModalState extends State<MediaInputModal> {
   Widget fileDialog(_screenWidth, _screenHeight, List<PlatformFile> files,
       dialogContext, setStateCustom) {
     return Dialog(
+     
       child: Container(
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
+        
           width: _screenWidth,
           height: _screenHeight * 0.5,
-          color: Colors.white,
-          child: Column(children: [
-            Text("Archivos a compartir"),
-            ListView.builder(
-              itemCount: files.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return Text(files[index].name);
-              },
-            ),
-            isSendingMessage
-                ? Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white),
-                        padding: const EdgeInsets.all(10),
-                        child: const CircularProgressIndicator()))
-                : Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(10),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red[800],
-                            radius: 30,
-                            child: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(dialogContext, []);
-                                },
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                )),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.all(10),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.green[800],
-                            radius: 30,
-                            child: IconButton(
-                                onPressed: () async {
-                                  setStateCustom(() {
-                                    isSendingMessage = true;
-                                  });
-                                  var responseUrls = [];
+          
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              
+              children: [
+              Text("Archivos a compartir", style: TextStyle(fontWeight: FontWeight.w600),),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: ListView.builder(
+                  itemCount: files.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Text(files[index].name);
+                  },
+                ),
+              ),
 
-                                  for (var element in files) {
-                                    var resp =
-                                        await ChatSocketRepository.uploadFile(
-                                            element);
-                                    var decodedJson = jsonDecode(resp.body);
-                                    responseUrls.add(decodedJson["url"]);
-                                  }
-                                  await Future.delayed(Duration(seconds: 2));
-                                  setStateCustom(() {
-                                    isSendingMessage = false;
-                                  });
-                                  Navigator.pop(dialogContext, {
-                                    "type": MessageType.file,
-                                    "data": responseUrls
-                                  });
-                                },
-                                icon: const Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                )),
+              Expanded(child: SizedBox()),
+              isSendingMessage
+                  ? Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.white),
+                          padding: const EdgeInsets.all(10),
+                          child: const CircularProgressIndicator()))
+                  : Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(10),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.red[800],
+                              radius: 30,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext, []);
+                                  },
+                                  icon: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  )),
+                            ),
                           ),
-                        )
-                      ],
+                          
+                          Container(
+                            margin: const EdgeInsets.all(10),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.green[800],
+                              radius: 30,
+                              child: IconButton(
+                                  onPressed: () async {
+                                    setStateCustom(() {
+                                      isSendingMessage = true;
+                                    });
+                                    var responseUrls = [];
+          
+                                    for (var element in files) {
+                                      var resp =
+                                          await ChatSocketRepository.uploadFile(
+                                              element);
+                                      var decodedJson = jsonDecode(resp.body);
+                                      responseUrls.add(decodedJson["url"]);
+                                    }
+                                    await Future.delayed(Duration(seconds: 2));
+                                    setStateCustom(() {
+                                      isSendingMessage = false;
+                                    });
+                                    Navigator.pop(dialogContext, {
+                                      "type": MessageType.file,
+                                      "data": responseUrls
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                  )),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-          ])),
+            ]),
+          )),
     );
   }
 
@@ -238,6 +252,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text("Obteniendo Ubicacion..."),
+                                SizedBox(width: 15,),
                                 CircularProgressIndicator()
                               ],
                             )),

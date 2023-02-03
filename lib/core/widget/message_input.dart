@@ -188,17 +188,11 @@ class _MessageInputState extends State<MessageInput> {
                   child: StreamBuilder(builder: (context, snapshot) {
                     return Row(
                       children: [
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              shape: CircleBorder(),
-                              padding: EdgeInsets.all(15),
-                              primary: HexColor(
-                                  colorPreference.chatHeaderColor.toString()),
+                      
 
-                              // maximumSize: Size(30, 30)
-                            ),
-                            onPressed: () {
+                          GestureDetector(
+                            onTap: () {
+
                               showModalBottomSheet(
                                       backgroundColor: HexColor(colorPreference
                                           .chatBackgroundColor
@@ -253,11 +247,26 @@ class _MessageInputState extends State<MessageInput> {
                                   print("No se envia nada");
                                 }
                               });
+                              
                             },
-                            child: Icon(
-                              Icons.add_box,
-                              color: HexColor(colorPreference.messageBotColor!),
-                            )),
+                            child: Container(
+                              decoration: BoxDecoration(
+          color: HexColor(colorPreference.messageBotColor .toString())
+                              .computeLuminance() >
+                          0.5
+                      ? Colors.black
+                      : Colors.white, // border color
+          shape: BoxShape.circle,
+        ),
+                              child: Icon(Icons.add,
+                                color:HexColor(colorPreference.messageBotColor!) , size: 30,),
+                            ),
+
+                          ),
+
+
+
+
                         Expanded(
                           child: TextFormField(
                             controller: _textController,

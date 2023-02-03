@@ -123,7 +123,7 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ],
             ),
-            elevation: 1,
+            elevation: 0,
             centerTitle: false,
           ),
           backgroundColor:
