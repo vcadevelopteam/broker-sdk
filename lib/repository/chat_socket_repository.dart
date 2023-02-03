@@ -29,12 +29,13 @@ class ChatSocketRepository {
     return IntegrationResponse.fromJson(jsonDecode(response.body));
   }
 
-  static Future<Response> sendMessage(String message, MessageType type) async {
+  static Future<Response> sendMessage(
+      String message, String title, MessageType type) async {
     final pref = await SharedPreferences.getInstance();
 
     MessageRequest request = MessageRequest(
         type: type.name,
-        data: MessageRequestData(message: message, title: "null"),
+        data: MessageRequestData(message: message, title: title),
         metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
         createdAt: DateTime.now().millisecondsSinceEpoch,
         senderId: pref.getString(IdentifierType.userId.name),

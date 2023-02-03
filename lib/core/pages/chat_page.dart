@@ -129,33 +129,25 @@ class _ChatPageState extends State<ChatPage> {
           backgroundColor:
               HexColor(colorPreference.chatBackgroundColor.toString()),
           body: Container(
+            height: _screenHeight,
             decoration: BoxDecoration(color: backgroundColor),
             child: Container(
-                child: Stack(
-              children: [
-                Container(
-                  width: _screenWidth,
-                  height: _screenHeight,
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            Container(
-                              child: widget.socket.channel != null
-                                  ? MessagesArea(widget.socket)
-                                  : Container(),
-                            ),
-                          ],
-                        ),
+                width: _screenWidth,
+                height: _screenHeight,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Flexible(
+                      flex: 10,
+                      child: Container(
+                        child: widget.socket.channel != null
+                            ? MessagesArea(widget.socket)
+                            : Container(),
                       ),
-                      MessageInput(widget.socket)
-                    ],
-                  ),
-                ),
-              ],
-            )),
+                    ),
+                    Flexible(flex: 1, child: MessageInput(widget.socket))
+                  ],
+                )),
           )),
     );
   }

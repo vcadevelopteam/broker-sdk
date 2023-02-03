@@ -102,7 +102,6 @@ class _MessagesAreaState extends State<MessagesArea> {
                     Expanded(
                       child: ListView.builder(
                           controller: scrollController,
-                          shrinkWrap: true,
                           reverse: false,
                           keyboardDismissBehavior:
                               ScrollViewKeyboardDismissBehavior.onDrag,
@@ -135,30 +134,31 @@ class _MessagesAreaState extends State<MessagesArea> {
                                     indx,
                                     colorPreference,
                                     widget.socket.integrationResponse!.metadata!
-                                        .icons!.chatHeaderImage!)
+                                        .icons!.chatHeaderImage!,
+                                    widget.socket)
                               ],
                             );
                           }),
                     ),
-                    // if (_isLoading)
-                    //   Container(
-                    //       width: 40,
-                    //       height: 40,
-                    //       child: CircularProgressIndicator())
                   ],
                 )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.message,
-                      color: Theme.of(context).textTheme.bodyText1!.color,
+              : Expanded(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height - kToolbarHeight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.message,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("No ha creado mensajes")
+                      ],
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text("No ha creado mensajes")
-                  ],
+                  ),
                 );
         } else {
           return Center(child: CircularProgressIndicator());

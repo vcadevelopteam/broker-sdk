@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:brokersdk/core/chat_socket.dart';
 import 'package:brokersdk/core/widget/message_buttons.dart';
 import 'package:brokersdk/core/widget/message_carousel.dart';
 import 'package:brokersdk/helpers/color_convert.dart';
@@ -12,12 +13,14 @@ import 'package:intl/intl.dart';
 import '../../model/message.dart';
 
 class MessageBubble extends StatelessWidget {
+  final ChatSocket _socket;
   final Message message;
   final int indx;
   final ColorPreference color;
   final Color textColor = Colors.black;
   final String imageUrl;
-  const MessageBubble(this.message, this.indx, this.color, this.imageUrl);
+  const MessageBubble(
+      this.message, this.indx, this.color, this.imageUrl, this._socket);
 
   static String parseTime(int time) {
     var dt = DateTime.fromMillisecondsSinceEpoch(time);
@@ -26,7 +29,10 @@ class MessageBubble extends StatelessWidget {
 
   Widget _getMessage(Message message, _screenHeight, _screenWidth, context) {
     if (message.type == MessageType.text) {
-      return Text(message.message!,
+      return Text(
+          message.data![0].title!.isNotEmpty
+              ? message.data![0].title!
+              : message.data![0].message!,
           style: TextStyle(
               color: message.isUser!
                   ? HexColor(color.messageClientColor.toString())
@@ -40,7 +46,7 @@ class MessageBubble extends StatelessWidget {
                       ? Colors.black
                       : Colors.white));
     } else if (message.type == MessageType.carousel) {
-      return MessageCarousel(message.data!, color);
+      return MessageCarousel(message.data!, color, _socket);
     } else if (message.type == MessageType.media) {
       return GestureDetector(
         onTap: () {
@@ -86,7 +92,7 @@ class MessageBubble extends StatelessWidget {
         ),
       );
     } else if (message.type == MessageType.button) {
-      return MessageButtons(message.data!, color);
+      return MessageButtons(message.data!, color, _socket);
     } else if (message.type == MessageType.location) {
       return Container(
         child: Text(message.data![0].lat.toString()),
@@ -136,6 +142,8 @@ class MessageBubble extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   constraints: BoxConstraints(
                     maxWidth: _screenWidth * 0.7,
+                    minHeight: 10,
+                    maxHeight: _screenHeight * 0.5,
                     minWidth: 10,
                   ),
                   decoration: BoxDecoration(

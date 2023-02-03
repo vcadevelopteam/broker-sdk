@@ -1,15 +1,25 @@
+import 'package:brokersdk/core/chat_socket.dart';
 import 'package:brokersdk/helpers/color_convert.dart';
+import 'package:brokersdk/helpers/message_type.dart';
 import 'package:brokersdk/model/color_preference.dart';
 import 'package:brokersdk/model/message_response.dart';
+import 'package:brokersdk/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:uuid/uuid.dart';
 
 class MessageButtons extends StatelessWidget {
   List<MessageResponseData> data;
+  ChatSocket _socket;
   ColorPreference color;
 
-  MessageButtons(this.data, this.color);
+  MessageButtons(this.data, this.color, this._socket);
+
+  sendMessage(String text, String title) async {
+    var messageSent = await ChatSocket.sendMessage(text, title);
+    _socket.controller!.sink.add(messageSent);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +53,10 @@ class MessageButtons extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       primary: HexColor(color.messageBotColor!),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      sendMessage(data[0].buttons![indx].payload!,
+                          data[0].buttons![indx].text!);
+                    },
                     child: Text(
                       data[0].buttons![indx].text!,
                       style: TextStyle(

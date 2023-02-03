@@ -27,11 +27,12 @@ class Message {
       //VERIFICAR SI ES DEL USUARIO O DEL CHAT / BOT
       if (json["isUser"]) {
         if (json["type"] == MessageType.text.name) {
+          var messages = json["message"] as List;
           message = Message(
               type: MessageType.text,
               isUser: json['isUser'],
               isSaved: true,
-              message: json['message'],
+              data: messages.map((e) => MessageResponseData.text(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.media.name) {
           var messages = json["message"] as List;
@@ -62,11 +63,12 @@ class Message {
       } else {
         //VERIFICAR EL TIPO DE MENSAJE
         if (json["type"] == MessageType.text.name) {
+          var messages = json["message"] as List;
           message = Message(
               type: MessageType.text,
               isSaved: true,
               isUser: json['isUser'],
-              message: json['message'],
+              data: messages.map((e) => MessageResponseData.text(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.carousel.name) {
           var messages = json["message"] as List;
@@ -119,11 +121,12 @@ class Message {
         //VERIFICAR SI ES DEL USUARIO
         if (json["isUser"]) {
           if (json["type"] == MessageType.text.name) {
+            var messagedata = json['message'] as MessageResponseData;
             message = Message(
                 type: MessageType.text,
                 isUser: json['isUser'],
                 isSaved: true,
-                message: json['message'],
+                data: [MessageResponseData.text(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
           } else if (json["type"] == MessageType.media.name) {
             var messagedata = json['message'] as MessageResponseData;
@@ -158,7 +161,7 @@ class Message {
                 type: MessageType.text,
                 isUser: false,
                 isSaved: true,
-                message: response.message!.data![0].message,
+                data: response.message!.data,
                 messageDate: response.receptionDate);
           } else if (response.type == MessageType.carousel.name) {
             message = Message(
@@ -205,7 +208,7 @@ class Message {
               type: MessageType.text,
               isUser: false,
               isSaved: true,
-              message: response.message!.data![0].message,
+              data: response.message!.data,
               messageDate: response.receptionDate);
         } else if (response.type == MessageType.carousel.name) {
           message = Message(
@@ -251,11 +254,8 @@ class Message {
 
   Map<String, dynamic> toJson() {
     var messageToSend;
-    if (type == MessageType.text) {
-      messageToSend = message;
-    } else {
-      messageToSend = data;
-    }
+
+    messageToSend = data;
 
     return {
       'isUser': isUser,

@@ -37,9 +37,8 @@ class MessageResponse {
     if (type == MessageType.text.name ||
         type == MessageType.button.name ||
         type == MessageType.media.name ||
+        type == MessageType.location.name ||
         type == MessageType.file.name) {
-      messageToSend = message!.data![0].message ?? message!.data![0];
-    } else if (type == MessageType.location.name) {
       messageToSend = message!.data![0];
     } else {
       messageToSend = message!.toJson();
@@ -213,7 +212,8 @@ class MessageResponseData {
   }
 
   factory MessageResponseData.text(Map<String, dynamic> json) {
-    return MessageResponseData(message: json["message"] ?? "");
+    return MessageResponseData(
+        message: json["message"] ?? "", title: json["title"] ?? "");
   }
 
   factory MessageResponseData.carousel(Map<String, dynamic> json) {

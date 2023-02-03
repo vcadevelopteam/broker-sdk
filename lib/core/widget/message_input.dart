@@ -34,10 +34,8 @@ class _MessageInputState extends State<MessageInput> {
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
       var response = await ChatSocketRepository.sendMessage(
-          _textController.text, MessageType.text);
+          _textController.text, "null", MessageType.text);
 
-      //Envia un mensaje unico como una respuesta para reutilizar
-      // el from json del stream de mensajes recibidos
       List<MessageResponseData> data = [];
       data.add(MessageResponseData(
         message: _textController.text,
