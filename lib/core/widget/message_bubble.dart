@@ -41,7 +41,7 @@ class MessageBubble extends StatelessWidget {
                       : Colors.white));
     } else if (message.type == MessageType.carousel) {
       return MessageCarousel(message.data!, color);
-    } else if (message.type == MessageType.image) {
+    } else if (message.type == MessageType.media) {
       return GestureDetector(
         onTap: () {
           showDialog(

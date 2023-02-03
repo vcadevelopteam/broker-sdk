@@ -54,14 +54,24 @@ class ChatSocketRepository {
       dynamic data, MessageType type) async {
     final pref = await SharedPreferences.getInstance();
     var encoded = {};
+    var messageType = type.name;
     switch (type) {
-      case MessageType.image:
+      case MessageType.media:
         var url = data as String;
         var parseName = url.split("/");
         final mimeType = lookupMimeType(url);
 
+        if (mimeType!.contains("jpg") ||
+            mimeType!.contains("jpeg") ||
+            mimeType!.contains("png") ||
+            mimeType!.contains("tiff") ||
+            mimeType!.contains("svg")) {
+          messageType = "image";
+        } else {
+          messageType = "video";
+        }
         MessageRequest request = MessageRequest(
-            type: type.name,
+            type: messageType,
             data: MessageRequestData(
                 mediaUrl: url,
                 mimeType: mimeType,
@@ -91,9 +101,6 @@ class ChatSocketRepository {
             integrationId: pref.getString(IdentifierType.integrationId.name));
         encoded = request.toJson();
         break;
-      case MessageType.video:
-        // TODO: Handle this case.
-        break;
       case MessageType.file:
         var url = data as String;
         var parseName = url.split("/");
@@ -121,8 +128,8 @@ class ChatSocketRepository {
     return response;
   }
 
-  static Future<Response> uploadImage(XFile file) async {
-    File fileToSend = File(file.path);
+  static Future<Response> uploadImage(PlatformFile file) async {
+    File fileToSend = File(file.path!);
     List<int> imageBytes = fileToSend.readAsBytesSync();
     String base64Image = base64Encode(imageBytes);
     var requestBody = {

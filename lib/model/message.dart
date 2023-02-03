@@ -33,10 +33,10 @@ class Message {
               isSaved: true,
               message: json['message'],
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else if (json["type"] == MessageType.image.name) {
+        } else if (json["type"] == MessageType.media.name) {
           var messages = json["message"] as List;
           message = Message(
-              type: MessageType.image,
+              type: MessageType.media,
               isUser: json['isUser'],
               isSaved: true,
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
@@ -86,10 +86,10 @@ class Message {
               data:
                   messages.map((e) => MessageResponseData.buttons(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
-        } else if (json["type"] == MessageType.image.name) {
+        } else if (json["type"] == MessageType.media.name) {
           var messages = json["message"] as List;
           message = Message(
-              type: MessageType.image,
+              type: MessageType.media,
               isSaved: true,
               isUser: json['isUser'],
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
@@ -125,10 +125,10 @@ class Message {
                 isSaved: true,
                 message: json['message'],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
-          } else if (json["type"] == MessageType.image.name) {
+          } else if (json["type"] == MessageType.media.name) {
             var messagedata = json['message'] as MessageResponseData;
             message = Message(
-                type: MessageType.image,
+                type: MessageType.media,
                 isUser: json['isUser'],
                 isSaved: true,
                 data: [MessageResponseData.image(messagedata.toJson())],
@@ -174,9 +174,9 @@ class Message {
                 isSaved: true,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
-          } else if (response.type == MessageType.image.name) {
+          } else if (response.type == MessageType.media.name) {
             message = Message(
-                type: MessageType.image,
+                type: MessageType.media,
                 isUser: false,
                 isSaved: true,
                 data: response.message!.data,
@@ -221,9 +221,9 @@ class Message {
               isSaved: true,
               data: response.message!.data,
               messageDate: response.receptionDate);
-        } else if (response.type == MessageType.image.name) {
+        } else if (response.type == MessageType.media.name) {
           message = Message(
-              type: MessageType.image,
+              type: MessageType.media,
               isUser: false,
               isSaved: true,
               data: response.message!.data,

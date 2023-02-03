@@ -62,14 +62,15 @@ class _MessageInputState extends State<MessageInput> {
     }
   }
 
-  void sendMediaMessage(Map media, MessageType type) async {
-    List<MessageResponseData> data = [];
+  void sendMultiMediaMessage(Map media, MessageType type) async {
+    List<Map<String, dynamic>> messagesToSend = [];
+    var toUse = media["data"] as List;
+    for (String element in toUse) {
+      List<MessageResponseData> data = [];
 
-    switch (type) {
-      case MessageType.image:
-        {
-          var toUse = media["data"];
-          toUse.forEach((element) async {
+      switch (type) {
+        case MessageType.media:
+          {
             var response =
                 await ChatSocketRepository.sendMediaMessage(element, type);
             var parseName = element.split("/");
@@ -91,45 +92,37 @@ class _MessageInputState extends State<MessageInput> {
                       receptionDate: DateTime.now().millisecondsSinceEpoch)
                   .toJson();
 
-              setState(() {
-                widget.socket.controller!.sink.add(messageSent);
-              });
+              messagesToSend.add(messageSent);
             }
-          });
-        }
-        break;
-      case MessageType.location:
-        var response = await ChatSocketRepository.sendMediaMessage(media, type);
-        var position = media["data"] as Position;
-        data.add(MessageResponseData(
-            lat: position.latitude,
-            long: position.longitude,
-            message: "Se envió data de localización"));
-        if (response.statusCode != 500 || response.statusCode != 400) {
-          var messageSent = MessageResponse(
-                  type: type.name,
-                  isUser: true,
-                  error: false,
-                  message: MessageSingleResponse(
-                      createdAt: DateTime.now().millisecondsSinceEpoch,
-                      data: data,
-                      type: type.name,
-                      id: Uuid().v4().toString()),
-                  receptionDate: DateTime.now().millisecondsSinceEpoch)
-              .toJson();
+          }
+          break;
+        case MessageType.location:
+          var response =
+              await ChatSocketRepository.sendMediaMessage(media, type);
+          var position = media["data"] as Position;
+          data.add(MessageResponseData(
+              lat: position.latitude,
+              long: position.longitude,
+              message: "Se envió data de localización"));
+          if (response.statusCode != 500 || response.statusCode != 400) {
+            var messageSent = MessageResponse(
+                    type: type.name,
+                    isUser: true,
+                    error: false,
+                    message: MessageSingleResponse(
+                        createdAt: DateTime.now().millisecondsSinceEpoch,
+                        data: data,
+                        type: type.name,
+                        id: Uuid().v4().toString()),
+                    receptionDate: DateTime.now().millisecondsSinceEpoch)
+                .toJson();
 
-          setState(() {
-            widget.socket.controller!.sink.add(messageSent);
-          });
-        }
-        break;
-      case MessageType.video:
-        // TODO: Handle this case.
-        break;
-      case MessageType.file:
-        {
-          var toUse = media["data"];
-          toUse.forEach((element) async {
+            messagesToSend.add(messageSent);
+          }
+          break;
+
+        case MessageType.file:
+          {
             var response =
                 await ChatSocketRepository.sendMediaMessage(element, type);
             var parseName = element.split("/");
@@ -151,14 +144,24 @@ class _MessageInputState extends State<MessageInput> {
                       receptionDate: DateTime.now().millisecondsSinceEpoch)
                   .toJson();
 
-              setState(() {
-                widget.socket.controller!.sink.add(messageSent);
-              });
+              messagesToSend.add(messageSent);
             }
-          });
-        }
-        break;
+          }
+          break;
+        case MessageType.text:
+          // TODO: Handle this case.
+          break;
+        case MessageType.button:
+          // TODO: Handle this case.
+          break;
+        case MessageType.carousel:
+          // TODO: Handle this case.
+          break;
+      }
     }
+    setState(() {
+      widget.socket.controller!.sink.add({'data': messagesToSend});
+    });
   }
 
   @override
@@ -221,21 +224,30 @@ class _MessageInputState extends State<MessageInput> {
                                         as MessageType;
 
                                     switch (dataType) {
-                                      case MessageType.image:
-                                        sendMediaMessage(mapValueInBottomSheet,
-                                            MessageType.image);
+                                      case MessageType.media:
+                                        sendMultiMediaMessage(
+                                            mapValueInBottomSheet,
+                                            MessageType.media);
                                         break;
                                       case MessageType.location:
-                                        sendMediaMessage(
+                                        sendMultiMediaMessage(
                                             mapValueInBottomSheet["data"],
                                             MessageType.location);
                                         break;
-                                      case MessageType.video:
+
+                                      case MessageType.file:
+                                        sendMultiMediaMessage(
+                                            mapValueInBottomSheet,
+                                            MessageType.file);
+                                        break;
+                                      case MessageType.text:
                                         // TODO: Handle this case.
                                         break;
-                                      case MessageType.file:
-                                        sendMediaMessage(mapValueInBottomSheet,
-                                            MessageType.file);
+                                      case MessageType.button:
+                                        // TODO: Handle this case.
+                                        break;
+                                      case MessageType.carousel:
+                                        // TODO: Handle this case.
                                         break;
                                     }
                                   }

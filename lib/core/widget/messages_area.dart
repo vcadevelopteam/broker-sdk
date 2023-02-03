@@ -79,8 +79,17 @@ class _MessagesAreaState extends State<MessagesArea> {
               var message = Message.fromJson(element);
               messages.add(message);
             });
+          } else if (snapshot.data["data"] != null) {
+            var messagesWithMedia = snapshot.data["data"] as List;
+            messagesWithMedia.forEach((element) {
+              var message = Message.fromJson(element);
+              messages.add(message);
+              message.isSaved = true;
+              ChatSocketRepository.saveMessageInLocal(message);
+            });
           } else {
             //Si no es una lista solo va a agregar el mensaje al arreglo
+
             var message = Message.fromJson(snapshot.data);
             messages.add(message);
             message.isSaved = true;

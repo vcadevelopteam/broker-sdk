@@ -36,7 +36,7 @@ class MessageResponse {
     var messageToSend;
     if (type == MessageType.text.name ||
         type == MessageType.button.name ||
-        type == MessageType.image.name ||
+        type == MessageType.media.name ||
         type == MessageType.file.name) {
       messageToSend = message!.data![0].message ?? message!.data![0];
     } else if (type == MessageType.location.name) {
@@ -78,7 +78,7 @@ class MessageSingleResponse {
     var dataToSend;
     if (type == MessageType.text.name ||
         type == MessageType.button.name ||
-        type == MessageType.image.name ||
+        type == MessageType.media.name ||
         type == MessageType.file.name) {
       dataToSend = data!.map((e) => e.toJson()).toList()[0];
     } else {
@@ -130,7 +130,7 @@ class MessageSingleResponse {
           type: json["type"] ?? "",
           data: [MessageResponseData.buttons(data)],
           sessionUuid: json["sessionUuid"] ?? "");
-    } else if (type == MessageType.image.name) {
+    } else if (type == MessageType.media.name) {
       var data = json["data"] as Map<String, dynamic>;
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,
