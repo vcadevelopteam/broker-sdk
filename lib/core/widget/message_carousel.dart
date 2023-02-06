@@ -73,27 +73,42 @@ class MessageCarousel extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5)),
               margin: const EdgeInsets.only(right: 8),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.network(data[index].mediaUrl!),
-                  Text(
-                    data[index].title!,
-                    style: TextStyle(
-                      color: HexColor(color.messageBotColor.toString())
-                                  .computeLuminance() <
-                              0.5
-                          ? Colors.black
-                          : Colors.white,
-                    ),
+                 
+                  Padding(
+                    padding: const EdgeInsets.only(top:10.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(2.5),
+                      child: Image.network(data[index].mediaUrl!, fit: BoxFit.contain, height: 200, )),
                   ),
-                  Text(data[index].description!,
-                      style: TextStyle(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical:10.0),
+                    child: Text(
+                      data[index].title!,
+                      style: TextStyle( fontWeight: FontWeight.w600,
                         color: HexColor(color.messageBotColor.toString())
                                     .computeLuminance() <
                                 0.5
                             ? Colors.black
                             : Colors.white,
-                      )),
-                  getButton(data[index].buttons!)
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: Text(data[index].description!,
+                      style: TextStyle( 
+                        color: HexColor(color.messageBotColor.toString())
+                                    .computeLuminance() <
+                                0.5
+                            ? Colors.black
+                            : Colors.white,
+                      )),),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical:8.0),
+                    child: getButton(data[index].buttons!),
+                  )
                 ],
               ),
             );

@@ -24,6 +24,7 @@ class MessageButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           data[0].message!,

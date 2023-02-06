@@ -145,7 +145,7 @@ class _ChatPageState extends State<ChatPage> {
                             : Container(),
                       ),
                     ),
-                    Flexible(flex: 1, child: MessageInput(widget.socket))
+                    MessageInput(widget.socket)
                   ],
                 )),
           )),
