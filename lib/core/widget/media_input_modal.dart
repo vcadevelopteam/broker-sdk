@@ -39,7 +39,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(children: [
-              const Text(
+              Text(
                 "Archivos a compartir",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
@@ -53,7 +53,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                   },
                 ),
               ),
-              const Expanded(child: SizedBox()),
+              Expanded(child: SizedBox()),
               isSendingMessage
                   ? Align(
                       alignment: Alignment.center,
@@ -136,17 +136,28 @@ class _MediaInputModalState extends State<MediaInputModal> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Escoja una opción',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: HexColor(widget.colorPreference.chatBackgroundColor
-                                  .toString())
-                              .computeLuminance() >
-                          0.5
-                      ? Colors.black
-                      : Colors.white),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(
+                  'Escoja una opción',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: HexColor(widget.colorPreference.chatBackgroundColor
+                                      .toString())
+                                  .computeLuminance() >
+                              0.5
+                          ? Colors.black
+                          : Colors.white),
+                ),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.cancel)),
+              ],
             ),
             TextButton(
                 onPressed: (() async {
@@ -172,15 +183,31 @@ class _MediaInputModalState extends State<MediaInputModal> {
                     }
                   }
                 }),
-                child: Text(
-                  'Abrir galería',
-                  style: TextStyle(
-                      color: HexColor(widget.colorPreference.chatBackgroundColor
-                                      .toString())
-                                  .computeLuminance() >
-                              0.5
-                          ? Colors.black
-                          : Colors.white),
+                child: Row(
+                  children: [
+                    Icon(Icons.photo,
+                        color: HexColor(widget
+                                        .colorPreference.chatBackgroundColor
+                                        .toString())
+                                    .computeLuminance() >
+                                0.5
+                            ? Colors.black
+                            : Colors.white),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      'Abrir galería',
+                      style: TextStyle(
+                          color: HexColor(widget
+                                          .colorPreference.chatBackgroundColor
+                                          .toString())
+                                      .computeLuminance() >
+                                  0.5
+                              ? Colors.black
+                              : Colors.white),
+                    ),
+                  ],
                 )),
             TextButton(
                 onPressed: (() async {
@@ -218,15 +245,31 @@ class _MediaInputModalState extends State<MediaInputModal> {
                     }
                   }
                 }),
-                child: Text(
-                  'Compartir un archivo',
-                  style: TextStyle(
-                      color: HexColor(widget.colorPreference.chatBackgroundColor
-                                      .toString())
-                                  .computeLuminance() >
-                              0.5
-                          ? Colors.black
-                          : Colors.white),
+                child: Row(
+                  children: [
+                    Icon(Icons.attach_file_rounded,
+                        color: HexColor(widget
+                                        .colorPreference.chatBackgroundColor
+                                        .toString())
+                                    .computeLuminance() >
+                                0.5
+                            ? Colors.black
+                            : Colors.white),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      'Compartir un archivo',
+                      style: TextStyle(
+                          color: HexColor(widget
+                                          .colorPreference.chatBackgroundColor
+                                          .toString())
+                                      .computeLuminance() >
+                                  0.5
+                              ? Colors.black
+                              : Colors.white),
+                    ),
+                  ],
                 )),
             TextButton(
                 onPressed: (() async {
@@ -259,15 +302,50 @@ class _MediaInputModalState extends State<MediaInputModal> {
                   Navigator.pop(context,
                       {"type": MessageType.location, "data": location});
                 }),
-                child: Text('Compartir ubicación',
-                    style: TextStyle(
+                child: Row(
+                  children: [
+                    Icon(Icons.location_on,
                         color: HexColor(widget
                                         .colorPreference.chatBackgroundColor
                                         .toString())
                                     .computeLuminance() >
                                 0.5
                             ? Colors.black
-                            : Colors.white)))
+                            : Colors.white),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text('Compartir ubicación',
+                        style: TextStyle(
+                            color: HexColor(widget
+                                            .colorPreference.chatBackgroundColor
+                                            .toString())
+                                        .computeLuminance() >
+                                    0.5
+                                ? Colors.black
+                                : Colors.white)),
+                  ],
+                )),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Cancelar',
+                      style: TextStyle(
+                          color: HexColor(widget
+                                          .colorPreference.chatBackgroundColor
+                                          .toString())
+                                      .computeLuminance() >
+                                  0.5
+                              ? Colors.black
+                              : Colors.white),
+                    )
+                  ],
+                ))
           ]),
     );
   }

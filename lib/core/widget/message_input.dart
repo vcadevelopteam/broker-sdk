@@ -180,92 +180,94 @@ class _MessageInputState extends State<MessageInput> {
       child: Container(
         color: backgroundColor,
         width: _screenWidth,
-        child: Row(
-          children: [
-            Flexible(
-                flex: 5,
-                child: Container(
-                  child: StreamBuilder(builder: (context, snapshot) {
-                    return Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                                    backgroundColor: HexColor(colorPreference
-                                        .chatBackgroundColor
-                                        .toString()),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    builder: (modalBottomSheetContext) {
-                                      return MediaInputModal(colorPreference);
-                                    },
-                                    context: context,
-                                    isDismissible: true,
-                                    isScrollControlled: false)
-                                .then((valueInBottomSheet) {
-                              try {
-                                var mapValueInBottomSheet =
-                                    valueInBottomSheet as Map;
-                                if (mapValueInBottomSheet["data"].isNotEmpty) {
-                                  var dataType = mapValueInBottomSheet["type"]
-                                      as MessageType;
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: StreamBuilder(builder: (context, snapshot) {
+                  return Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                                  backgroundColor: HexColor(colorPreference
+                                      .chatBackgroundColor
+                                      .toString()),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  builder: (modalBottomSheetContext) {
+                                    return MediaInputModal(colorPreference);
+                                  },
+                                  context: context,
+                                  isDismissible: true,
+                                  isScrollControlled: false)
+                              .then((valueInBottomSheet) {
+                            try {
+                              var mapValueInBottomSheet =
+                                  valueInBottomSheet as Map;
+                              if (mapValueInBottomSheet["data"].isNotEmpty) {
+                                var dataType = mapValueInBottomSheet["type"]
+                                    as MessageType;
 
-                                  switch (dataType) {
-                                    case MessageType.media:
-                                      sendMultiMediaMessage(
-                                          mapValueInBottomSheet,
-                                          MessageType.media);
-                                      break;
-                                    case MessageType.location:
-                                      sendMultiMediaMessage(
-                                          mapValueInBottomSheet["data"],
-                                          MessageType.location);
-                                      break;
+                                switch (dataType) {
+                                  case MessageType.media:
+                                    sendMultiMediaMessage(mapValueInBottomSheet,
+                                        MessageType.media);
+                                    break;
+                                  case MessageType.location:
+                                    sendMultiMediaMessage(
+                                        mapValueInBottomSheet["data"],
+                                        MessageType.location);
+                                    break;
 
-                                    case MessageType.file:
-                                      sendMultiMediaMessage(
-                                          mapValueInBottomSheet,
-                                          MessageType.file);
-                                      break;
-                                    case MessageType.text:
-                                      // TODO: Handle this case.
-                                      break;
-                                    case MessageType.button:
-                                      // TODO: Handle this case.
-                                      break;
-                                    case MessageType.carousel:
-                                      // TODO: Handle this case.
-                                      break;
-                                  }
+                                  case MessageType.file:
+                                    sendMultiMediaMessage(mapValueInBottomSheet,
+                                        MessageType.file);
+                                    break;
+                                  case MessageType.text:
+                                    // TODO: Handle this case.
+                                    break;
+                                  case MessageType.button:
+                                    // TODO: Handle this case.
+                                    break;
+                                  case MessageType.carousel:
+                                    // TODO: Handle this case.
+                                    break;
                                 }
-                              } catch (ex) {
-                                print("No se envia nada");
                               }
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: HexColor(colorPreference.messageBotColor
-                                              .toString())
-                                          .computeLuminance() >
-                                      0.5
-                                  ? Colors.black
-                                  : Colors.white, // border color
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.add,
-                              color: HexColor(colorPreference.messageBotColor!),
-                              size: 30,
-                            ),
+                            } catch (ex) {
+                              print("No se envia nada");
+                            }
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                            color: HexColor(colorPreference
+                                .messageBotColor!), // border color
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            color: HexColor(colorPreference.messageBotColor
+                                            .toString())
+                                        .computeLuminance() <
+                                    0.5
+                                ? Colors.black
+                                : Colors.white,
+                            size: 30,
                           ),
                         ),
-                        Expanded(
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 50,
                           child: TextFormField(
                             controller: _textController,
                             textAlign: TextAlign.left,
                             onChanged: (val) {},
+                            autofocus: false,
                             style: TextStyle(
                                 fontSize: 18,
                                 color: Theme.of(context)
@@ -278,59 +280,67 @@ class _MessageInputState extends State<MessageInput> {
                                   colorPreference.chatHeaderColor.toString()),
                               hintText: "¡Escribe Algo!",
                               hintStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color),
+                                  color: Colors.black.withOpacity(0.5)),
                               labelStyle: TextStyle(
                                   color: Theme.of(context)
                                       .textTheme
                                       .bodyText1!
                                       .color),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25.0),
                                 borderSide: BorderSide(
                                   color: Colors.transparent,
                                 ),
                               ),
-                              disabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                  width: 2.0,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  }),
-                )),
-            Flexible(
-                flex: 1,
-                child: Container(
-                  margin: EdgeInsets.only(left: 10),
-                  child: StreamBuilder(builder: (context, snapshot) {
-                    return ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          shape: CircleBorder(),
-                          primary: HexColor(
-                              colorPreference.chatHeaderColor.toString()),
-                          padding: EdgeInsets.all(15),
-                        ),
-                        onPressed: () async {
-                          if (_textController.text.length > 0) {
-                            sendMessage();
-                          }
-                        },
+                      ),
+                    ],
+                  );
+                }),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 10),
+                child: StreamBuilder(builder: (context, snapshot) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (_textController.text.length > 0) {
+                        sendMessage();
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: HexColor(
+                            colorPreference.messageBotColor!), // border color
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
                         child: Icon(
                           Icons.send,
-                          color: HexColor(colorPreference.messageBotColor!),
-                        ));
-                  }),
-                ))
-          ],
+                          color: HexColor(colorPreference.messageBotColor
+                                          .toString())
+                                      .computeLuminance() <
+                                  0.5
+                              ? Colors.black
+                              : Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -88,7 +88,9 @@ class MessageBubble extends StatelessWidget {
           width: double.infinity,
           height: _screenHeight * 0.25,
           decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
               image: DecorationImage(
+                  fit: BoxFit.cover,
                   image: NetworkImage(message.data![0].mediaUrl!))),
         ),
       );
@@ -125,31 +127,22 @@ class MessageBubble extends StatelessWidget {
       );
     } else {
       return Container(
-          child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: HexColor(color.messageClientColor.toString())
-                        .computeLuminance() <
-                    0.5
-                ? Colors.black
-                : Colors.white),
         child: Padding(
           padding:
-              const EdgeInsets.only(left: 10.0, top: 20, bottom: 20, right: 10),
+              const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.file_copy_outlined,
+                Icons.attach_file_rounded,
                 color: HexColor(color.messageClientColor.toString())
                             .computeLuminance() >
                         0.5
                     ? Colors.black
                     : Colors.white,
               ),
-              SizedBox(
-                width: 10,
-              ),
+
+              // SizedBox(width: 5,),
               Text(
                 message.data![0].filename.toString(),
                 style: TextStyle(
@@ -162,7 +155,7 @@ class MessageBubble extends StatelessWidget {
             ],
           ),
         ),
-      ));
+      );
     }
   }
 
@@ -225,55 +218,57 @@ class MessageBubble extends StatelessWidget {
                           ? CrossAxisAlignment.end
                           : CrossAxisAlignment.start,
                       children: [
-                        Stack(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 20),
-                              child: _getMessage(message, _screenHeight,
-                                  _screenWidth, context),
-                            ),
-                            SizedBox(
-                              height: 40,
-                              width: 50,
-                            ),
-                            Positioned(
-                              left: message.isUser! ? 0 : 10,
-                              right: message.isUser! ? 10 : 0,
-                              bottom: 0,
-                              child: Text(
-                                f.format(DateTime.parse(
-                                    parseTime(message.messageDate!))),
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                    color: message.isUser!
-                                        ? HexColor(color.messageClientColor
-                                                        .toString())
-                                                    .computeLuminance() >
-                                                0.5
-                                            ? Colors.black
-                                            : Colors.white
-                                        : HexColor(color.messageBotColor
-                                                        .toString())
-                                                    .computeLuminance() >
-                                                0.5
-                                            ? Colors.black
-                                            : Colors.white,
-                                    fontSize: 12),
-                              ),
-                            )
-                          ],
-                        )
+                        Flexible(
+                            fit: FlexFit.loose,
+                            child: Stack(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: _getMessage(message, _screenHeight,
+                                      _screenWidth, context),
+                                ),
+                                SizedBox(
+                                  height: 40,
+                                  width: 50,
+                                ),
+                                Positioned(
+                                  left: message.isUser! ? 0 : 10,
+                                  right: message.isUser! ? 10 : 0,
+                                  bottom: 0,
+                                  child: Text(
+                                    f.format(DateTime.parse(
+                                        parseTime(message.messageDate!))),
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                        color: message.isUser!
+                                            ? HexColor(color.messageClientColor
+                                                            .toString())
+                                                        .computeLuminance() >
+                                                    0.5
+                                                ? Colors.black
+                                                : Colors.white
+                                            : HexColor(color.messageBotColor
+                                                            .toString())
+                                                        .computeLuminance() >
+                                                    0.5
+                                                ? Colors.black
+                                                : Colors.white,
+                                        fontSize: 12),
+                                  ),
+                                )
+                              ],
+                            ))
                       ]),
                 ),
               ),
             ),
-            if (message.isUser!)
-              const CircleAvatar(
-                backgroundImage: AssetImage(
-                  'assets/user_default.png',
-                ),
-                backgroundColor: Colors.white,
-              ),
+            // if (message.isUser!)
+            //   const CircleAvatar(
+            //     backgroundImage: AssetImage(
+            //       'assets/user_default.png',
+            //     ),
+            //     backgroundColor: Colors.white,
+            //   ),
           ],
         ),
       ),

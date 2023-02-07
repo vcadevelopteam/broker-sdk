@@ -42,56 +42,69 @@ class _SingleMediaState extends State<SingleMedia> {
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
                     fit: BoxFit.cover, image: FileImage(File(widget.path)))))
-        : Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(children: [
-              AspectRatio(
-                aspectRatio: 1.5,
-                child: VideoPlayer(controller!),
+        : ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+               
               ),
-              Container(
-                //duration of video
-                child: Text(
-                    "Total Duration: " + controller!.value.duration.toString()),
-              ),
-              Container(
-                  child: VideoProgressIndicator(controller!,
-                      allowScrubbing: true,
-                      colors: VideoProgressColors(
-                        backgroundColor: Colors.redAccent,
-                        playedColor: Colors.green,
-                        bufferedColor: Colors.purple,
-                      ))),
-              Container(
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          if (controller!.value.isPlaying) {
-                            controller!.pause();
-                          } else {
-                            controller!.play();
-                          }
+              child: Column(children: [
+                Expanded(child: AspectRatio(
+                  aspectRatio: controller!.value.aspectRatio,
+                  child: GestureDetector(
+                    onTap: (){
 
-                          setState(() {});
-                        },
-                        icon: Icon(controller!.value.isPlaying
-                            ? Icons.pause
-                            : Icons.play_arrow)),
-                    IconButton(
-                        onPressed: () {
-                          controller!.seekTo(Duration(seconds: 0));
+                      if (controller!.value.isPlaying) {
+                              controller!.pause();
+                            } else {
+                              controller!.play();
+                            }
 
-                          setState(() {});
-                        },
-                        icon: Icon(Icons.stop))
-                  ],
-                ),
-              )
-            ]));
+                    },
+                    child: VideoPlayer(controller!)),
+                ),),
+                // Container(
+                //   //duration of video
+                //   child: Text(
+                //       "Total Duration: " + controller!.value.duration.toString()),
+                // ),
+                // Container(
+                //     child: VideoProgressIndicator(controller!,
+                //         allowScrubbing: true,
+                //         colors: VideoProgressColors(
+                //           backgroundColor: Colors.redAccent,
+                //           playedColor: Colors.green,
+                //           bufferedColor: Colors.purple,
+                //         ))),
+                // Container(
+                //   child: Row(
+                //     children: [
+                //       IconButton(
+                //           onPressed: () {
+                //             if (controller!.value.isPlaying) {
+                //               controller!.pause();
+                //             } else {
+                //               controller!.play();
+                //             }
+        
+                //             setState(() {});
+                //           },
+                //           icon: Icon(controller!.value.isPlaying
+                //               ? Icons.pause
+                //               : Icons.play_arrow)),
+                //       IconButton(
+                //           onPressed: () {
+                //             controller!.seekTo(Duration(seconds: 0));
+        
+                //             setState(() {});
+                //           },
+                //           icon: Icon(Icons.stop))
+                //     ],
+                //   ),
+                // )
+              ])),
+        );
   }
 }
