@@ -1,5 +1,5 @@
 name: laraigo_chat
-description: An easy flutter implementation of Laraigo's chat services.
+description: An easy flutter implementation of Laraigo's real time chat services with custom designed bots.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

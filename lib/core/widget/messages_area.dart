@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
+import '../../helpers/sender_type.dart';
 import '../../model/color_preference.dart';
 import '../../model/message.dart';
 import '../../repository/chat_socket_repository.dart';
