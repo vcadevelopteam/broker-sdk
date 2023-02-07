@@ -7,6 +7,9 @@ import '../../model/color_preference.dart';
 import '../../model/message_response.dart';
 import '../chat_socket.dart';
 
+/*
+Message Widget for Button MessageType
+ */
 class MessageButtons extends StatelessWidget {
   List<MessageResponseData> data;
   final ChatSocket _socket;

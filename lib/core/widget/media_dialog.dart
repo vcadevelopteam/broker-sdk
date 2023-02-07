@@ -9,6 +9,10 @@ import '../../helpers/message_type.dart';
 import '../../repository/chat_socket_repository.dart';
 import 'single_media.dart';
 
+/*
+The media dialog widget allow user to update files and preview it.
+This widget only appears when a media file is uploaded or recieved and allow to have a preview
+ */
 class MediaDialog extends StatefulWidget {
   List<PlatformFile> files;
   Function setStateCustom;
@@ -85,7 +89,7 @@ class _MediaDialogState extends State<MediaDialog> {
 
                                   for (var element in widget.files) {
                                     var resp =
-                                        await ChatSocketRepository.uploadImage(
+                                        await ChatSocketRepository.uploadFile(
                                             element);
                                     var decodedJson = jsonDecode(resp.body);
                                     responseUrls.add(decodedJson["url"]);
@@ -95,6 +99,7 @@ class _MediaDialogState extends State<MediaDialog> {
                                   setState(() {
                                     widget.isSendingMessage = false;
                                   });
+                                  //Pop is used for passing the data to the previous widget without any state manager
                                   // ignore: use_build_context_synchronously
                                   Navigator.pop(context, {
                                     "type": MessageType.media,

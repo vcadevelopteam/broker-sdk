@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/*
+Class that allow the conversion of HTML Colors to a custom format
+ */
 class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");

@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 import 'package:video_player/video_player.dart';
 
+/*
+This widget is used for show a single media file in the media dialog 
+ */
 class SingleMedia extends StatefulWidget {
   String path;
   SingleMedia({super.key, required this.path});

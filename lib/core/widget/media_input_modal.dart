@@ -13,6 +13,10 @@ import '../../model/color_preference.dart';
 import '../../repository/chat_socket_repository.dart';
 import 'media_dialog.dart';
 
+/*
+This widget is used for picking what kind of files are going to upload. You can pick between
+files, location or multimedia files, the widget is rendered in a bottom sheet
+ */
 class MediaInputModal extends StatefulWidget {
   ColorPreference colorPreference;
 

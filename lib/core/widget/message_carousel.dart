@@ -8,6 +8,9 @@ import '../../model/color_preference.dart';
 import '../../model/message_response.dart';
 import '../chat_socket.dart';
 
+/*
+Message Widget for Carousel MessageType
+ */
 class MessageCarousel extends StatelessWidget {
   ColorPreference color;
   final ChatSocket _socket;

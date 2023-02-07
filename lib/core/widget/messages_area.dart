@@ -14,6 +14,9 @@ import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
 import 'message_bubble.dart';
 
+/*
+This widget is used as an showing area for all the messages, the messages are recollected by an stream that is connected to the web socket
+ */
 class MessagesArea extends StatefulWidget {
   ChatSocket socket;
   MessagesArea(this.socket, {super.key});

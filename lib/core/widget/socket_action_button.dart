@@ -6,6 +6,9 @@ import '../../model/color_preference.dart';
 import '../chat_socket.dart';
 import '../pages/chat_page.dart';
 
+/*
+This widget is used as main widget for calling or initalizing the whole package for chat
+ */
 class SocketActionButton extends StatefulWidget {
   String? integrationId;
   SocketActionButton({super.key, this.integrationId});

@@ -1,3 +1,4 @@
+//Custom urls that are used in the package for a correct function
 class SocketUrls {
   static const baseFileUploadEndpoint =
       "https://zyxmelinux2.zyxmeapp.com/zyxmetest/bridge/api/processzyxme/uploadfile";
