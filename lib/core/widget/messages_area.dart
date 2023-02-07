@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
+// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables, unused_local_variable
 
 import 'dart:convert';
 import 'dart:math' as math;
@@ -178,23 +178,23 @@ class _MessagesAreaState extends State<MessagesArea> {
   }
 
   final f = DateFormat('dd/mm/yyyy');
-  Widget _labelDay(String date) {
-    if (f.format(DateTime.parse(
-            MessageBubble.parseTime(messages[0].messageDate!))) ==
-        date) {
-      date = "Hoy";
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-      decoration: BoxDecoration(
-          color: const Color.fromRGBO(106, 194, 194, 1),
-          borderRadius: BorderRadius.circular(10)),
-      child: Text(
-        date,
-        style: const TextStyle(color: Colors.black),
-      ),
-    );
-  }
+  // Widget _labelDay(String date) {
+  //   if (f.format(DateTime.parse(
+  //           MessageBubble.parseTime(messages[0].messageDate!))) ==
+  //       date) {
+  //     date = "Hoy";
+  //   }
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+  //     decoration: BoxDecoration(
+  //         color: const Color.fromRGBO(106, 194, 194, 1),
+  //         borderRadius: BorderRadius.circular(10)),
+  //     child: Text(
+  //       date,
+  //       style: const TextStyle(color: Colors.black),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:laraigo_chat/core/widget/socket_action_button.dart';
 import 'package:flutter/material.dart';
 
