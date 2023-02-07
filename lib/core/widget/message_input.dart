@@ -3,15 +3,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:brokersdk/core/chat_socket.dart';
-import 'package:brokersdk/core/widget/media_input_modal.dart';
-import 'package:brokersdk/helpers/color_convert.dart';
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/model/color_preference.dart';
-import 'package:brokersdk/model/icons_preference.dart.dart';
-import 'package:brokersdk/model/message_response.dart';
-import 'package:brokersdk/model/personalization.dart';
-import 'package:brokersdk/repository/chat_socket_repository.dart';
+import 'package:laraigo_chat/core/chat_socket.dart';
+import 'package:laraigo_chat/core/widget/media_input_modal.dart';
+import 'package:laraigo_chat/helpers/color_convert.dart';
+import 'package:laraigo_chat/helpers/message_type.dart';
+import 'package:laraigo_chat/model/color_preference.dart';
+import 'package:laraigo_chat/model/icons_preference.dart.dart';
+import 'package:laraigo_chat/model/message_response.dart';
+import 'package:laraigo_chat/model/personalization.dart';
+import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -188,85 +188,79 @@ class _MessageInputState extends State<MessageInput> {
                   child: StreamBuilder(builder: (context, snapshot) {
                     return Row(
                       children: [
-                      
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                                    backgroundColor: HexColor(colorPreference
+                                        .chatBackgroundColor
+                                        .toString()),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    builder: (modalBottomSheetContext) {
+                                      return MediaInputModal(colorPreference);
+                                    },
+                                    context: context,
+                                    isDismissible: true,
+                                    isScrollControlled: false)
+                                .then((valueInBottomSheet) {
+                              try {
+                                var mapValueInBottomSheet =
+                                    valueInBottomSheet as Map;
+                                if (mapValueInBottomSheet["data"].isNotEmpty) {
+                                  var dataType = mapValueInBottomSheet["type"]
+                                      as MessageType;
 
-                          GestureDetector(
-                            onTap: () {
+                                  switch (dataType) {
+                                    case MessageType.media:
+                                      sendMultiMediaMessage(
+                                          mapValueInBottomSheet,
+                                          MessageType.media);
+                                      break;
+                                    case MessageType.location:
+                                      sendMultiMediaMessage(
+                                          mapValueInBottomSheet["data"],
+                                          MessageType.location);
+                                      break;
 
-                              showModalBottomSheet(
-                                      backgroundColor: HexColor(colorPreference
-                                          .chatBackgroundColor
-                                          .toString()),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      builder: (modalBottomSheetContext) {
-                                        return MediaInputModal(colorPreference);
-                                      },
-                                      context: context,
-                                      isDismissible: true,
-                                      isScrollControlled: false)
-                                  .then((valueInBottomSheet) {
-                                try {
-                                  var mapValueInBottomSheet =
-                                      valueInBottomSheet as Map;
-                                  if (mapValueInBottomSheet["data"]
-                                      .isNotEmpty) {
-                                    var dataType = mapValueInBottomSheet["type"]
-                                        as MessageType;
-
-                                    switch (dataType) {
-                                      case MessageType.media:
-                                        sendMultiMediaMessage(
-                                            mapValueInBottomSheet,
-                                            MessageType.media);
-                                        break;
-                                      case MessageType.location:
-                                        sendMultiMediaMessage(
-                                            mapValueInBottomSheet["data"],
-                                            MessageType.location);
-                                        break;
-
-                                      case MessageType.file:
-                                        sendMultiMediaMessage(
-                                            mapValueInBottomSheet,
-                                            MessageType.file);
-                                        break;
-                                      case MessageType.text:
-                                        // TODO: Handle this case.
-                                        break;
-                                      case MessageType.button:
-                                        // TODO: Handle this case.
-                                        break;
-                                      case MessageType.carousel:
-                                        // TODO: Handle this case.
-                                        break;
-                                    }
+                                    case MessageType.file:
+                                      sendMultiMediaMessage(
+                                          mapValueInBottomSheet,
+                                          MessageType.file);
+                                      break;
+                                    case MessageType.text:
+                                      // TODO: Handle this case.
+                                      break;
+                                    case MessageType.button:
+                                      // TODO: Handle this case.
+                                      break;
+                                    case MessageType.carousel:
+                                      // TODO: Handle this case.
+                                      break;
                                   }
-                                } catch (ex) {
-                                  print("No se envia nada");
                                 }
-                              });
-                              
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-          color: HexColor(colorPreference.messageBotColor .toString())
-                              .computeLuminance() >
-                          0.5
-                      ? Colors.black
-                      : Colors.white, // border color
-          shape: BoxShape.circle,
-        ),
-                              child: Icon(Icons.add,
-                                color:HexColor(colorPreference.messageBotColor!) , size: 30,),
+                              } catch (ex) {
+                                print("No se envia nada");
+                              }
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: HexColor(colorPreference.messageBotColor
+                                              .toString())
+                                          .computeLuminance() >
+                                      0.5
+                                  ? Colors.black
+                                  : Colors.white, // border color
+                              shape: BoxShape.circle,
                             ),
-
+                            child: Icon(
+                              Icons.add,
+                              color: HexColor(colorPreference.messageBotColor!),
+                              size: 30,
+                            ),
                           ),
-
-
-
-
+                        ),
                         Expanded(
                           child: TextFormField(
                             controller: _textController,

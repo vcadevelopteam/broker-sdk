@@ -1,6 +1,6 @@
-import 'package:brokersdk/core/chat_socket.dart';
-import 'package:brokersdk/core/pages/chat_page.dart';
-import 'package:brokersdk/model/color_preference.dart';
+import 'package:laraigo_chat/core/chat_socket.dart';
+import 'package:laraigo_chat/core/pages/chat_page.dart';
+import 'package:laraigo_chat/model/color_preference.dart';
 import 'package:flutter/material.dart';
 
 class SocketActionButton extends StatefulWidget {

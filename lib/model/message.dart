@@ -1,7 +1,7 @@
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/helpers/sender_type.dart';
-import 'package:brokersdk/model/message_request.dart';
-import 'package:brokersdk/model/message_response.dart';
+import 'package:laraigo_chat/helpers/message_type.dart';
+import 'package:laraigo_chat/helpers/sender_type.dart';
+import 'package:laraigo_chat/model/message_request.dart';
+import 'package:laraigo_chat/model/message_response.dart';
 import 'package:flutter/foundation.dart';
 
 class Message {

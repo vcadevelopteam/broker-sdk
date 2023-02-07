@@ -1,27 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:brokersdk/core/chat_socket.dart';
-import 'package:brokersdk/core/widget/message_input.dart';
-import 'package:brokersdk/core/widget/messages_area.dart';
-import 'package:brokersdk/helpers/color_convert.dart';
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/helpers/sender_type.dart';
-import 'package:brokersdk/model/models.dart';
-import 'package:brokersdk/model/personalization.dart';
-
-import 'package:brokersdk/repository/chat_socket_repository.dart';
-
+import 'package:laraigo_chat/core/chat_socket.dart';
+import 'package:laraigo_chat/core/widget/message_input.dart';
+import 'package:laraigo_chat/core/widget/messages_area.dart';
+import 'package:laraigo_chat/helpers/color_convert.dart';
+import 'package:laraigo_chat/model/models.dart';
+import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:math' as math;
-
-import '../../model/color_preference.dart';
-import '../../model/message_response.dart';
-import '../widget/message_bubble.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({
@@ -39,8 +23,6 @@ class _ChatPageState extends State<ChatPage> {
   bool _visible = true;
   List<Message> messages = [];
   final f = new DateFormat('dd/mm/yyyy');
-
-  bool _isLoading = false;
   ScrollController? scrollController;
 
   @override
@@ -68,7 +50,7 @@ class _ChatPageState extends State<ChatPage> {
     setState(() {});
     //Setea el estado para actualizar el stream a que responda
     var savedMessages = await ChatSocketRepository.getLocalMessages();
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     //Agrega una lista de mensajes
     widget.socket.controller!.sink.add(savedMessages);
   }
@@ -106,7 +88,7 @@ class _ChatPageState extends State<ChatPage> {
                   backgroundColor:
                       HexColor(colorPreference.chatHeaderColor.toString()),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Column(

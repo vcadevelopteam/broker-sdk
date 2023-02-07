@@ -1,22 +1,15 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, use_key_in_widget_constructors, must_be_immutable, no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:brokersdk/core/widget/media_dialog.dart';
-import 'package:brokersdk/helpers/color_convert.dart';
-import 'package:brokersdk/helpers/locationManager.dart';
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/model/color_preference.dart';
-import 'package:brokersdk/repository/chat_socket_repository.dart';
+import 'package:laraigo_chat/core/widget/media_dialog.dart';
+import 'package:laraigo_chat/helpers/color_convert.dart';
+import 'package:laraigo_chat/helpers/locationManager.dart';
+import 'package:laraigo_chat/helpers/message_type.dart';
+import 'package:laraigo_chat/model/color_preference.dart';
+import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
 
 class MediaInputModal extends StatefulWidget {
   ColorPreference colorPreference;
@@ -38,21 +31,20 @@ class _MediaInputModalState extends State<MediaInputModal> {
   Widget fileDialog(_screenWidth, _screenHeight, List<PlatformFile> files,
       dialogContext, setStateCustom) {
     return Dialog(
-     
       child: Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
-        
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20), color: Colors.white),
           width: _screenWidth,
           height: _screenHeight * 0.5,
-          
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Column(
-              
-              children: [
-              Text("Archivos a compartir", style: TextStyle(fontWeight: FontWeight.w600),),
+            child: Column(children: [
+              const Text(
+                "Archivos a compartir",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: ListView.builder(
                   itemCount: files.length,
                   shrinkWrap: true,
@@ -61,8 +53,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                   },
                 ),
               ),
-
-              Expanded(child: SizedBox()),
+              const Expanded(child: SizedBox()),
               isSendingMessage
                   ? Align(
                       alignment: Alignment.center,
@@ -92,7 +83,6 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                   )),
                             ),
                           ),
-                          
                           Container(
                             margin: const EdgeInsets.all(10),
                             child: CircleAvatar(
@@ -104,7 +94,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                       isSendingMessage = true;
                                     });
                                     var responseUrls = [];
-          
+
                                     for (var element in files) {
                                       var resp =
                                           await ChatSocketRepository.uploadFile(
@@ -112,7 +102,8 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                       var decodedJson = jsonDecode(resp.body);
                                       responseUrls.add(decodedJson["url"]);
                                     }
-                                    await Future.delayed(Duration(seconds: 2));
+                                    await Future.delayed(
+                                        const Duration(seconds: 2));
                                     setStateCustom(() {
                                       isSendingMessage = false;
                                     });
@@ -140,7 +131,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
     var _screenWidth = MediaQuery.of(context).size.width;
     var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,17 +150,16 @@ class _MediaInputModalState extends State<MediaInputModal> {
             ),
             TextButton(
                 onPressed: (() async {
-                  final ImagePicker _picker = ImagePicker();
                   FilePickerResult? result = await FilePicker.platform
                       .pickFiles(allowMultiple: true, type: FileType.media);
                   if (result != null) {
-                    if (result!.files.isNotEmpty) {
+                    if (result.files.isNotEmpty) {
                       showDialog(
                           context: context,
                           builder: (dialogContext) {
                             return StatefulBuilder(
                                 builder: (dialogContext, setStateCustom) {
-                              return MediaDialog(result!.files, setStateCustom,
+                              return MediaDialog(result.files, setStateCustom,
                                   isSendingMessage);
                             });
                           }).then((valueInDialog) {
@@ -209,14 +199,14 @@ class _MediaInputModalState extends State<MediaInputModal> {
                         "txt"
                       ]);
                   if (result != null) {
-                    if (result!.files.isNotEmpty) {
+                    if (result.files.isNotEmpty) {
                       showDialog(
                           context: context,
                           builder: (dialogContext) {
                             return StatefulBuilder(
                                 builder: (dialogContext, setStateCustom) {
                               return fileDialog(_screenWidth, _screenHeight,
-                                  result!.files, dialogContext, setStateCustom);
+                                  result.files, dialogContext, setStateCustom);
                             });
                           }).then((valueInDialog) {
                         var dataToReturn = valueInDialog;
@@ -250,9 +240,11 @@ class _MediaInputModalState extends State<MediaInputModal> {
                             child: Center(
                                 child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                              children: const [
                                 Text("Obteniendo Ubicacion..."),
-                                SizedBox(width: 15,),
+                                SizedBox(
+                                  width: 15,
+                                ),
                                 CircularProgressIndicator()
                               ],
                             )),
@@ -278,6 +270,5 @@ class _MediaInputModalState extends State<MediaInputModal> {
                             : Colors.white)))
           ]),
     );
-    ;
   }
 }

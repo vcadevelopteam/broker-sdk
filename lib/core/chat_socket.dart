@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:brokersdk/helpers/identifier_type.dart';
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/helpers/socket_urls.dart';
-import 'package:brokersdk/model/integration_response.dart';
-import 'package:brokersdk/model/message_response.dart';
-import 'package:brokersdk/repository/chat_socket_repository.dart';
+import 'package:flutter/foundation.dart';
+import 'package:laraigo_chat/helpers/identifier_type.dart';
+import 'package:laraigo_chat/helpers/message_type.dart';
+import 'package:laraigo_chat/helpers/socket_urls.dart';
+import 'package:laraigo_chat/model/integration_response.dart';
+import 'package:laraigo_chat/model/message_response.dart';
+import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -32,7 +33,9 @@ class ChatSocket {
       Uri.parse('${SocketUrls.baseSocketEndpoint}$userId/$sessionId'),
     );
     controller = StreamController();
-    print('${SocketUrls.baseSocketEndpoint}$userId/$sessionId');
+    if (kDebugMode) {
+      print('${SocketUrls.baseSocketEndpoint}$userId/$sessionId');
+    }
   }
 
   void disconnect() {
@@ -64,7 +67,7 @@ class ChatSocket {
                   createdAt: DateTime.now().millisecondsSinceEpoch,
                   data: data,
                   type: MessageType.text.name,
-                  id: Uuid().v4().toString()),
+                  id: const Uuid().v4().toString()),
               receptionDate: DateTime.now().millisecondsSinceEpoch)
           .toJson();
       return messageSent;

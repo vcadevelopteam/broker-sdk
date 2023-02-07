@@ -1,16 +1,115 @@
-# brokersdk
+# Laraigo Chat
 
-A new Flutter project.
+Flutter dependency that implements Laraigo's services.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Real time comunication
+- Online chat customization
+- Multimedia files picker
+- Share location
+- Multiple kinds of interactions (Text, Buttons, and Carousels)
 
-A few resources to get you started if this is your first Flutter project:
+## Getting started
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+You should ensure that you add the router as a dependency in your flutter project.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```yaml
+dependencies:
+  laraigo_chat: ^1.0.0
+```
+
+You should then run `flutter packages upgrade` or update your packages in IntelliJ.
+
+## Example Project
+
+There is a example project in the `example` folder. Check it out. Otherwise, keep reading to get up and running.
+
+## Usage
+
+Need to include the import the package to the dart file where it will be used, use the below command,
+
+```dart
+import 'package:laraigo_chat/socket_action_button.dart';
+```
+
+**Circular percent indicator**
+
+Basic Widget
+
+```dart
+  floatingActionButton: SocketActionButton(
+          integrationId: 'Your Integration Id',
+        )
+```
+
+Complete example
+
+```dart
+import 'package:laraigo_chat/core/widget/socket_action_button.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: SocketActionButton(
+          integrationId: 'Your Integration Id',
+        ));
+  }
+}
+
+```

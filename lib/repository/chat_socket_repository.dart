@@ -4,17 +4,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 
-import 'package:brokersdk/core/chat_socket.dart';
-import 'package:brokersdk/helpers/api_manager.dart';
-import 'package:brokersdk/helpers/identifier_type.dart';
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/helpers/socket_urls.dart';
-import 'package:brokersdk/model/integration_response.dart';
-import 'package:brokersdk/model/message.dart';
-import 'package:brokersdk/model/message_request.dart';
-import 'package:flutter/material.dart';
+import 'package:laraigo_chat/helpers/api_manager.dart';
+import 'package:laraigo_chat/helpers/identifier_type.dart';
+import 'package:laraigo_chat/helpers/message_type.dart';
+import 'package:laraigo_chat/helpers/socket_urls.dart';
+import 'package:laraigo_chat/model/integration_response.dart';
+import 'package:laraigo_chat/model/message.dart';
+import 'package:laraigo_chat/model/message_request.dart';
 import 'package:http/http.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 

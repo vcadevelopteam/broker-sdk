@@ -1,12 +1,12 @@
 import 'dart:ui';
 
-import 'package:brokersdk/core/chat_socket.dart';
-import 'package:brokersdk/core/widget/message_buttons.dart';
-import 'package:brokersdk/core/widget/message_carousel.dart';
-import 'package:brokersdk/helpers/color_convert.dart';
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/model/message_response.dart';
-import 'package:brokersdk/model/models.dart';
+import 'package:laraigo_chat/core/chat_socket.dart';
+import 'package:laraigo_chat/core/widget/message_buttons.dart';
+import 'package:laraigo_chat/core/widget/message_carousel.dart';
+import 'package:laraigo_chat/helpers/color_convert.dart';
+import 'package:laraigo_chat/helpers/message_type.dart';
+import 'package:laraigo_chat/model/message_response.dart';
+import 'package:laraigo_chat/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -125,41 +125,44 @@ class MessageBubble extends StatelessWidget {
       );
     } else {
       return Container(
-        
-        
-        child: Container(
-          
-          decoration: BoxDecoration( borderRadius: BorderRadius.circular(5), color: HexColor(color.messageClientColor
-                                                          .toString())
-                                                      .computeLuminance() <
-                                                  0.5
-                                              ? Colors.black
-                                              : Colors.white),
-          child: Padding(
-            padding: const EdgeInsets.only(left:10.0, top: 20, bottom: 20, right: 10),
-            child: Row(
-
-              mainAxisSize: MainAxisSize.min,
-             
-              children: [
-              
-              Icon(Icons.file_copy_outlined, color: HexColor(color.messageClientColor
-                                                            .toString())
-                                                        .computeLuminance() >
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white ,),
-
-              SizedBox(width: 10,),
-              Text(message.data![0].filename.toString(), style: TextStyle(color: HexColor(color.messageClientColor
-                                                            .toString())
-                                                        .computeLuminance() >
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white),),],),
+          child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: HexColor(color.messageClientColor.toString())
+                        .computeLuminance() <
+                    0.5
+                ? Colors.black
+                : Colors.white),
+        child: Padding(
+          padding:
+              const EdgeInsets.only(left: 10.0, top: 20, bottom: 20, right: 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.file_copy_outlined,
+                color: HexColor(color.messageClientColor.toString())
+                            .computeLuminance() >
+                        0.5
+                    ? Colors.black
+                    : Colors.white,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                message.data![0].filename.toString(),
+                style: TextStyle(
+                    color: HexColor(color.messageClientColor.toString())
+                                .computeLuminance() >
+                            0.5
+                        ? Colors.black
+                        : Colors.white),
+              ),
+            ],
           ),
-        )
-      );
+        ),
+      ));
     }
   }
 
@@ -226,15 +229,13 @@ class MessageBubble extends StatelessWidget {
                           children: [
                             Padding(
                               padding: EdgeInsets.only(bottom: 20),
-                              child: _getMessage(
-                                  message, _screenHeight, _screenWidth, context),
+                              child: _getMessage(message, _screenHeight,
+                                  _screenWidth, context),
                             ),
-                                SizedBox(
+                            SizedBox(
                               height: 40,
                               width: 50,
-                              
                             ),
-                                 
                             Positioned(
                               left: message.isUser! ? 0 : 10,
                               right: message.isUser! ? 10 : 0,

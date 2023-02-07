@@ -1,7 +1,7 @@
-import 'package:brokersdk/core/chat_socket.dart';
-import 'package:brokersdk/model/carousel_button.dart';
-import 'package:brokersdk/model/color_preference.dart';
-import 'package:brokersdk/model/message_response.dart';
+import 'package:laraigo_chat/core/chat_socket.dart';
+import 'package:laraigo_chat/model/carousel_button.dart';
+import 'package:laraigo_chat/model/color_preference.dart';
+import 'package:laraigo_chat/model/message_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';

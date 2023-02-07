@@ -1,13 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:brokersdk/core/widget/single_media.dart';
-import 'package:brokersdk/helpers/message_type.dart';
-import 'package:brokersdk/repository/chat_socket_repository.dart';
+import 'package:laraigo_chat/core/widget/single_media.dart';
+import 'package:laraigo_chat/helpers/message_type.dart';
+import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class MediaDialog extends StatefulWidget {
   List<PlatformFile> files;

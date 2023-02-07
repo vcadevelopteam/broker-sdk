@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:brokersdk/core/chat_socket.dart';
-import 'package:brokersdk/helpers/sender_type.dart';
-import 'package:brokersdk/model/color_preference.dart';
-import 'package:brokersdk/model/message.dart';
+import 'package:laraigo_chat/core/chat_socket.dart';
+import 'package:laraigo_chat/helpers/sender_type.dart';
+import 'package:laraigo_chat/model/color_preference.dart';
+import 'package:laraigo_chat/model/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
