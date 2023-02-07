@@ -1,15 +1,17 @@
 // ignore_for_file: use_build_context_synchronously, use_key_in_widget_constructors, must_be_immutable, no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
-import 'package:laraigo_chat/core/widget/media_dialog.dart';
-import 'package:laraigo_chat/helpers/color_convert.dart';
-import 'package:laraigo_chat/helpers/location_manager.dart';
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/model/color_preference.dart';
-import 'package:laraigo_chat/repository/chat_socket_repository.dart';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+
+import '../../helpers/color_convert.dart';
+import '../../helpers/location_manager.dart';
+import '../../helpers/message_type.dart';
+import '../../model/color_preference.dart';
+import '../../repository/chat_socket_repository.dart';
+import 'media_dialog.dart';
 
 class MediaInputModal extends StatefulWidget {
   ColorPreference colorPreference;

@@ -1,5 +1,5 @@
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/model/carousel_button.dart';
+import '../helpers/message_type.dart';
+import 'carousel_button.dart';
 
 class MessageResponse {
   MessageSingleResponse? message;

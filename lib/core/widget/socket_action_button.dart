@@ -1,9 +1,10 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:laraigo_chat/core/chat_socket.dart';
-import 'package:laraigo_chat/core/pages/chat_page.dart';
-import 'package:laraigo_chat/model/color_preference.dart';
 import 'package:flutter/material.dart';
+
+import '../../model/color_preference.dart';
+import '../chat_socket.dart';
+import '../pages/chat_page.dart';
 
 class SocketActionButton extends StatefulWidget {
   String? integrationId;

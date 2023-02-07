@@ -3,15 +3,17 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:laraigo_chat/helpers/identifier_type.dart';
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/helpers/socket_urls.dart';
-import 'package:laraigo_chat/model/integration_response.dart';
-import 'package:laraigo_chat/model/message_response.dart';
-import 'package:laraigo_chat/repository/chat_socket_repository.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+import '../helpers/identifier_type.dart';
+import '../helpers/message_type.dart';
+import '../helpers/socket_urls.dart';
+import '../model/integration_response.dart';
+import '../model/message_response.dart';
+import '../repository/chat_socket_repository.dart';
 
 class ChatSocket {
   final String? _integrationId;

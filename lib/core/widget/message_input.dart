@@ -1,17 +1,19 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'package:flutter/foundation.dart';
-import 'package:laraigo_chat/core/chat_socket.dart';
-import 'package:laraigo_chat/core/widget/media_input_modal.dart';
-import 'package:laraigo_chat/helpers/color_convert.dart';
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/model/color_preference.dart';
-import 'package:laraigo_chat/model/message_response.dart';
-import 'package:laraigo_chat/repository/chat_socket_repository.dart';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../helpers/color_convert.dart';
+import '../../helpers/message_type.dart';
+import '../../model/color_preference.dart';
+import '../../model/message_response.dart';
+import '../../repository/chat_socket_repository.dart';
+import '../chat_socket.dart';
+import 'media_input_modal.dart';
 
 class MessageInput extends StatefulWidget {
   ChatSocket socket;

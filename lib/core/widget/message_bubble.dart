@@ -1,12 +1,14 @@
-import 'package:laraigo_chat/core/chat_socket.dart';
-import 'package:laraigo_chat/core/widget/message_buttons.dart';
-import 'package:laraigo_chat/core/widget/message_carousel.dart';
-import 'package:laraigo_chat/helpers/color_convert.dart';
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+
+import '../../helpers/color_convert.dart';
+import '../../helpers/message_type.dart';
+import '../../model/color_preference.dart';
+import '../../model/message.dart';
+import '../chat_socket.dart';
+import 'message_buttons.dart';
+import 'message_carousel.dart';
 
 class MessageBubble extends StatelessWidget {
   final ChatSocket _socket;

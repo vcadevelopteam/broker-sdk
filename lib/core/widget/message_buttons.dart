@@ -1,10 +1,11 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:laraigo_chat/core/chat_socket.dart';
-import 'package:laraigo_chat/helpers/color_convert.dart';
-import 'package:laraigo_chat/model/color_preference.dart';
-import 'package:laraigo_chat/model/message_response.dart';
 import 'package:flutter/material.dart';
+
+import '../../helpers/color_convert.dart';
+import '../../model/color_preference.dart';
+import '../../model/message_response.dart';
+import '../chat_socket.dart';
 
 class MessageButtons extends StatelessWidget {
   List<MessageResponseData> data;

@@ -5,16 +5,17 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 
-import 'package:laraigo_chat/helpers/api_manager.dart';
-import 'package:laraigo_chat/helpers/identifier_type.dart';
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/helpers/socket_urls.dart';
-import 'package:laraigo_chat/model/integration_response.dart';
-import 'package:laraigo_chat/model/message.dart';
-import 'package:laraigo_chat/model/message_request.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+
+import '../helpers/api_manager.dart';
+import '../helpers/identifier_type.dart';
+import '../helpers/message_type.dart';
+import '../helpers/socket_urls.dart';
+import '../model/integration_response.dart';
+import '../model/message.dart';
+import '../model/message_request.dart';
 
 class ChatSocketRepository {
   static Future<IntegrationResponse> getIntegration(

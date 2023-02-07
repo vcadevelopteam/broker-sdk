@@ -2,11 +2,12 @@
 
 import 'dart:convert';
 
-import 'package:laraigo_chat/core/widget/single_media.dart';
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
+import '../../helpers/message_type.dart';
+import '../../repository/chat_socket_repository.dart';
+import 'single_media.dart';
 
 class MediaDialog extends StatefulWidget {
   List<PlatformFile> files;

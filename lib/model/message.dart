@@ -1,5 +1,5 @@
-import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/model/message_response.dart';
+import '../helpers/message_type.dart';
+import 'message_response.dart';
 
 class Message {
   bool? isUser;
