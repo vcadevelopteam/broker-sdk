@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
@@ -20,9 +22,8 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  bool _visible = true;
   List<Message> messages = [];
-  final f = new DateFormat('dd/mm/yyyy');
+  final f = DateFormat('dd/mm/yyyy');
   ScrollController? scrollController;
 
   @override
@@ -57,8 +58,8 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    var _screenWidth = MediaQuery.of(context).size.width;
-    var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     ColorPreference colorPreference =
         widget.socket.integrationResponse!.metadata!.color!;
     Color backgroundColor =
@@ -111,12 +112,12 @@ class _ChatPageState extends State<ChatPage> {
           backgroundColor:
               HexColor(colorPreference.chatBackgroundColor.toString()),
           body: Container(
-            height: _screenHeight,
+            height: screenHeight,
             decoration: BoxDecoration(color: backgroundColor),
             child: Container(
-                width: _screenWidth,
-                height: _screenHeight,
-                padding: EdgeInsets.all(10),
+                width: screenWidth,
+                height: screenHeight,
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
                     Flexible(

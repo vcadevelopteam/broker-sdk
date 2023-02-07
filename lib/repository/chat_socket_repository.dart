@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 
@@ -60,10 +61,10 @@ class ChatSocketRepository {
         final mimeType = lookupMimeType(url);
 
         if (mimeType!.contains("jpg") ||
-            mimeType!.contains("jpeg") ||
-            mimeType!.contains("png") ||
-            mimeType!.contains("tiff") ||
-            mimeType!.contains("svg")) {
+            mimeType.contains("jpeg") ||
+            mimeType.contains("png") ||
+            mimeType.contains("tiff") ||
+            mimeType.contains("svg")) {
           messageType = "image";
         } else {
           messageType = "video";
@@ -117,6 +118,12 @@ class ChatSocketRepository {
             recipinetId: "HOOK",
             integrationId: pref.getString(IdentifierType.integrationId.name));
         encoded = request.toJson();
+        break;
+      case MessageType.text:
+        break;
+      case MessageType.button:
+        break;
+      case MessageType.carousel:
         break;
     }
 
@@ -180,7 +187,9 @@ class ChatSocketRepository {
     var encodedMessages = messagesToSave.map((e) => e.toJson()).toList();
     pref.setString('messages', jsonEncode(encodedMessages));
 
-    print("Size del arreglo " + encodedMessages.length.toString());
+    if (kDebugMode) {
+      print("Size del arreglo ${encodedMessages.length}");
+    }
   }
 
   static Future<List<dynamic>> getLocalMessages() async {

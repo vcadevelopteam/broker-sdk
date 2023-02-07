@@ -1,18 +1,18 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/model/carousel_button.dart';
 import 'package:laraigo_chat/model/color_preference.dart';
 import 'package:laraigo_chat/model/message_response.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 import '../../helpers/color_convert.dart';
 
 class MessageCarousel extends StatelessWidget {
   ColorPreference color;
-  ChatSocket _socket;
+  final ChatSocket _socket;
   List<MessageResponseData> data;
-  MessageCarousel(this.data, this.color, this._socket);
+  MessageCarousel(this.data, this.color, this._socket, {super.key});
 
   void sendMessage(String text, String title) async {
     var messageSent = await ChatSocket.sendMessage(text, title);
@@ -28,7 +28,7 @@ class MessageCarousel extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: HexColor(color.messageBotColor!),
+                backgroundColor: HexColor(color.messageBotColor!),
               ),
               onPressed: () {
                 sendMessage(buttons[indx].payload.toString(),
@@ -50,20 +50,20 @@ class MessageCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _screenWidth = MediaQuery.of(context).size.width;
-    var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     return Container(
-        margin: EdgeInsets.only(bottom: 20),
+        margin: const EdgeInsets.only(bottom: 20),
         // padding: EdgeInsets.only(bottom: 15),
         constraints:
-            BoxConstraints(maxHeight: _screenHeight * 0.6, minHeight: 10),
-        width: _screenWidth * 0.9,
+            BoxConstraints(maxHeight: screenHeight * 0.6, minHeight: 10),
+        width: screenWidth * 0.9,
         child: PageView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           controller: PageController(viewportFraction: 0.95),
           itemBuilder: (context, index) {
             return Container(
-              padding: EdgeInsets.only(right: 10, left: 10, top: 5),
+              padding: const EdgeInsets.only(right: 10, left: 10, top: 5),
               decoration: BoxDecoration(
                   color: HexColor(color.messageBotColor.toString())
                               .computeLuminance() >

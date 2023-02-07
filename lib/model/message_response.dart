@@ -1,4 +1,3 @@
-import 'package:laraigo_chat/core/widget/messages_area.dart';
 import 'package:laraigo_chat/helpers/message_type.dart';
 import 'package:laraigo_chat/model/carousel_button.dart';
 

@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
+
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -14,7 +16,7 @@ import 'message_bubble.dart';
 
 class MessagesArea extends StatefulWidget {
   ChatSocket socket;
-  MessagesArea(this.socket);
+  MessagesArea(this.socket, {super.key});
 
   @override
   State<MessagesArea> createState() => _MessagesAreaState();
@@ -63,7 +65,7 @@ class _MessagesAreaState extends State<MessagesArea> {
   }
 
   initStreamBuilder() {
-    scrollController = new ScrollController()..addListener(_scrollListener);
+    scrollController = ScrollController()..addListener(_scrollListener);
 
     ColorPreference colorPreference =
         widget.socket.integrationResponse!.metadata!.color!;
@@ -75,18 +77,18 @@ class _MessagesAreaState extends State<MessagesArea> {
           //Si es una lista va a agregar a cada mensaje de la lista al arreglo local
           if (snapshot.data.runtimeType == List) {
             var recievedMessages = snapshot.data as List;
-            recievedMessages.forEach((element) {
+            for (var element in recievedMessages) {
               var message = Message.fromJson(element);
               messages.add(message);
-            });
+            }
           } else if (snapshot.data["data"] != null) {
             var messagesWithMedia = snapshot.data["data"] as List;
-            messagesWithMedia.forEach((element) {
+            for (var element in messagesWithMedia) {
               var message = Message.fromJson(element);
               messages.add(message);
               message.isSaved = true;
               ChatSocketRepository.saveMessageInLocal(message);
-            });
+            }
           } else {
             //Si no es una lista solo va a agregar el mensaje al arreglo
 
@@ -107,7 +109,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                               ScrollViewKeyboardDismissBehavior.onDrag,
                           itemCount: messages.length,
                           itemBuilder: (ctx, indx) {
-                            Widget separator = SizedBox();
+                            Widget separator = const SizedBox();
 
                             // if (indx == messages.length - 1) {
                             //   separator = _labelDay(f.format(DateTime.parse(
@@ -143,25 +145,25 @@ class _MessagesAreaState extends State<MessagesArea> {
                   ],
                 )
               : Expanded(
-                  child: Container(
+                  child: SizedBox(
                     height: MediaQuery.of(context).size.height - kToolbarHeight,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.message,
-                          color: Theme.of(context).textTheme.bodyText1!.color,
+                          color: Theme.of(context).textTheme.bodyLarge!.color,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text("No ha creado mensajes")
+                        const Text("No ha creado mensajes")
                       ],
                     ),
                   ),
                 );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
@@ -175,7 +177,7 @@ class _MessagesAreaState extends State<MessagesArea> {
     });
   }
 
-  final f = new DateFormat('dd/mm/yyyy');
+  final f = DateFormat('dd/mm/yyyy');
   Widget _labelDay(String date) {
     if (f.format(DateTime.parse(
             MessageBubble.parseTime(messages[0].messageDate!))) ==
@@ -183,13 +185,13 @@ class _MessagesAreaState extends State<MessagesArea> {
       date = "Hoy";
     }
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
       decoration: BoxDecoration(
-          color: Color.fromRGBO(106, 194, 194, 1),
+          color: const Color.fromRGBO(106, 194, 194, 1),
           borderRadius: BorderRadius.circular(10)),
       child: Text(
         date,
-        style: TextStyle(color: Colors.black),
+        style: const TextStyle(color: Colors.black),
       ),
     );
   }
@@ -199,15 +201,15 @@ class _MessagesAreaState extends State<MessagesArea> {
     Widget downButton = Positioned(
       left: 0,
       child: AnimatedOpacity(
-        duration: Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 500),
         opacity: _visible ? 1.0 : 0.0,
         child: Transform.rotate(
           angle: 270 * math.pi / 180,
           child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
-                primary: Color.fromRGBO(106, 194, 194, 1),
-                padding: EdgeInsets.all(0),
+                shape: const CircleBorder(),
+                backgroundColor: const Color.fromRGBO(106, 194, 194, 1),
+                padding: const EdgeInsets.all(0),
               ),
               onPressed: () {
                 scrollController!.animateTo(
@@ -219,8 +221,8 @@ class _MessagesAreaState extends State<MessagesArea> {
                   _visible = true;
                 });
               },
-              icon: Icon(Icons.arrow_back),
-              label: Text("")),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text("")),
         ),
       ),
     );

@@ -1,17 +1,12 @@
-import 'dart:ui';
-
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_buttons.dart';
 import 'package:laraigo_chat/core/widget/message_carousel.dart';
 import 'package:laraigo_chat/helpers/color_convert.dart';
 import 'package:laraigo_chat/helpers/message_type.dart';
-import 'package:laraigo_chat/model/message_response.dart';
 import 'package:laraigo_chat/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-
-import '../../model/message.dart';
 
 class MessageBubble extends StatelessWidget {
   final ChatSocket _socket;
@@ -21,14 +16,15 @@ class MessageBubble extends StatelessWidget {
   final Color textColor = Colors.black;
   final String imageUrl;
   const MessageBubble(
-      this.message, this.indx, this.color, this.imageUrl, this._socket);
+      this.message, this.indx, this.color, this.imageUrl, this._socket,
+      {super.key});
 
   static String parseTime(int time) {
     var dt = DateTime.fromMillisecondsSinceEpoch(time);
     return dt.toString();
   }
 
-  Widget _getMessage(Message message, _screenHeight, _screenWidth, context) {
+  Widget _getMessage(Message message, screenHeight, screenWidth, context) {
     if (message.type == MessageType.text) {
       return Text(
           message.data![0].title!.isNotEmpty
@@ -59,18 +55,18 @@ class MessageBubble extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   child: Dialog(
-                    insetPadding: EdgeInsets.all(0),
+                    insetPadding: const EdgeInsets.all(0),
                     backgroundColor: Colors.transparent,
-                    child: Container(
-                      width: _screenWidth,
-                      height: _screenHeight,
+                    child: SizedBox(
+                      width: screenWidth,
+                      height: screenHeight,
                       child: PageView.builder(
-                          physics: BouncingScrollPhysics(),
+                          physics: const BouncingScrollPhysics(),
                           controller: PageController(viewportFraction: 0.95),
                           itemCount: 1,
                           itemBuilder: (ctx, indx) {
                             return Container(
-                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
                                   image: DecorationImage(
@@ -86,7 +82,7 @@ class MessageBubble extends StatelessWidget {
         },
         child: Container(
           width: double.infinity,
-          height: _screenHeight * 0.25,
+          height: screenHeight * 0.25,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               image: DecorationImage(
@@ -97,8 +93,8 @@ class MessageBubble extends StatelessWidget {
     } else if (message.type == MessageType.button) {
       return MessageButtons(message.data!, color, _socket);
     } else if (message.type == MessageType.location) {
-      return Container(
-        width: _screenWidth * 0.5,
+      return SizedBox(
+        width: screenWidth * 0.5,
         height: 150,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
@@ -126,7 +122,7 @@ class MessageBubble extends StatelessWidget {
         ),
       );
     } else {
-      return Container(
+      return SizedBox(
         child: Padding(
           padding:
               const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
@@ -161,15 +157,15 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final f = new DateFormat('hh:mm');
-    var _screenWidth = MediaQuery.of(context).size.width;
-    var _screenHeight = MediaQuery.of(context).size.height;
+    final f = DateFormat('hh:mm');
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
 
     return Align(
       alignment:
           !message.isUser! ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
-        margin: EdgeInsets.all(5),
+        margin: const EdgeInsets.all(5),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -185,18 +181,18 @@ class MessageBubble extends StatelessWidget {
                     topRight: !message.isUser!
                         ? const Radius.circular(10)
                         : const Radius.circular(0),
-                    bottomLeft: Radius.circular(10),
+                    bottomLeft: const Radius.circular(10),
                     topLeft: message.isUser!
                         ? const Radius.circular(10)
                         : const Radius.circular(0),
-                    bottomRight: Radius.circular(10)),
+                    bottomRight: const Radius.circular(10)),
                 elevation: 10,
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   constraints: BoxConstraints(
-                    maxWidth: _screenWidth * 0.7,
+                    maxWidth: screenWidth * 0.7,
                     minHeight: 10,
-                    maxHeight: _screenHeight * 0.6,
+                    maxHeight: screenHeight * 0.6,
                     minWidth: 10,
                   ),
                   decoration: BoxDecoration(
@@ -223,11 +219,11 @@ class MessageBubble extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: _getMessage(message, _screenHeight,
-                                      _screenWidth, context),
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: _getMessage(message, screenHeight,
+                                      screenWidth, context),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 40,
                                   width: 50,
                                 ),

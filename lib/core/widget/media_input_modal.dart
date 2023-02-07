@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'package:laraigo_chat/core/widget/media_dialog.dart';
 import 'package:laraigo_chat/helpers/color_convert.dart';
-import 'package:laraigo_chat/helpers/locationManager.dart';
+import 'package:laraigo_chat/helpers/location_manager.dart';
 import 'package:laraigo_chat/helpers/message_type.dart';
 import 'package:laraigo_chat/model/color_preference.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
@@ -39,7 +39,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(children: [
-              Text(
+              const Text(
                 "Archivos a compartir",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
@@ -53,7 +53,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                   },
                 ),
               ),
-              Expanded(child: SizedBox()),
+              const Expanded(child: SizedBox()),
               isSendingMessage
                   ? Align(
                       alignment: Alignment.center,
@@ -156,7 +156,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: Icon(Icons.cancel)),
+                    child: const Icon(Icons.cancel)),
               ],
             ),
             TextButton(
@@ -193,7 +193,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                 0.5
                             ? Colors.black
                             : Colors.white),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Text(
@@ -255,7 +255,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                 0.5
                             ? Colors.black
                             : Colors.white),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Text(
@@ -277,7 +277,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                       context: context,
                       builder: (locationDialogContext) {
                         return Dialog(
-                          child: Container(
+                          child: SizedBox(
                             width: _screenWidth * 0.2,
                             height: _screenHeight * 0.1,
                             child: Center(
@@ -312,7 +312,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                 0.5
                             ? Colors.black
                             : Colors.white),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Text('Compartir ubicación',

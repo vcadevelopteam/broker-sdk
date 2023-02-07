@@ -1,62 +1,57 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
-import 'dart:convert';
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/media_input_modal.dart';
 import 'package:laraigo_chat/helpers/color_convert.dart';
 import 'package:laraigo_chat/helpers/message_type.dart';
 import 'package:laraigo_chat/model/color_preference.dart';
-import 'package:laraigo_chat/model/icons_preference.dart.dart';
 import 'package:laraigo_chat/model/message_response.dart';
-import 'package:laraigo_chat/model/personalization.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:uuid/uuid.dart';
 
 class MessageInput extends StatefulWidget {
   ChatSocket socket;
-  MessageInput(this.socket);
+  MessageInput(this.socket, {super.key});
 
   @override
   State<MessageInput> createState() => _MessageInputState();
 }
 
 class _MessageInputState extends State<MessageInput> {
-  var _textController = TextEditingController();
+  final _textController = TextEditingController();
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
       var response = await ChatSocketRepository.sendMessage(
           _textController.text, "null", MessageType.text);
 
-      List<MessageResponseData> data = [];
-      data.add(MessageResponseData(
-        message: _textController.text,
-      ));
-      var messageSent = MessageResponse(
-              type: MessageType.text.name,
-              isUser: true,
-              error: false,
-              message: MessageSingleResponse(
-                  createdAt: DateTime.now().millisecondsSinceEpoch,
-                  data: data,
-                  type: MessageType.text.name,
-                  id: Uuid().v4().toString()),
-              receptionDate: DateTime.now().millisecondsSinceEpoch)
-          .toJson();
+      if (response.statusCode != 500 || response.statusCode != 400) {
+        List<MessageResponseData> data = [];
+        data.add(MessageResponseData(
+          message: _textController.text,
+        ));
+        var messageSent = MessageResponse(
+                type: MessageType.text.name,
+                isUser: true,
+                error: false,
+                message: MessageSingleResponse(
+                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    data: data,
+                    type: MessageType.text.name,
+                    id: const Uuid().v4().toString()),
+                receptionDate: DateTime.now().millisecondsSinceEpoch)
+            .toJson();
 
-      setState(() {
-        widget.socket.controller!.sink.add(messageSent);
-      });
+        setState(() {
+          widget.socket.controller!.sink.add(messageSent);
+        });
 
-      _textController.clear();
+        _textController.clear();
+      }
     }
   }
 
@@ -86,7 +81,7 @@ class _MessageInputState extends State<MessageInput> {
                           createdAt: DateTime.now().millisecondsSinceEpoch,
                           data: data,
                           type: type.name,
-                          id: Uuid().v4().toString()),
+                          id: const Uuid().v4().toString()),
                       receptionDate: DateTime.now().millisecondsSinceEpoch)
                   .toJson();
 
@@ -111,7 +106,7 @@ class _MessageInputState extends State<MessageInput> {
                         createdAt: DateTime.now().millisecondsSinceEpoch,
                         data: data,
                         type: type.name,
-                        id: Uuid().v4().toString()),
+                        id: const Uuid().v4().toString()),
                     receptionDate: DateTime.now().millisecondsSinceEpoch)
                 .toJson();
 
@@ -138,7 +133,7 @@ class _MessageInputState extends State<MessageInput> {
                           createdAt: DateTime.now().millisecondsSinceEpoch,
                           data: data,
                           type: type.name,
-                          id: Uuid().v4().toString()),
+                          id: const Uuid().v4().toString()),
                       receptionDate: DateTime.now().millisecondsSinceEpoch)
                   .toJson();
 
@@ -147,13 +142,10 @@ class _MessageInputState extends State<MessageInput> {
           }
           break;
         case MessageType.text:
-          // TODO: Handle this case.
           break;
         case MessageType.button:
-          // TODO: Handle this case.
           break;
         case MessageType.carousel:
-          // TODO: Handle this case.
           break;
       }
     }
@@ -164,22 +156,16 @@ class _MessageInputState extends State<MessageInput> {
 
   @override
   Widget build(BuildContext context) {
-    var _screenWidth = MediaQuery.of(context).size.width;
-    var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
+    var screenWidth = MediaQuery.of(context).size.width;
     ColorPreference colorPreference =
         widget.socket.integrationResponse!.metadata!.color!;
     Color backgroundColor =
         HexColor(colorPreference.chatBackgroundColor.toString());
-    IconsPreference headerIcons =
-        widget.socket.integrationResponse!.metadata!.icons!;
-    Personalization header =
-        widget.socket.integrationResponse!.metadata!.personalization!;
-    Color textColor =
-        backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+
     return SafeArea(
       child: Container(
         color: backgroundColor,
-        width: _screenWidth,
+        width: screenWidth,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
@@ -226,23 +212,22 @@ class _MessageInputState extends State<MessageInput> {
                                         MessageType.file);
                                     break;
                                   case MessageType.text:
-                                    // TODO: Handle this case.
                                     break;
                                   case MessageType.button:
-                                    // TODO: Handle this case.
                                     break;
                                   case MessageType.carousel:
-                                    // TODO: Handle this case.
                                     break;
                                 }
                               }
                             } catch (ex) {
-                              print("No se envia nada");
+                              if (kDebugMode) {
+                                print("No se envia nada");
+                              }
                             }
                           });
                         },
                         child: Container(
-                          margin: EdgeInsets.only(right: 10),
+                          margin: const EdgeInsets.only(right: 10),
                           decoration: BoxDecoration(
                             color: HexColor(colorPreference
                                 .messageBotColor!), // border color
@@ -272,7 +257,7 @@ class _MessageInputState extends State<MessageInput> {
                                 fontSize: 18,
                                 color: Theme.of(context)
                                     .textTheme
-                                    .bodyText1!
+                                    .bodyLarge!
                                     .color),
                             decoration: InputDecoration(
                               filled: true,
@@ -284,17 +269,17 @@ class _MessageInputState extends State<MessageInput> {
                               labelStyle: TextStyle(
                                   color: Theme.of(context)
                                       .textTheme
-                                      .bodyText1!
+                                      .bodyLarge!
                                       .color),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(25.0),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Colors.transparent,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(25.0),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Colors.transparent,
                                   width: 2.0,
                                 ),
@@ -308,16 +293,16 @@ class _MessageInputState extends State<MessageInput> {
                 }),
               ),
               Container(
-                margin: EdgeInsets.only(left: 10),
+                margin: const EdgeInsets.only(left: 10),
                 child: StreamBuilder(builder: (context, snapshot) {
                   return GestureDetector(
                     onTap: () {
-                      if (_textController.text.length > 0) {
+                      if (_textController.text.isNotEmpty) {
                         sendMessage();
                       }
                     },
                     child: Container(
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: HexColor(
                             colorPreference.messageBotColor!), // border color

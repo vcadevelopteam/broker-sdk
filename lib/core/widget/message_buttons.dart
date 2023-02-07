@@ -1,20 +1,17 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/helpers/color_convert.dart';
-import 'package:laraigo_chat/helpers/message_type.dart';
 import 'package:laraigo_chat/model/color_preference.dart';
 import 'package:laraigo_chat/model/message_response.dart';
-import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:uuid/uuid.dart';
 
 class MessageButtons extends StatelessWidget {
   List<MessageResponseData> data;
-  ChatSocket _socket;
+  final ChatSocket _socket;
   ColorPreference color;
 
-  MessageButtons(this.data, this.color, this._socket);
+  MessageButtons(this.data, this.color, this._socket, {super.key});
 
   sendMessage(String text, String title) async {
     var messageSent = await ChatSocket.sendMessage(text, title);
@@ -36,11 +33,11 @@ class MessageButtons extends StatelessWidget {
                   ? Colors.black
                   : Colors.white),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10), color: Colors.white),
           child: ListView.builder(
@@ -52,7 +49,7 @@ class MessageButtons extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: HexColor(color.messageBotColor!),
+                      backgroundColor: HexColor(color.messageBotColor!),
                     ),
                     onPressed: () {
                       sendMessage(data[0].buttons![indx].payload!,

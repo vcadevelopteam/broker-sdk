@@ -3,8 +3,6 @@ description: An easy flutter implementation of Laraigo's chat services.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
-
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -19,6 +17,8 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
 homepage: https://github.com/vcadevelopteam/broker-sdk
+false_secrets:
+  - /android/app/src/main/AndroidManifest.xml
 
 environment:
   sdk: ">=2.18.6 <3.0.0"

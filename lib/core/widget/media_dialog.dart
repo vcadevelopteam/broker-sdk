@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 
 import 'package:laraigo_chat/core/widget/single_media.dart';
@@ -10,7 +12,8 @@ class MediaDialog extends StatefulWidget {
   List<PlatformFile> files;
   Function setStateCustom;
   bool isSendingMessage;
-  MediaDialog(this.files, this.setStateCustom, this.isSendingMessage);
+  MediaDialog(this.files, this.setStateCustom, this.isSendingMessage,
+      {super.key});
 
   @override
   State<MediaDialog> createState() => _MediaDialogState();
@@ -19,14 +22,14 @@ class MediaDialog extends StatefulWidget {
 class _MediaDialogState extends State<MediaDialog> {
   @override
   Widget build(BuildContext context) {
-    var _screenWidth = MediaQuery.of(context).size.width;
-    var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     return Dialog(
       insetPadding: const EdgeInsets.all(0),
       backgroundColor: Colors.transparent,
       child: SizedBox(
-          width: _screenWidth,
-          height: _screenHeight * 0.5,
+          width: screenWidth,
+          height: screenHeight * 0.5,
           child: Stack(children: [
             PageView.builder(
                 physics: const BouncingScrollPhysics(),
@@ -86,7 +89,8 @@ class _MediaDialogState extends State<MediaDialog> {
                                     var decodedJson = jsonDecode(resp.body);
                                     responseUrls.add(decodedJson["url"]);
                                   }
-                                  await Future.delayed(Duration(seconds: 2));
+                                  await Future.delayed(
+                                      const Duration(seconds: 2));
                                   setState(() {
                                     widget.isSendingMessage = false;
                                   });
@@ -107,6 +111,5 @@ class _MediaDialogState extends State<MediaDialog> {
                   ),
           ])),
     );
-    ;
   }
 }
