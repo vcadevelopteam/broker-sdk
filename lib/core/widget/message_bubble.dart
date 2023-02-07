@@ -196,7 +196,7 @@ class MessageBubble extends StatelessWidget {
                   constraints: BoxConstraints(
                     maxWidth: _screenWidth * 0.7,
                     minHeight: 10,
-                    maxHeight: _screenHeight * 0.5,
+                    maxHeight: _screenHeight * 0.6,
                     minWidth: 10,
                   ),
                   decoration: BoxDecoration(

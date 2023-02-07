@@ -225,7 +225,7 @@ class _MessagesAreaState extends State<MessagesArea> {
       ),
     );
     return Stack(
-      children: [mystreambuilder, downButton],
+      children: [mystreambuilder],
     );
   }
 }

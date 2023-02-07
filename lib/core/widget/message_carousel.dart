@@ -56,7 +56,7 @@ class MessageCarousel extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 20),
         // padding: EdgeInsets.only(bottom: 15),
         constraints:
-            BoxConstraints(maxHeight: _screenHeight * 0.5, minHeight: 10),
+            BoxConstraints(maxHeight: _screenHeight * 0.6, minHeight: 10),
         width: _screenWidth * 0.9,
         child: PageView.builder(
           physics: BouncingScrollPhysics(),
@@ -75,18 +75,22 @@ class MessageCarousel extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                 
                   Padding(
-                    padding: const EdgeInsets.only(top:10.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(2.5),
-                      child: Image.network(data[index].mediaUrl!, fit: BoxFit.contain, height: 200, )),
+                        borderRadius: BorderRadius.circular(2.5),
+                        child: Image.network(
+                          data[index].mediaUrl!,
+                          fit: BoxFit.contain,
+                          height: 200,
+                        )),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical:10.0),
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Text(
                       data[index].title!,
-                      style: TextStyle( fontWeight: FontWeight.w600,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
                         color: HexColor(color.messageBotColor.toString())
                                     .computeLuminance() <
                                 0.5
@@ -95,18 +99,18 @@ class MessageCarousel extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Flexible(
-                    fit: FlexFit.loose,
+                  Expanded(
                     child: Text(data[index].description!,
-                      style: TextStyle( 
-                        color: HexColor(color.messageBotColor.toString())
-                                    .computeLuminance() <
-                                0.5
-                            ? Colors.black
-                            : Colors.white,
-                      )),),
+                        style: TextStyle(
+                          color: HexColor(color.messageBotColor.toString())
+                                      .computeLuminance() <
+                                  0.5
+                              ? Colors.black
+                              : Colors.white,
+                        )),
+                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical:8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: getButton(data[index].buttons!),
                   )
                 ],
