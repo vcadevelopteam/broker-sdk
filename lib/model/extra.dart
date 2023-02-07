@@ -1,3 +1,5 @@
+// allows you identify extra information to upload new data between user and laraigo services
+
 class Extra {
   String? cssBody;
   String? cssHeader;

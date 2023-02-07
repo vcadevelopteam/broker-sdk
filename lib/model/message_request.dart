@@ -1,3 +1,4 @@
+//Allows you to identify data to get and send information with laraigo's services
 class MessageRequest {
   String? integrationId;
   String? sessionUuid;

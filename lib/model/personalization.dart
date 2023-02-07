@@ -1,3 +1,4 @@
+//Allows you to identify the information for the header used on the chat
 class Personalization {
   String? headerSubtitle;
   String? headerTitle;

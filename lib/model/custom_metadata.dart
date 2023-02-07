@@ -4,6 +4,8 @@ import 'form_field.dart';
 import 'icons_preference.dart.dart';
 import 'personalization.dart';
 
+//Data used to integrate chat services
+
 class CustomMetadata {
   int? applicationId;
   int? integrationId;

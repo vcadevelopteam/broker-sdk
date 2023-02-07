@@ -1,3 +1,5 @@
+// Allows you to identify the icon preference displayed in chat
+
 class IconsPreference {
   String? chatbotImage;
   String? chatHeaderImage;

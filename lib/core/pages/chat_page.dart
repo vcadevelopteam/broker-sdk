@@ -48,16 +48,21 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   fillWithChatHistory() async {
+    //change state to update stream
     setState(() {});
     //Setea el estado para actualizar el stream a que responda
+    
     var savedMessages = await ChatSocketRepository.getLocalMessages();
     await Future.delayed(const Duration(seconds: 1));
+    //add messages list
     //Agrega una lista de mensajes
     widget.socket.controller!.sink.add(savedMessages);
   }
 
   @override
   Widget build(BuildContext context) {
+
+    //identify properties to customize the chat screen 
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     ColorPreference colorPreference =
@@ -128,6 +133,7 @@ class _ChatPageState extends State<ChatPage> {
                             : Container(),
                       ),
                     ),
+                    //send socket information to MessageInput component
                     MessageInput(widget.socket)
                   ],
                 )),
