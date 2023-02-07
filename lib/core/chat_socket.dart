@@ -15,6 +15,9 @@ import '../model/integration_response.dart';
 import '../model/message_response.dart';
 import '../repository/chat_socket_repository.dart';
 
+/*
+Main package class, it encapsules the main methods for the first initialization of the ChatSocket
+ */
 class ChatSocket {
   final String? _integrationId;
   WebSocketChannel? channel = null;
@@ -29,6 +32,7 @@ class ChatSocket {
     return ChatSocket(integrationId, integrationResponse);
   }
 
+//The connect method allows user to connect to the Laraigo Chat Web using an userId and sessionId
   Future<void> connect() async {
     var userId = await _generateRandomId(IdentifierType.userId);
     var sessionId = await _generateRandomId(IdentifierType.sessionId);
@@ -42,11 +46,14 @@ class ChatSocket {
     }
   }
 
+//The disconect method allows user to disconnect from the ChatSocket
+//The disconect method set nulls to dispose the chat socket current initialization to allow a future reconnection
   void disconnect() {
     channel = null;
     controller = null;
   }
 
+  //Method to generate a randonId for Identifiers
   Future<String> _generateRandomId(IdentifierType idType) async {
     final pref = await SharedPreferences.getInstance();
     if (pref.getString(idType.name) != null) {
@@ -57,6 +64,7 @@ class ChatSocket {
     return id;
   }
 
+  //Method to send text messages
   static Future<Map?> sendMessage(String text, String title) async {
     var response =
         await ChatSocketRepository.sendMessage(text, title, MessageType.text);

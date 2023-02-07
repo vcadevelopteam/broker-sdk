@@ -15,6 +15,9 @@ import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
 import 'media_input_modal.dart';
 
+/*
+This widget is used as an input for the whole chat page
+ */
 class MessageInput extends StatefulWidget {
   ChatSocket socket;
   MessageInput(this.socket, {super.key});

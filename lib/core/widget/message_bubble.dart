@@ -10,6 +10,10 @@ import '../chat_socket.dart';
 import 'message_buttons.dart';
 import 'message_carousel.dart';
 
+/*
+This widget is used for showing a single message, the widget changes between the types of messages
+we can filter the message using the MessageType parameter and show different widgets 
+ */
 class MessageBubble extends StatelessWidget {
   final ChatSocket _socket;
   final Message message;

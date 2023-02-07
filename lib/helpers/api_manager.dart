@@ -1,9 +1,15 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+/*
+Class that encapsule all the API Manager methods to allow seding and receiving 
+Http Requests from/to the online server
+ */
 
+//Types of requests
 enum RequestType { get, post, put, delete }
 
+//Method that allows getting the headers to use in the request
 Future<Map<String, String>> _getHeaders(RequestType type) async {
   final Map<String, String> headers = {
     HttpHeaders.acceptHeader: 'application/json',
@@ -15,6 +21,7 @@ Future<Map<String, String>> _getHeaders(RequestType type) async {
 }
 
 class ApiManager {
+  /*Template for GET requests */
   static Future<http.Response> get(String path,
       {Map<String, dynamic> params = const {}}) async {
     var uri = Uri.parse(path);
@@ -28,6 +35,7 @@ class ApiManager {
     return decorateResponse(response);
   }
 
+  /*Template for POST requests */
   static Future<http.Response> post(
     String path, {
     Map<String, dynamic> params = const {},
@@ -46,6 +54,7 @@ class ApiManager {
   }
 }
 
+/*A custom response to any of the previous requests*/
 http.Response decorateResponse(http.Response response) {
   debugPrint('req: ${response.request!.url} ${response.statusCode}');
   final code = response.statusCode;
@@ -74,6 +83,7 @@ http.Response decorateResponse(http.Response response) {
   }
 }
 
+/*Class that allow handling the exceptions and showing them to the users */
 class RequestException extends HttpException {
   final int status;
 
