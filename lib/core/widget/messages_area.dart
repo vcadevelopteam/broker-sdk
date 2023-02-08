@@ -5,6 +5,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 
 import '../../helpers/sender_type.dart';
@@ -48,7 +49,7 @@ class _MessagesAreaState extends State<MessagesArea> {
     scrollController!.animateTo(
       scrollController!.position.maxScrollExtent,
       curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(seconds: 3),
     );
   }
 
@@ -102,6 +103,14 @@ class _MessagesAreaState extends State<MessagesArea> {
             message.isSaved = true;
             ChatSocketRepository.saveMessageInLocal(message);
           }
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            if (messages.isNotEmpty) {
+              scrollController!.animateTo(
+                  scrollController!.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut);
+            }
+          });
 
           return messages.isNotEmpty
               ? Column(
@@ -180,6 +189,8 @@ class _MessagesAreaState extends State<MessagesArea> {
       decodedJson['sender'] = SenderType.chat.name;
       widget.socket.controller!.sink.add(decodedJson);
     });
+    await Future.delayed(const Duration(milliseconds: 500));
+    scrollDown();
   }
 
   final f = DateFormat('dd/mm/yyyy');

@@ -58,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButton: SocketButton(
             width: 100,
             height: 80,
+            customMessage: "Hola",
             circularProgressIndicatorColor: Colors.amber,
             integrationId: '63d8224c5c8a9dde22652275',
             child: Container(

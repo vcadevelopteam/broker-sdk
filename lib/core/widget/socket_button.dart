@@ -12,12 +12,14 @@ class SocketButton extends StatefulWidget {
   Color? circularProgressIndicatorColor;
   double? height;
   double? width;
+  String customMessage;
 
   SocketButton(
       {required this.child,
       required this.integrationId,
       this.circularProgressIndicatorColor,
       this.width,
+      this.customMessage = "",
       this.height});
 
   @override
@@ -47,8 +49,13 @@ class _SocketButtonState extends State<SocketButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ChatPage(socket: socket!)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ChatPage(
+                      socket: socket!,
+                      customMessage: widget.customMessage,
+                    )));
       },
       child: SizedBox(
         height: widget.height,

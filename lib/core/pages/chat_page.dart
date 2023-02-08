@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:flutter/scheduler.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
@@ -8,12 +9,13 @@ import 'package:laraigo_chat/model/models.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../helpers/message_type.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({
-    Key? key,
-    required this.socket,
-  }) : super(key: key);
+  String customMessage;
+  ChatPage({required this.socket, this.customMessage = ""});
 
   final ChatSocket socket;
 
@@ -45,15 +47,44 @@ class _ChatPageState extends State<ChatPage> {
   initSocket() async {
     await widget.socket.connect();
     await fillWithChatHistory();
+    await sendCustomMessage(widget.customMessage);
+  }
+
+  sendCustomMessage(String customMessage) async {
+    if (customMessage.isNotEmpty) {
+      var response = await ChatSocketRepository.sendMessage(
+          customMessage, "null", MessageType.text);
+
+      if (response.statusCode != 500 || response.statusCode != 400) {
+        List<MessageResponseData> data = [];
+        data.add(MessageResponseData(
+          message: customMessage,
+        ));
+        var messageSent = MessageResponse(
+                type: MessageType.text.name,
+                isUser: true,
+                error: false,
+                message: MessageSingleResponse(
+                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    data: data,
+                    type: MessageType.text.name,
+                    id: const Uuid().v4().toString()),
+                receptionDate: DateTime.now().millisecondsSinceEpoch)
+            .toJson();
+
+        setState(() {
+          widget.socket.controller!.sink.add(messageSent);
+        });
+      }
+    }
   }
 
   fillWithChatHistory() async {
     //change state to update stream
     setState(() {});
     //Setea el estado para actualizar el stream a que responda
-    
+
     var savedMessages = await ChatSocketRepository.getLocalMessages();
-    await Future.delayed(const Duration(seconds: 1));
     //add messages list
     //Agrega una lista de mensajes
     widget.socket.controller!.sink.add(savedMessages);
@@ -61,8 +92,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    //identify properties to customize the chat screen 
+    //identify properties to customize the chat screen
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     ColorPreference colorPreference =
