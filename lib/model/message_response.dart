@@ -1,8 +1,7 @@
-// Allows you to classify the message type
-
 import '../helpers/message_type.dart';
 import 'carousel_button.dart';
 
+// Allows you to classify the message type
 class MessageResponse {
   MessageSingleResponse? message;
   bool? error;

@@ -1,7 +1,6 @@
-//Allows you to identify data from the IntegrationResponse needed to start laraigo's service
-
 import 'custom_metadata.dart';
 
+//Allows you to identify data from the IntegrationResponse needed to start laraigo's service
 class IntegrationResponse {
   String? applicationId;
   DateTime? createdAt;

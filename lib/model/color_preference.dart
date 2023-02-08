@@ -1,5 +1,4 @@
 // Allows to identify the color preference to use in the UI of the chat 
-
 class ColorPreference {
   String? chatBackgroundColor;
   String? chatBorderColor;

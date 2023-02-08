@@ -1,5 +1,4 @@
 // allows you to identify the information from the input chat
-
 class FormField {
   String? fielId;
   String? inputValidation;

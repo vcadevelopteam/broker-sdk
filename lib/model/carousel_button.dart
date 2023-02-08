@@ -1,5 +1,4 @@
 //Allows to identify the information contained in the carousel buttons
-
 class CarouselButton {
   String? payload;
   String? text;
