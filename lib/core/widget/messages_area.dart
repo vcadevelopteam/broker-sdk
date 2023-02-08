@@ -162,7 +162,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                         const SizedBox(
                           width: 10,
                         ),
-                        const Text("No ha creado mensajes")
+                        const Text("No ha enviado mensajes")
                       ],
                     ),
                   ),
