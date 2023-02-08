@@ -103,7 +103,7 @@ class ChatSocketRepository {
         break;
       case MessageType.location:
         //In case of location it gets the coordinates that are going to be sent
-        var position = data["data"] as Position;
+        var position = data["data"][0] as Position;
         MessageRequest request = MessageRequest(
             type: type.name,
             data: MessageRequestData(

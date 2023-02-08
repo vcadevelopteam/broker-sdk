@@ -62,6 +62,34 @@ class _MessageInputState extends State<MessageInput> {
 
   void sendMultiMediaMessage(Map media, MessageType type) async {
     List<Map<String, dynamic>> messagesToSend = [];
+    if (type == MessageType.location) {
+      List<MessageResponseData> data = [];
+
+      var response = await ChatSocketRepository.sendMediaMessage(media, type);
+      var position = media["data"][0] as Position;
+      data.add(MessageResponseData(
+          lat: position.latitude,
+          long: position.longitude,
+          message: "Se envió data de localización"));
+      if (response.statusCode != 500 || response.statusCode != 400) {
+        var messageSent = MessageResponse(
+                type: type.name,
+                isUser: true,
+                error: false,
+                message: MessageSingleResponse(
+                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    data: data,
+                    type: type.name,
+                    id: const Uuid().v4().toString()),
+                receptionDate: DateTime.now().millisecondsSinceEpoch)
+            .toJson();
+
+        messagesToSend.add(messageSent);
+        widget.socket.controller!.sink.add({'data': messagesToSend});
+      }
+      return;
+    }
+
     var toUse = media["data"] as List;
     for (String element in toUse) {
       List<MessageResponseData> data = [];
@@ -95,28 +123,6 @@ class _MessageInputState extends State<MessageInput> {
           }
           break;
         case MessageType.location:
-          var response =
-              await ChatSocketRepository.sendMediaMessage(media, type);
-          var position = media["data"] as Position;
-          data.add(MessageResponseData(
-              lat: position.latitude,
-              long: position.longitude,
-              message: "Se envió data de localización"));
-          if (response.statusCode != 500 || response.statusCode != 400) {
-            var messageSent = MessageResponse(
-                    type: type.name,
-                    isUser: true,
-                    error: false,
-                    message: MessageSingleResponse(
-                        createdAt: DateTime.now().millisecondsSinceEpoch,
-                        data: data,
-                        type: type.name,
-                        id: const Uuid().v4().toString()),
-                    receptionDate: DateTime.now().millisecondsSinceEpoch)
-                .toJson();
-
-            messagesToSend.add(messageSent);
-          }
           break;
 
         case MessageType.file:
@@ -197,6 +203,9 @@ class _MessageInputState extends State<MessageInput> {
                             try {
                               var mapValueInBottomSheet =
                                   valueInBottomSheet as Map;
+
+                              print(mapValueInBottomSheet["data"]);
+
                               if (mapValueInBottomSheet["data"].isNotEmpty) {
                                 var dataType = mapValueInBottomSheet["type"]
                                     as MessageType;
@@ -207,8 +216,7 @@ class _MessageInputState extends State<MessageInput> {
                                         MessageType.media);
                                     break;
                                   case MessageType.location:
-                                    sendMultiMediaMessage(
-                                        mapValueInBottomSheet["data"],
+                                    sendMultiMediaMessage(mapValueInBottomSheet,
                                         MessageType.location);
                                     break;
 

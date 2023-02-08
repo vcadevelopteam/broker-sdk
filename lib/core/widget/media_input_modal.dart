@@ -300,13 +300,14 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           ),
                         );
                       }).then((value) {
-                    Navigator.pop(
-                        context, {"type": MessageType.location, "data": value});
+                    Navigator.pop(context, value);
                   });
                   Position location = await LocationManager.determinePosition();
 
-                  Navigator.pop(context,
-                      {"type": MessageType.location, "data": location});
+                  Navigator.pop(context, {
+                    "type": MessageType.location,
+                    "data": [location]
+                  });
                 }),
                 child: Row(
                   children: [

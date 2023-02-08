@@ -84,8 +84,9 @@ class _MessagesAreaState extends State<MessagesArea> {
               var message = Message.fromJson(element);
               messages.add(message);
             }
-          } else if (snapshot.data["data"] != null) {
-            var messagesWithMedia = snapshot.data["data"] as List;
+          } else if ((snapshot.data as Map<String, dynamic>)["data"] != null) {
+            var messagesWithMedia =
+                (snapshot.data as Map<String, dynamic>)["data"] as List;
             for (var element in messagesWithMedia) {
               var message = Message.fromJson(element);
               messages.add(message);
@@ -95,7 +96,8 @@ class _MessagesAreaState extends State<MessagesArea> {
           } else {
             //Si no es una lista solo va a agregar el mensaje al arreglo
 
-            var message = Message.fromJson(snapshot.data);
+            var message =
+                Message.fromJson((snapshot.data as Map<String, dynamic>));
             messages.add(message);
             message.isSaved = true;
             ChatSocketRepository.saveMessageInLocal(message);
