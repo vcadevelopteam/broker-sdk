@@ -23,6 +23,14 @@ migrate_working_dir/
 
 # Flutter/Dart/Pub related
 **/doc/api/
+doc
+web
+windows
+android
+macos
+linux
+android
+ios
 **/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
@@ -41,4 +49,5 @@ app.*.map.json
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
+
 /android/app/release
