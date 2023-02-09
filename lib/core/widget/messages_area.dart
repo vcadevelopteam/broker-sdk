@@ -190,7 +190,10 @@ class _MessagesAreaState extends State<MessagesArea> {
       widget.socket.controller!.sink.add(decodedJson);
     });
     await Future.delayed(const Duration(milliseconds: 500));
-    scrollDown();
+    var messagesCount = await ChatSocketRepository.getLocalMessages();
+    if (messagesCount.isNotEmpty) {
+      scrollDown();
+    }
   }
 
   final f = DateFormat('dd/mm/yyyy');
