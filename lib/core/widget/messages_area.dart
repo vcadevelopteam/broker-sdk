@@ -35,6 +35,8 @@ class _MessagesAreaState extends State<MessagesArea> {
   void initState() {
     initStreamBuilder();
     initChat();
+    scrollController = new ScrollController()..addListener(_scrollListener);
+
     super.initState();
   }
 
@@ -65,6 +67,37 @@ class _MessagesAreaState extends State<MessagesArea> {
         _visible = true;
       });
     }
+  }
+
+  Widget scrollDownButton() {
+    return AnimatedOpacity(
+      duration: Duration(milliseconds: 500),
+      opacity: _visible ? 1.0 : 0.0,
+      child: Transform.rotate(
+        angle: 270 * math.pi / 180,
+        child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              shape: CircleBorder(),
+              primary: Colors.white,
+              padding: EdgeInsets.all(0),
+            ),
+            onPressed: () {
+              scrollController!.animateTo(
+                scrollController!.position.maxScrollExtent,
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 500),
+              );
+              setState(() {
+                _visible = false;
+              });
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            label: Text("")),
+      ),
+    );
   }
 
   initStreamBuilder() {
@@ -124,22 +157,22 @@ class _MessagesAreaState extends State<MessagesArea> {
                           itemBuilder: (ctx, indx) {
                             Widget separator = const SizedBox();
 
-                            // if (indx == messages.length - 1) {
-                            //   separator = _labelDay(f.format(DateTime.parse(
-                            //       MessageBubble.parseTime(
-                            //           messages[0].messageDate!))));
-                            // }
-                            // if (indx != 0 &&
-                            //     DateTime.fromMillisecondsSinceEpoch(
-                            //                 messages[indx].messageDate!)
-                            //             .day !=
-                            //         DateTime.fromMillisecondsSinceEpoch(
-                            //                 messages[indx - 1].messageDate!)
-                            //             .day) {
-                            //   separator = _labelDay(f.format(DateTime.parse(
-                            //       MessageBubble.parseTime(
-                            //           messages[indx].messageDate!))));
-                            // }
+                            if (indx == 0) {
+                              separator = _labelDay(f.format(DateTime.parse(
+                                  MessageBubble.parseTime(
+                                      messages[0].messageDate!))));
+                            }
+                            if (indx != 0 &&
+                                DateTime.fromMillisecondsSinceEpoch(
+                                            messages[indx].messageDate!)
+                                        .day !=
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                            messages[indx - 1].messageDate!)
+                                        .day) {
+                              separator = _labelDay(f.format(DateTime.parse(
+                                  MessageBubble.parseTime(
+                                      messages[indx].messageDate!))));
+                            }
 
                             return Column(
                               children: [
@@ -194,24 +227,17 @@ class _MessagesAreaState extends State<MessagesArea> {
     }
   }
 
-  final f = DateFormat('dd/mm/yyyy');
-  // Widget _labelDay(String date) {
-  //   if (f.format(DateTime.parse(
-  //           MessageBubble.parseTime(messages[0].messageDate!))) ==
-  //       date) {
-  //     date = "Hoy";
-  //   }
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-  //     decoration: BoxDecoration(
-  //         color: const Color.fromRGBO(106, 194, 194, 1),
-  //         borderRadius: BorderRadius.circular(10)),
-  //     child: Text(
-  //       date,
-  //       style: const TextStyle(color: Colors.black),
-  //     ),
-  //   );
-  // }
+  final f = DateFormat('MMMM dd, hh:mm a');
+  Widget _labelDay(String date) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+      child: Text(
+        date,
+        style: const TextStyle(color: Colors.black),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +270,10 @@ class _MessagesAreaState extends State<MessagesArea> {
       ),
     );
     return Stack(
-      children: [mystreambuilder],
+      children: [
+        mystreambuilder,
+        Align(alignment: Alignment.bottomCenter, child: scrollDownButton())
+      ],
     );
   }
 }

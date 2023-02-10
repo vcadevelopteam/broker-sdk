@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable, use_key_in_widget_constructors
 
+import 'package:flutter/rendering.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
@@ -7,6 +8,7 @@ import 'package:laraigo_chat/helpers/color_convert.dart';
 import 'package:laraigo_chat/model/models.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -24,6 +26,8 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   List<Message> messages = [];
+  bool _visible = true;
+
   final f = DateFormat('dd/mm/yyyy');
   ScrollController? scrollController;
 
@@ -89,6 +93,21 @@ class _ChatPageState extends State<ChatPage> {
     widget.socket.controller!.sink.add(savedMessages);
   }
 
+  void _scrollListener() {
+    if (scrollController!.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      setState(() {
+        _visible = false;
+      });
+    }
+    if (scrollController!.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      setState(() {
+        _visible = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //identify properties to customize the chat screen
@@ -130,12 +149,21 @@ class _ChatPageState extends State<ChatPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      header.headerTitle.toString(),
-                      style: TextStyle(fontSize: 20, color: textColor),
+                      header.headerTitle.toString().toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 19,
+                          color: textColor,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 1,
                     ),
                     if (header.headerSubtitle != null)
                       Text(header.headerSubtitle.toString(),
-                          style: TextStyle(fontSize: 15, color: textColor))
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: textColor,
+                              fontWeight: FontWeight.w400))
                   ],
                 ),
               ],

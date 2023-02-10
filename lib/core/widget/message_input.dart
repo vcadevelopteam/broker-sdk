@@ -188,11 +188,9 @@ class _MessageInputState extends State<MessageInput> {
                       GestureDetector(
                         onTap: () {
                           showModalBottomSheet(
-                                  backgroundColor: HexColor(colorPreference
-                                      .chatBackgroundColor
-                                      .toString()),
+                                  backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(20)),
                                   builder: (modalBottomSheetContext) {
                                     return MediaInputModal(colorPreference);
                                   },
@@ -277,8 +275,8 @@ class _MessageInputState extends State<MessageInput> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: HexColor(
-                                  colorPreference.chatHeaderColor.toString()),
-                              hintText: "¡Escribe Algo!",
+                                  colorPreference.messageBotColor.toString()),
+                              hintText: "Mensaje...",
                               hintStyle: TextStyle(
                                   color: Colors.black.withOpacity(0.5)),
                               labelStyle: TextStyle(

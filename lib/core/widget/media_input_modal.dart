@@ -137,192 +137,240 @@ class _MediaInputModalState extends State<MediaInputModal> {
     var _screenWidth = MediaQuery.of(context).size.width;
     var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     return Container(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  'Escoja una opción',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: HexColor(widget.colorPreference.chatBackgroundColor
-                                      .toString())
-                                  .computeLuminance() >
-                              0.5
-                          ? Colors.black
-                          : Colors.white),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+      padding: EdgeInsets.all(10),
+      child: Stack(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: HexColor(
+                      widget.colorPreference.chatBackgroundColor.toString()),
                 ),
-                GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(Icons.cancel)),
-              ],
-            ),
-            TextButton(
-                onPressed: (() async {
-                  FilePickerResult? result = await FilePicker.platform
-                      .pickFiles(allowMultiple: true, type: FileType.media);
-                  if (result != null) {
-                    if (result.files.isNotEmpty) {
-                      showDialog(
-                          context: context,
-                          builder: (dialogContext) {
-                            return StatefulBuilder(
-                                builder: (dialogContext, setStateCustom) {
-                              return MediaDialog(result.files, setStateCustom,
-                                  isSendingMessage);
-                            });
-                          }).then((valueInDialog) {
-                        var dataToReturn = valueInDialog;
-
-                        if (dataToReturn["data"].isNotEmpty) {
-                          Navigator.pop(context, dataToReturn);
-                        }
-                      });
-                    }
-                  }
-                }),
-                child: Row(
-                  children: [
-                    Icon(Icons.photo,
-                        color: HexColor(widget
-                                        .colorPreference.chatBackgroundColor
-                                        .toString())
-                                    .computeLuminance() >
-                                0.5
-                            ? Colors.black
-                            : Colors.white),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      'Abrir galería',
-                      style: TextStyle(
-                          color: HexColor(widget
-                                          .colorPreference.chatBackgroundColor
-                                          .toString())
-                                      .computeLuminance() >
-                                  0.5
-                              ? Colors.black
-                              : Colors.white),
-                    ),
-                  ],
-                )),
-            TextButton(
-                onPressed: (() async {
-                  FilePickerResult? result = await FilePicker.platform
-                      .pickFiles(
-                          allowMultiple: true,
-                          type: FileType.custom,
-                          allowedExtensions: [
-                        "pdf",
-                        "xlsx",
-                        "xls",
-                        "doc",
-                        "docx",
-                        "pptx",
-                        "csv",
-                        "txt"
-                      ]);
-                  if (result != null) {
-                    if (result.files.isNotEmpty) {
-                      showDialog(
-                          context: context,
-                          builder: (dialogContext) {
-                            return StatefulBuilder(
-                                builder: (dialogContext, setStateCustom) {
-                              return fileDialog(_screenWidth, _screenHeight,
-                                  result.files, dialogContext, setStateCustom);
-                            });
-                          }).then((valueInDialog) {
-                        var dataToReturn = valueInDialog;
-
-                        if (dataToReturn["data"].isNotEmpty) {
-                          Navigator.pop(context, dataToReturn);
-                        }
-                      });
-                    }
-                  }
-                }),
-                child: Row(
-                  children: [
-                    Icon(Icons.attach_file_rounded,
-                        color: HexColor(widget
-                                        .colorPreference.chatBackgroundColor
-                                        .toString())
-                                    .computeLuminance() >
-                                0.5
-                            ? Colors.black
-                            : Colors.white),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      'Compartir un archivo',
-                      style: TextStyle(
-                          color: HexColor(widget
-                                          .colorPreference.chatBackgroundColor
-                                          .toString())
-                                      .computeLuminance() >
-                                  0.5
-                              ? Colors.black
-                              : Colors.white),
-                    ),
-                  ],
-                )),
-            TextButton(
-                onPressed: (() async {
-                  showDialog(
-                      context: context,
-                      builder: (locationDialogContext) {
-                        return Dialog(
-                          child: SizedBox(
-                            width: _screenWidth * 0.2,
-                            height: _screenHeight * 0.1,
-                            child: Center(
-                                child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text("Obteniendo Ubicacion..."),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                CircularProgressIndicator()
-                              ],
-                            )),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              'Escoja una opción',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: HexColor(widget.colorPreference
+                                                  .chatBackgroundColor
+                                                  .toString())
+                                              .computeLuminance() >
+                                          0.5
+                                      ? Colors.black
+                                      : Colors.white),
+                            ),
                           ),
-                        );
-                      }).then((value) {
-                    Navigator.pop(context, value);
-                  });
-                  Position location = await LocationManager.determinePosition();
+                        ],
+                      ),
+                      TextButton(
+                          onPressed: (() async {
+                            FilePickerResult? result = await FilePicker.platform
+                                .pickFiles(
+                                    allowMultiple: true, type: FileType.media);
+                            if (result != null) {
+                              if (result.files.isNotEmpty) {
+                                showDialog(
+                                    context: context,
+                                    builder: (dialogContext) {
+                                      return StatefulBuilder(builder:
+                                          (dialogContext, setStateCustom) {
+                                        return MediaDialog(result.files,
+                                            setStateCustom, isSendingMessage);
+                                      });
+                                    }).then((valueInDialog) {
+                                  var dataToReturn = valueInDialog;
 
-                  Navigator.pop(context, {
-                    "type": MessageType.location,
-                    "data": [location]
-                  });
-                }),
-                child: Row(
-                  children: [
-                    Icon(Icons.location_on,
-                        color: HexColor(widget
-                                        .colorPreference.chatBackgroundColor
-                                        .toString())
-                                    .computeLuminance() >
-                                0.5
-                            ? Colors.black
-                            : Colors.white),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text('Compartir ubicación',
+                                  if (dataToReturn["data"].isNotEmpty) {
+                                    Navigator.pop(context, dataToReturn);
+                                  }
+                                });
+                              }
+                            }
+                          }),
+                          child: Row(
+                            children: [
+                              Icon(Icons.photo,
+                                  color: HexColor(widget.colorPreference
+                                                  .chatBackgroundColor
+                                                  .toString())
+                                              .computeLuminance() >
+                                          0.5
+                                      ? Colors.black
+                                      : Colors.white),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Abrir galería',
+                                style: TextStyle(
+                                    color: HexColor(widget.colorPreference
+                                                    .chatBackgroundColor
+                                                    .toString())
+                                                .computeLuminance() >
+                                            0.5
+                                        ? Colors.black
+                                        : Colors.white),
+                              ),
+                            ],
+                          )),
+                      TextButton(
+                          onPressed: (() async {
+                            FilePickerResult? result = await FilePicker.platform
+                                .pickFiles(
+                                    allowMultiple: true,
+                                    type: FileType.custom,
+                                    allowedExtensions: [
+                                  "pdf",
+                                  "xlsx",
+                                  "xls",
+                                  "doc",
+                                  "docx",
+                                  "pptx",
+                                  "csv",
+                                  "txt"
+                                ]);
+                            if (result != null) {
+                              if (result.files.isNotEmpty) {
+                                showDialog(
+                                    context: context,
+                                    builder: (dialogContext) {
+                                      return StatefulBuilder(builder:
+                                          (dialogContext, setStateCustom) {
+                                        return fileDialog(
+                                            _screenWidth,
+                                            _screenHeight,
+                                            result.files,
+                                            dialogContext,
+                                            setStateCustom);
+                                      });
+                                    }).then((valueInDialog) {
+                                  var dataToReturn = valueInDialog;
+
+                                  if (dataToReturn["data"].isNotEmpty) {
+                                    Navigator.pop(context, dataToReturn);
+                                  }
+                                });
+                              }
+                            }
+                          }),
+                          child: Row(
+                            children: [
+                              Icon(Icons.attach_file_rounded,
+                                  color: HexColor(widget.colorPreference
+                                                  .chatBackgroundColor
+                                                  .toString())
+                                              .computeLuminance() >
+                                          0.5
+                                      ? Colors.black
+                                      : Colors.white),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Compartir un archivo',
+                                style: TextStyle(
+                                    color: HexColor(widget.colorPreference
+                                                    .chatBackgroundColor
+                                                    .toString())
+                                                .computeLuminance() >
+                                            0.5
+                                        ? Colors.black
+                                        : Colors.white),
+                              ),
+                            ],
+                          )),
+                      TextButton(
+                          onPressed: (() async {
+                            showDialog(
+                                context: context,
+                                builder: (locationDialogContext) {
+                                  return Dialog(
+                                    child: SizedBox(
+                                      width: _screenWidth * 0.2,
+                                      height: _screenHeight * 0.1,
+                                      child: Center(
+                                          child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: const [
+                                          Text("Obteniendo Ubicacion..."),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          CircularProgressIndicator()
+                                        ],
+                                      )),
+                                    ),
+                                  );
+                                }).then((value) {
+                              Navigator.pop(context, value);
+                            });
+                            Position location =
+                                await LocationManager.determinePosition();
+
+                            Navigator.pop(context, {
+                              "type": MessageType.location,
+                              "data": [location]
+                            });
+                          }),
+                          child: Row(
+                            children: [
+                              Icon(Icons.location_on,
+                                  color: HexColor(widget.colorPreference
+                                                  .chatBackgroundColor
+                                                  .toString())
+                                              .computeLuminance() >
+                                          0.5
+                                      ? Colors.black
+                                      : Colors.white),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text('Compartir ubicación',
+                                  style: TextStyle(
+                                      color: HexColor(widget.colorPreference
+                                                      .chatBackgroundColor
+                                                      .toString())
+                                                  .computeLuminance() >
+                                              0.5
+                                          ? Colors.black
+                                          : Colors.white)),
+                            ],
+                          )),
+                    ]),
+              ),
+              TextButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                    HexColor(
+                        widget.colorPreference.chatBackgroundColor.toString()),
+                  )),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Cancelar',
                         style: TextStyle(
                             color: HexColor(widget
                                             .colorPreference.chatBackgroundColor
@@ -330,30 +378,23 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                         .computeLuminance() >
                                     0.5
                                 ? Colors.black
-                                : Colors.white)),
-                  ],
-                )),
-            TextButton(
-                onPressed: () {
+                                : Colors.white),
+                      )
+                    ],
+                  )),
+            ],
+          ),
+          Positioned(
+            top: 5,
+            right: 5,
+            child: GestureDetector(
+                onTap: () {
                   Navigator.pop(context);
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Cancelar',
-                      style: TextStyle(
-                          color: HexColor(widget
-                                          .colorPreference.chatBackgroundColor
-                                          .toString())
-                                      .computeLuminance() >
-                                  0.5
-                              ? Colors.black
-                              : Colors.white),
-                    )
-                  ],
-                ))
-          ]),
+                child: const Icon(Icons.cancel)),
+          ),
+        ],
+      ),
     );
   }
 }
