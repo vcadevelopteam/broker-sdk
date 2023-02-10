@@ -204,7 +204,9 @@ class _MessageInputState extends State<MessageInput> {
                               var mapValueInBottomSheet =
                                   valueInBottomSheet as Map;
 
-                              print(mapValueInBottomSheet["data"]);
+                              if (kDebugMode) {
+                                print(mapValueInBottomSheet["data"]);
+                              }
 
                               if (mapValueInBottomSheet["data"].isNotEmpty) {
                                 var dataType = mapValueInBottomSheet["type"]

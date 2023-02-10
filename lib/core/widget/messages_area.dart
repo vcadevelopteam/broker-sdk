@@ -5,7 +5,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 
 import '../../helpers/sender_type.dart';
@@ -158,22 +157,21 @@ class _MessagesAreaState extends State<MessagesArea> {
                     ),
                   ],
                 )
-              : Expanded(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height - kToolbarHeight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.message,
-                          color: Theme.of(context).textTheme.bodyLarge!.color,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text("No ha enviado mensajes")
-                      ],
-                    ),
+              : SizedBox(
+                  height: MediaQuery.of(context).size.height - kToolbarHeight,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.message,
+                        color: Theme.of(context).textTheme.bodyLarge!.color,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text("No ha enviado mensajes")
+                    ],
                   ),
                 );
         } else {

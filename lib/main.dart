@@ -2,7 +2,8 @@
 
 import 'package:laraigo_chat/core/widget/socket_action_button.dart';
 import 'package:flutter/material.dart';
-import 'package:laraigo_chat/core/widget/socket_button.dart';
+
+import 'core/widget/socket_elevated_button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        floatingActionButton: SocketButton(
+        floatingActionButton: SocketElevatedButton(
             width: 100,
             height: 80,
             customMessage: "Hola",

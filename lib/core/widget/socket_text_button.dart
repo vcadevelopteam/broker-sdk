@@ -1,12 +1,12 @@
+// ignore_for_file: use_key_in_widget_constructors, must_be_immutable
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:laraigo_chat/core/pages/chat_page.dart';
 
 import '../../model/color_preference.dart';
 import '../chat_socket.dart';
 
-class SocketButton extends StatefulWidget {
+class SocketTextButton extends StatefulWidget {
   Widget child;
   String? integrationId;
   Color? circularProgressIndicatorColor;
@@ -14,7 +14,7 @@ class SocketButton extends StatefulWidget {
   double? width;
   String customMessage;
 
-  SocketButton(
+  SocketTextButton(
       {required this.child,
       required this.integrationId,
       this.circularProgressIndicatorColor,
@@ -23,10 +23,10 @@ class SocketButton extends StatefulWidget {
       this.height});
 
   @override
-  State<SocketButton> createState() => _SocketButtonState();
+  State<SocketTextButton> createState() => _SocketTextButtonState();
 }
 
-class _SocketButtonState extends State<SocketButton> {
+class _SocketTextButtonState extends State<SocketTextButton> {
   ChatSocket? socket;
   bool isInitialized = false;
   ColorPreference colorPreference = ColorPreference();
@@ -47,8 +47,8 @@ class _SocketButtonState extends State<SocketButton> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
+    return TextButton(
+      onPressed: () {
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -57,17 +57,18 @@ class _SocketButtonState extends State<SocketButton> {
                       customMessage: widget.customMessage,
                     )));
       },
-      child: SizedBox(
-        height: widget.height,
-        width: widget.width,
-        child: isInitialized
-            ? widget.child
-            : Center(
+      child: isInitialized
+          ? widget.child
+          : Container(
+              padding: const EdgeInsets.all(10),
+              width: 50,
+              height: 50,
+              child: Center(
                 child: CircularProgressIndicator(
                   color: widget.circularProgressIndicatorColor,
                 ),
               ),
-      ),
+            ),
     );
   }
 }

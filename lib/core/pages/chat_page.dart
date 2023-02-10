@@ -1,6 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, must_be_immutable, use_key_in_widget_constructors
 
-import 'package:flutter/scheduler.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
