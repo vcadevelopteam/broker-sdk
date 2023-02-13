@@ -138,7 +138,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
     var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Stack(
         children: [
           Column(
@@ -162,7 +162,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'Escoja una opción',
                               textAlign: TextAlign.center,
@@ -198,7 +198,11 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                     }).then((valueInDialog) {
                                   var dataToReturn = valueInDialog;
 
-                                  if (dataToReturn["data"].isNotEmpty) {
+                                  try {
+                                    if (dataToReturn["data"].isNotEmpty) {
+                                      Navigator.pop(context, dataToReturn);
+                                    }
+                                  } catch (e) {
                                     Navigator.pop(context, dataToReturn);
                                   }
                                 });
@@ -264,7 +268,11 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                     }).then((valueInDialog) {
                                   var dataToReturn = valueInDialog;
 
-                                  if (dataToReturn["data"].isNotEmpty) {
+                                  try {
+                                    if (dataToReturn["data"].isNotEmpty) {
+                                      Navigator.pop(context, dataToReturn);
+                                    }
+                                  } catch (e) {
                                     Navigator.pop(context, dataToReturn);
                                   }
                                 });

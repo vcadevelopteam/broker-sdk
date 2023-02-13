@@ -35,7 +35,7 @@ class _MessagesAreaState extends State<MessagesArea> {
   void initState() {
     initStreamBuilder();
     initChat();
-    scrollController = new ScrollController()..addListener(_scrollListener);
+    scrollController = ScrollController()..addListener(_scrollListener);
 
     super.initState();
   }
@@ -71,15 +71,15 @@ class _MessagesAreaState extends State<MessagesArea> {
 
   Widget scrollDownButton() {
     return AnimatedOpacity(
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       opacity: _visible ? 1.0 : 0.0,
       child: Transform.rotate(
         angle: 270 * math.pi / 180,
         child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              primary: Colors.white,
-              padding: EdgeInsets.all(0),
+              shape: const CircleBorder(),
+              backgroundColor: Colors.white,
+              padding: const EdgeInsets.all(0),
             ),
             onPressed: () {
               scrollController!.animateTo(
@@ -91,11 +91,11 @@ class _MessagesAreaState extends State<MessagesArea> {
                 _visible = false;
               });
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: Colors.black,
             ),
-            label: Text("")),
+            label: const Text("")),
       ),
     );
   }

@@ -31,7 +31,7 @@ class MessageCarousel extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: HexColor(color.messageClientColor !),
+                backgroundColor: HexColor(color.messageClientColor!),
               ),
               onPressed: () {
                 sendMessage(buttons[indx].payload.toString(),
@@ -40,7 +40,7 @@ class MessageCarousel extends StatelessWidget {
               child: Text(
                 buttons[indx].text!,
                 style: TextStyle(
-                    color: HexColor(color.messageClientColor .toString())
+                    color: HexColor(color.messageClientColor.toString())
                                 .computeLuminance() >
                             0.5
                         ? Colors.black
@@ -53,82 +53,72 @@ class MessageCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
-    return 
-        
-         Container(
-          constraints:
-            BoxConstraints(maxHeight: screenHeight * 0.55, minHeight: 10),
-           child: PageView.builder(
-            physics: const BouncingScrollPhysics(),
-            controller: PageController(viewportFraction: 0.95),
-            itemBuilder: (context, index) {
-              return  Container(
-                
-                  padding: const EdgeInsets.only(right: 10, left: 10, top: 5),
-                  decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(5)),
-                  margin: const EdgeInsets.only(right: 8),
-                  child: 
-                   Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: Image.network(
-                                data[index].mediaUrl!,
-                                fit: BoxFit.contain,
-                                height: 200,
-                              )),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text(
-                            data[index].title!,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: HexColor(color.messageBotColor.toString())
-                                          .computeLuminance() >
-                                      0.5
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                          ),
-                        ),
-                        
-                          SizedBox(
-                            height: screenHeight*0.08,
-                            child: SingleChildScrollView(
-                              child: Text(data[index].description!, maxLines: 5,
-                                  style: TextStyle(
-                                    color: HexColor(color.messageBotColor.toString())
-                                                .computeLuminance() >
-                                            0.5
-                                        ? Colors.black
-                                        : Colors.white,
-                                  )),
-                            ),
-                          ),
-                        
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: getButton(data[index].buttons!),
-                        )
-                      ],
+    return Container(
+      constraints:
+          BoxConstraints(maxHeight: screenHeight * 0.55, minHeight: 10),
+      child: PageView.builder(
+        physics: const BouncingScrollPhysics(),
+        controller: PageController(viewportFraction: 0.95),
+        itemBuilder: (context, index) {
+          return Container(
+            padding: const EdgeInsets.only(right: 10, left: 10, top: 5),
+            decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(5)),
+            margin: const EdgeInsets.only(right: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Image.network(
+                        data[index].mediaUrl!,
+                        fit: BoxFit.contain,
+                        height: 200,
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
+                    data[index].title!,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: HexColor(color.messageBotColor.toString())
+                                  .computeLuminance() >
+                              0.5
+                          ? Colors.black
+                          : Colors.white,
                     ),
-                  
-                
-              );
-            },
-            itemCount: data.length,
-                 ),
-         );
-        
-        
+                  ),
+                ),
+                SizedBox(
+                  height: screenHeight * 0.08,
+                  child: SingleChildScrollView(
+                    child: Text(data[index].description!,
+                        maxLines: 5,
+                        style: TextStyle(
+                          color: HexColor(color.messageBotColor.toString())
+                                      .computeLuminance() >
+                                  0.5
+                              ? Colors.black
+                              : Colors.white,
+                        )),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: getButton(data[index].buttons!),
+                )
+              ],
+            ),
+          );
+        },
+        itemCount: data.length,
+      ),
+    );
   }
 }

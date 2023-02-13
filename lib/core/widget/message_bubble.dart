@@ -9,6 +9,7 @@ import '../../model/message.dart';
 import '../chat_socket.dart';
 import 'message_buttons.dart';
 import 'message_carousel.dart';
+import 'message_media.dart';
 
 /*
 This widget is used for showing a single message, the widget changes between the types of messages
@@ -51,51 +52,7 @@ class MessageBubble extends StatelessWidget {
     } else if (message.type == MessageType.carousel) {
       return MessageCarousel(message.data!, color, _socket);
     } else if (message.type == MessageType.media) {
-      return GestureDetector(
-        onTap: () {
-          showDialog(
-              context: context,
-              builder: (ctx) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Dialog(
-                    insetPadding: const EdgeInsets.all(0),
-                    backgroundColor: Colors.transparent,
-                    child: SizedBox(
-                      width: screenWidth,
-                      height: screenHeight,
-                      child: PageView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          controller: PageController(viewportFraction: 0.95),
-                          itemCount: 1,
-                          itemBuilder: (ctx, indx) {
-                            return Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  image: DecorationImage(
-                                      fit: BoxFit.contain,
-                                      image: NetworkImage(
-                                          message.data![0].mediaUrl!))),
-                            );
-                          }),
-                    ),
-                  ),
-                );
-              });
-        },
-        child: Container(
-          width: double.infinity,
-          height: screenHeight * 0.25,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(message.data![0].mediaUrl!))),
-        ),
-      );
+      return MediaMessageBubble(message);
     } else if (message.type == MessageType.button) {
       return MessageButtons(message.data!, color, _socket);
     } else if (message.type == MessageType.location) {

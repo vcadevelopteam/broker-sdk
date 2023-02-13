@@ -1,6 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable, use_key_in_widget_constructors
 
-import 'package:flutter/rendering.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
@@ -8,7 +7,6 @@ import 'package:laraigo_chat/helpers/color_convert.dart';
 import 'package:laraigo_chat/model/models.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -26,7 +24,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   List<Message> messages = [];
-  bool _visible = true;
+  bool visible = true;
 
   final f = DateFormat('dd/mm/yyyy');
   ScrollController? scrollController;
@@ -93,20 +91,20 @@ class _ChatPageState extends State<ChatPage> {
     widget.socket.controller!.sink.add(savedMessages);
   }
 
-  void _scrollListener() {
-    if (scrollController!.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      setState(() {
-        _visible = false;
-      });
-    }
-    if (scrollController!.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      setState(() {
-        _visible = true;
-      });
-    }
-  }
+  // void _scrollListener() {
+  //   if (scrollController!.position.userScrollDirection ==
+  //       ScrollDirection.reverse) {
+  //     setState(() {
+  //       visible = false;
+  //     });
+  //   }
+  //   if (scrollController!.position.userScrollDirection ==
+  //       ScrollDirection.forward) {
+  //     setState(() {
+  //       visible = true;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
