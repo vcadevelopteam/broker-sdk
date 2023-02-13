@@ -49,9 +49,11 @@ class MessageBubble extends StatelessWidget {
                           0.5
                       ? Colors.black
                       : Colors.white));
-    } else if (message.type == MessageType.carousel) {
-      return MessageCarousel(message.data!, color, _socket);
-    } else if (message.type == MessageType.media) {
+    }
+    //  else if (message.type == MessageType.carousel) {
+    //   return MessageCarousel(message.data!, color, _socket);
+    // }
+     else if (message.type == MessageType.media) {
       return MediaMessageBubble(message);
     } else if (message.type == MessageType.button) {
       return MessageButtons(message.data!, color, _socket);

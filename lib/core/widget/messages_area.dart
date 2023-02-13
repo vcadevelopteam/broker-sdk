@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
+import '../../helpers/message_type.dart';
 import '../../helpers/sender_type.dart';
 import '../../model/color_preference.dart';
 import '../../model/message.dart';
 import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
 import 'message_bubble.dart';
+import 'message_carousel.dart';
 
 /*
 This widget is used as an showing area for all the messages, the messages are recollected by an stream that is connected to the web socket
@@ -174,7 +176,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                                       messages[indx].messageDate!))));
                             }
 
-                            return Column(
+                            return messages[indx].type == MessageType.carousel? MessageCarousel(messages[indx].data!, colorPreference, widget.socket) :Column(
                               children: [
                                 separator,
                                 MessageBubble(
