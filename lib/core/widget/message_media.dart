@@ -34,9 +34,7 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
     final mimeType = lookupMimeType(widget.message.data![0].mediaUrl!);
 
     if (!mimeType!.startsWith('image/')) {
-      setState(() {
-        isImage = false;
-      });
+      isImage = false;
       final response =
           await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
 
