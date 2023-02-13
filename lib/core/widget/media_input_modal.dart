@@ -156,29 +156,32 @@ class _MediaInputModalState extends State<MediaInputModal> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              'Escoja una opción',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: HexColor(widget.colorPreference
-                                                  .chatBackgroundColor
-                                                  .toString())
-                                              .computeLuminance() >
-                                          0.5
-                                      ? Colors.black
-                                      : Colors.white),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical:10.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                'Escoja una opción',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: HexColor(widget.colorPreference
+                                                    .chatBackgroundColor
+                                                    .toString())
+                                                .computeLuminance() >
+                                            0.5
+                                        ? Colors.black
+                                        : Colors.white),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       TextButton(
                           onPressed: (() async {
@@ -399,7 +402,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: const Icon(Icons.cancel)),
+                child: const Icon(Icons.cancel_outlined)),
           ),
         ],
       ),

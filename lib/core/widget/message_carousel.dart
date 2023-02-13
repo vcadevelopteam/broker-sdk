@@ -59,7 +59,7 @@ class MessageCarousel extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
       width: double.infinity,
-      height: 250,
+      height: 270,
       child: ListView.builder(
         itemCount: data.length,
         scrollDirection: Axis.horizontal,
@@ -79,7 +79,7 @@ class MessageCarousel extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 // mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ClipRRect(
                       borderRadius: BorderRadius.circular(5),
@@ -96,7 +96,7 @@ class MessageCarousel extends StatelessWidget {
                         Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Text(
-                        data[index].title!,
+                        data[index].title!, maxLines: 1,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: HexColor(color.messageBotColor.toString())
@@ -109,19 +109,24 @@ class MessageCarousel extends StatelessWidget {
                     ),
                     SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      child: Text(data[index].description!,
-                          maxLines: 5,
-                          style: TextStyle(
-                            color: HexColor(color.messageBotColor.toString())
-                                        .computeLuminance() >
-                                    0.5
-                                ? Colors.black
-                                : Colors.white,
-                          )),
+                      child: SizedBox(
+                        height: 40,
+                        child: Text(data[index].description!,
+                            maxLines: 5,
+                            style: TextStyle(
+                              color: HexColor(color.messageBotColor.toString())
+                                          .computeLuminance() >
+                                      0.5
+                                  ? Colors.black
+                                  : Colors.white,
+                            )),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: getButton(data[index].buttons!),
+                      child: SizedBox(
+                        height: 40,
+                        child: getButton(data[index].buttons!)),
                     )
                       ],
                     ),
