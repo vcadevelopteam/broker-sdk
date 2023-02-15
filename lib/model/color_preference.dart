@@ -5,13 +5,15 @@ class ColorPreference {
   String? chatHeaderColor;
   String? messageBotColor;
   String? messageClientColor;
+  String? iconsColor;
 
   ColorPreference(
       {this.chatBackgroundColor,
       this.chatBorderColor,
       this.chatHeaderColor,
       this.messageBotColor,
-      this.messageClientColor});
+      this.messageClientColor,
+      this.iconsColor});
 
   factory ColorPreference.fromJson(Map<String, dynamic> json) {
     return ColorPreference(
@@ -19,6 +21,8 @@ class ColorPreference {
         chatBorderColor: json["chatBorderColor"] ?? "",
         chatHeaderColor: json["chatHeaderColor"] ?? "",
         messageBotColor: json["messageBotColor"] ?? "",
-        messageClientColor: json["messageClientColor"] ?? "");
+        messageClientColor: json["messageClientColor"] ?? "",
+        iconsColor: json["iconscolor"] ?? "");
+        
   }
 }

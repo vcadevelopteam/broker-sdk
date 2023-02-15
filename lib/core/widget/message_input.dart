@@ -248,12 +248,8 @@ class _MessageInputState extends State<MessageInput> {
                           ),
                           child: Icon(
                             Icons.add,
-                            color: HexColor(colorPreference.messageBotColor
-                                            .toString())
-                                        .computeLuminance() <
-                                    0.5
-                                ? Colors.black
-                                : Colors.white,
+                            color: HexColor(colorPreference
+                                .iconsColor!),
                             size: 30,
                           ),
                         ),
@@ -324,12 +320,7 @@ class _MessageInputState extends State<MessageInput> {
                       child: Center(
                         child: Icon(
                           Icons.send,
-                          color: HexColor(colorPreference.messageBotColor
-                                          .toString())
-                                      .computeLuminance() <
-                                  0.5
-                              ? Colors.black
-                              : Colors.white,
+                          color: HexColor(colorPreference.iconsColor!),
                           size: 20,
                         ),
                       ),

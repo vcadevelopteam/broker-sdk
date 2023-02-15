@@ -130,7 +130,7 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            iconTheme: IconThemeData(color: textColor),
+            iconTheme: IconThemeData(color:  HexColor(colorPreference.iconsColor!)),
             backgroundColor:
                 HexColor(colorPreference.chatHeaderColor.toString()),
             title: Row(

@@ -215,13 +215,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           child: Row(
                             children: [
                               Icon(Icons.photo,
-                                  color: HexColor(widget.colorPreference
-                                                  .chatBackgroundColor
-                                                  .toString())
-                                              .computeLuminance() >
-                                          0.5
-                                      ? Colors.black
-                                      : Colors.white),
+                                  color: HexColor(widget.colorPreference.iconsColor!)),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -285,13 +279,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           child: Row(
                             children: [
                               Icon(Icons.attach_file_rounded,
-                                  color: HexColor(widget.colorPreference
-                                                  .chatBackgroundColor
-                                                  .toString())
-                                              .computeLuminance() >
-                                          0.5
-                                      ? Colors.black
-                                      : Colors.white),
+                                  color:  HexColor(widget.colorPreference.iconsColor!)),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -345,13 +333,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           child: Row(
                             children: [
                               Icon(Icons.location_on,
-                                  color: HexColor(widget.colorPreference
-                                                  .chatBackgroundColor
-                                                  .toString())
-                                              .computeLuminance() >
-                                          0.5
-                                      ? Colors.black
-                                      : Colors.white),
+                                  color:  HexColor(widget.colorPreference.iconsColor!)),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -383,13 +365,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                       Text(
                         'Cancelar',
                         style: TextStyle(
-                            color: HexColor(widget
-                                            .colorPreference.chatBackgroundColor
-                                            .toString())
-                                        .computeLuminance() >
-                                    0.5
-                                ? Colors.black
-                                : Colors.white),
+                            color:  HexColor(widget.colorPreference.iconsColor!)),
                       )
                     ],
                   )),
@@ -402,7 +378,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: const Icon(Icons.cancel_outlined)),
+                child:  Icon(Icons.cancel_outlined, color:  HexColor(widget.colorPreference.iconsColor!),)),
           ),
         ],
       ),

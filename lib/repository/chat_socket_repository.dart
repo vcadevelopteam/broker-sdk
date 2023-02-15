@@ -33,6 +33,8 @@ class ChatSocketRepository {
     //Saved into shared preferences as IntegrationId
     pref.setString(IdentifierType.integrationId.name, integrationId);
 
+    print(IntegrationResponse.fromJson(jsonDecode(response.body)));
+
     return IntegrationResponse.fromJson(jsonDecode(response.body));
   }
 
