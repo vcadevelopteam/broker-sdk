@@ -242,14 +242,16 @@ class _MessageInputState extends State<MessageInput> {
                         child: Container(
                           margin: const EdgeInsets.only(right: 10),
                           decoration: BoxDecoration(
-                            color: HexColor(colorPreference
-                                .messageBotColor!), // border color
+                            color: HexColor(colorPreference.messageBotColor!)
+                                        .computeLuminance() >
+                                    0.5
+                                ? Colors.black
+                                : Colors.white, // border color
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.add,
-                            color: HexColor(colorPreference
-                                .iconsColor!),
+                            color: HexColor(colorPreference.iconsColor!),
                             size: 30,
                           ),
                         ),
@@ -270,11 +272,16 @@ class _MessageInputState extends State<MessageInput> {
                                     .color),
                             decoration: InputDecoration(
                               filled: true,
-                              fillColor: HexColor(
-                                  colorPreference.messageBotColor.toString()),
+                              fillColor: HexColor(colorPreference.iconsColor
+                                              .toString())
+                                          .computeLuminance() >
+                                      0.5
+                                  ? Colors.black
+                                  : Colors.white,
                               hintText: "Mensaje...",
                               hintStyle: TextStyle(
-                                  color: Colors.black.withOpacity(0.5)),
+                                  color: HexColor(
+                                      colorPreference.iconsColor.toString())),
                               labelStyle: TextStyle(
                                   color: Theme.of(context)
                                       .textTheme
@@ -313,8 +320,11 @@ class _MessageInputState extends State<MessageInput> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: HexColor(
-                            colorPreference.messageBotColor!), // border color
+                        color: HexColor(colorPreference.messageBotColor!)
+                                    .computeLuminance() >
+                                0.5
+                            ? Colors.black
+                            : Colors.white, // border color
                         shape: BoxShape.circle,
                       ),
                       child: Center(
