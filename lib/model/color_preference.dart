@@ -1,4 +1,4 @@
-// Allows to identify the color preference to use in the UI of the chat 
+// Allows to identify the color preference to use in the UI of the chat
 class ColorPreference {
   String? chatBackgroundColor;
   String? chatBorderColor;
@@ -22,7 +22,6 @@ class ColorPreference {
         chatHeaderColor: json["chatHeaderColor"] ?? "",
         messageBotColor: json["messageBotColor"] ?? "",
         messageClientColor: json["messageClientColor"] ?? "",
-        iconsColor: json["iconscolor"] ?? "");
-        
+        iconsColor: json["iconscolor"] ?? "#C2C2C2");
   }
 }
