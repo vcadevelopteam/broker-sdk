@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, use_key_in_widget_constructors, must_be_immutable, no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -348,7 +349,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           )),
                       TextButton(
                           onPressed: (() async {
-                            bool locationPermission = await askGps();
+                            bool locationPermission = Platform.isAndroid? await askGps(): await askGpsForIos();
 
                             if (locationPermission) {
                               showDialog(

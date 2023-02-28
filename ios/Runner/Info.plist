@@ -48,8 +48,10 @@
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true />
 		<key>NSLocationAlwaysUsageDescription</key>
-		<true />
+		<string>Permiso de ubicación</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<true />
+		<string>Permiso de ubicación</string>
+		<key>NSLocationAlwaysAndWhenInUsageDescription</key>
+		<string>Permiso de ubicación</string>
 	</dict>
 </plist>
