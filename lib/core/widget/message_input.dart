@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
@@ -28,6 +30,16 @@ class MessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<MessageInput> {
   final _textController = TextEditingController();
+
+  Future<bool> hasNetwork() async {
+    try {
+      final result = await InternetAddress.lookup('8.8.8.8');
+
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
@@ -312,9 +324,22 @@ class _MessageInputState extends State<MessageInput> {
                 margin: const EdgeInsets.only(left: 10),
                 child: StreamBuilder(builder: (context, snapshot) {
                   return GestureDetector(
-                    onTap: () {
-                      if (_textController.text.isNotEmpty) {
-                        sendMessage();
+                    onTap: () async {
+                      final connection = await hasNetwork();
+                      if (connection == true) {
+                        if (_textController.text.isNotEmpty) {
+                          sendMessage();
+                        }
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: ((context) {
+                              return const AlertDialog(
+                                title: Text('Error de conexión'),
+                                content: Text(
+                                    'Por favor verifique su estado de internet e intentelo nuevamente'),
+                              );
+                            }));
                       }
                     },
                     child: Container(
