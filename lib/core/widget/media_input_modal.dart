@@ -157,14 +157,15 @@ class _MediaInputModalState extends State<MediaInputModal> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical:10.0),
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
                                 'Escoja una opción',
                                 textAlign: TextAlign.center,
@@ -191,6 +192,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                             if (result != null) {
                               if (result.files.isNotEmpty) {
                                 showDialog(
+                                    barrierDismissible: false,
                                     context: context,
                                     builder: (dialogContext) {
                                       return StatefulBuilder(builder:
@@ -215,7 +217,8 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           child: Row(
                             children: [
                               Icon(Icons.photo,
-                                  color: HexColor(widget.colorPreference.iconsColor!)),
+                                  color: HexColor(
+                                      widget.colorPreference.iconsColor!)),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -251,6 +254,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                             if (result != null) {
                               if (result.files.isNotEmpty) {
                                 showDialog(
+                                    barrierDismissible: false,
                                     context: context,
                                     builder: (dialogContext) {
                                       return StatefulBuilder(builder:
@@ -279,7 +283,8 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           child: Row(
                             children: [
                               Icon(Icons.attach_file_rounded,
-                                  color:  HexColor(widget.colorPreference.iconsColor!)),
+                                  color: HexColor(
+                                      widget.colorPreference.iconsColor!)),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -299,6 +304,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
                       TextButton(
                           onPressed: (() async {
                             showDialog(
+                                barrierDismissible: false,
                                 context: context,
                                 builder: (locationDialogContext) {
                                   return Dialog(
@@ -333,7 +339,8 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           child: Row(
                             children: [
                               Icon(Icons.location_on,
-                                  color:  HexColor(widget.colorPreference.iconsColor!)),
+                                  color: HexColor(
+                                      widget.colorPreference.iconsColor!)),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -365,7 +372,8 @@ class _MediaInputModalState extends State<MediaInputModal> {
                       Text(
                         'Cancelar',
                         style: TextStyle(
-                            color:  HexColor(widget.colorPreference.iconsColor!)),
+                            color:
+                                HexColor(widget.colorPreference.iconsColor!)),
                       )
                     ],
                   )),
@@ -378,7 +386,10 @@ class _MediaInputModalState extends State<MediaInputModal> {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child:  Icon(Icons.cancel_outlined, color:  HexColor(widget.colorPreference.iconsColor!),)),
+                child: Icon(
+                  Icons.cancel_outlined,
+                  color: HexColor(widget.colorPreference.iconsColor!),
+                )),
           ),
         ],
       ),
