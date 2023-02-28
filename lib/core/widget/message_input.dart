@@ -278,10 +278,8 @@ class _MessageInputState extends State<MessageInput> {
                             autofocus: false,
                             style: TextStyle(
                                 fontSize: 18,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .color),
+                                color: HexColor(
+                                    colorPreference.iconsColor.toString())),
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: HexColor(colorPreference.iconsColor
@@ -291,6 +289,7 @@ class _MessageInputState extends State<MessageInput> {
                                   ? Colors.black
                                   : Colors.white,
                               hintText: "Mensaje...",
+                              contentPadding: const EdgeInsets.only(left: 10),
                               hintStyle: TextStyle(
                                   color: HexColor(
                                       colorPreference.iconsColor.toString())),

@@ -8,7 +8,6 @@ import '../../model/color_preference.dart';
 import '../../model/message.dart';
 import '../chat_socket.dart';
 import 'message_buttons.dart';
-import 'message_carousel.dart';
 import 'message_media.dart';
 
 /*
@@ -104,14 +103,16 @@ class MessageBubble extends StatelessWidget {
               ),
 
               // SizedBox(width: 5,),
-              Text(
-                message.data![0].filename.toString(),
-                style: TextStyle(
-                    color: HexColor(color.messageClientColor.toString())
-                                .computeLuminance() >
-                            0.5
-                        ? Colors.black
-                        : Colors.white),
+              Flexible(
+                child: Text(
+                  message.data![0].filename.toString(),
+                  style: TextStyle(
+                      color: HexColor(color.messageClientColor.toString())
+                                  .computeLuminance() >
+                              0.5
+                          ? Colors.black
+                          : Colors.white),
+                ),
               ),
             ],
           ),

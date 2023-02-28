@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:laraigo_chat/helpers/permissions_handler.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/location_manager.dart';
@@ -186,32 +187,55 @@ class _MediaInputModalState extends State<MediaInputModal> {
                       ),
                       TextButton(
                           onPressed: (() async {
-                            FilePickerResult? result = await FilePicker.platform
-                                .pickFiles(
-                                    allowMultiple: true, type: FileType.media);
-                            if (result != null) {
-                              if (result.files.isNotEmpty) {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (dialogContext) {
-                                      return StatefulBuilder(builder:
-                                          (dialogContext, setStateCustom) {
-                                        return MediaDialog(result.files,
-                                            setStateCustom, isSendingMessage);
-                                      });
-                                    }).then((valueInDialog) {
-                                  var dataToReturn = valueInDialog;
+                            bool photoPermission = await askStorage();
 
-                                  try {
-                                    if (dataToReturn["data"].isNotEmpty) {
+                            if (photoPermission) {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
+                                      allowMultiple: true,
+                                      type: FileType.media);
+                              if (result != null) {
+                                if (result.files.isNotEmpty) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (dialogContext) {
+                                        return StatefulBuilder(builder:
+                                            (dialogContext, setStateCustom) {
+                                          return MediaDialog(result.files,
+                                              setStateCustom, isSendingMessage);
+                                        });
+                                      }).then((valueInDialog) {
+                                    var dataToReturn = valueInDialog;
+
+                                    try {
+                                      if (dataToReturn["data"].isNotEmpty) {
+                                        Navigator.pop(context, dataToReturn);
+                                      }
+                                    } catch (e) {
                                       Navigator.pop(context, dataToReturn);
                                     }
-                                  } catch (e) {
-                                    Navigator.pop(context, dataToReturn);
-                                  }
-                                });
+                                  });
+                                }
                               }
+                            } else {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (locationDialogContext) {
+                                    return AlertDialog(
+                                      title:
+                                          Text('Librería de archivos denegada'),
+                                      content: Text(
+                                          'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su imagen.'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text('Cerrar'))
+                                      ],
+                                    );
+                                  });
                             }
                           }),
                           child: Row(
@@ -237,47 +261,68 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           )),
                       TextButton(
                           onPressed: (() async {
-                            FilePickerResult? result = await FilePicker.platform
-                                .pickFiles(
-                                    allowMultiple: true,
-                                    type: FileType.custom,
-                                    allowedExtensions: [
-                                  "pdf",
-                                  "xlsx",
-                                  "xls",
-                                  "doc",
-                                  "docx",
-                                  "pptx",
-                                  "csv",
-                                  "txt"
-                                ]);
-                            if (result != null) {
-                              if (result.files.isNotEmpty) {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (dialogContext) {
-                                      return StatefulBuilder(builder:
-                                          (dialogContext, setStateCustom) {
-                                        return fileDialog(
-                                            _screenWidth,
-                                            _screenHeight,
-                                            result.files,
-                                            dialogContext,
-                                            setStateCustom);
-                                      });
-                                    }).then((valueInDialog) {
-                                  var dataToReturn = valueInDialog;
+                            bool storagePermission = await askStorage();
+                            if (storagePermission) {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
+                                      allowMultiple: true,
+                                      type: FileType.custom,
+                                      allowedExtensions: [
+                                    "pdf",
+                                    "xlsx",
+                                    "xls",
+                                    "doc",
+                                    "docx",
+                                    "pptx",
+                                    "csv",
+                                    "txt"
+                                  ]);
+                              if (result != null) {
+                                if (result.files.isNotEmpty) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (dialogContext) {
+                                        return StatefulBuilder(builder:
+                                            (dialogContext, setStateCustom) {
+                                          return fileDialog(
+                                              _screenWidth,
+                                              _screenHeight,
+                                              result.files,
+                                              dialogContext,
+                                              setStateCustom);
+                                        });
+                                      }).then((valueInDialog) {
+                                    var dataToReturn = valueInDialog;
 
-                                  try {
-                                    if (dataToReturn["data"].isNotEmpty) {
+                                    try {
+                                      if (dataToReturn["data"].isNotEmpty) {
+                                        Navigator.pop(context, dataToReturn);
+                                      }
+                                    } catch (e) {
                                       Navigator.pop(context, dataToReturn);
                                     }
-                                  } catch (e) {
-                                    Navigator.pop(context, dataToReturn);
-                                  }
-                                });
+                                  });
+                                }
                               }
+                            } else {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (locationDialogContext) {
+                                    return AlertDialog(
+                                      title:
+                                          Text('Librería de archivos denegada'),
+                                      content: Text(
+                                          'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su archivo.'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text('Cerrar'))
+                                      ],
+                                    );
+                                  });
                             }
                           }),
                           child: Row(
@@ -303,38 +348,59 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           )),
                       TextButton(
                           onPressed: (() async {
-                            showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (locationDialogContext) {
-                                  return Dialog(
-                                    child: SizedBox(
-                                      width: _screenWidth * 0.2,
-                                      height: _screenHeight * 0.1,
-                                      child: Center(
-                                          child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Text("Obteniendo Ubicacion..."),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          CircularProgressIndicator()
-                                        ],
-                                      )),
-                                    ),
-                                  );
-                                }).then((value) {
-                              Navigator.pop(context, value);
-                            });
-                            Position location =
-                                await LocationManager.determinePosition();
+                            bool locationPermission = await askGps();
 
-                            Navigator.pop(context, {
-                              "type": MessageType.location,
-                              "data": [location]
-                            });
+                            if (locationPermission) {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (locationDialogContext) {
+                                    return Dialog(
+                                      child: SizedBox(
+                                        width: _screenWidth * 0.2,
+                                        height: _screenHeight * 0.1,
+                                        child: Center(
+                                            child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Text("Obteniendo Ubicacion..."),
+                                            SizedBox(
+                                              width: 15,
+                                            ),
+                                            CircularProgressIndicator()
+                                          ],
+                                        )),
+                                      ),
+                                    );
+                                  }).then((value) {
+                                Navigator.pop(context, value);
+                              });
+                              Position location =
+                                  await LocationManager.determinePosition();
+
+                              Navigator.pop(context, {
+                                "type": MessageType.location,
+                                "data": [location]
+                              });
+                            } else {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (locationDialogContext) {
+                                    return AlertDialog(
+                                      title: Text('Ubicación denegada'),
+                                      content: Text(
+                                          'Por favor brinde acceso a su ubicación desde ajustes, para que pueda compartirla.'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text('Cerrar'))
+                                      ],
+                                    );
+                                  });
+                            }
                           }),
                           child: Row(
                             children: [

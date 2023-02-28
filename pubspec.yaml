@@ -47,6 +47,7 @@ dependencies:
   video_player: ^2.5.1
   google_maps_flutter: ^2.2.3
   path_provider: ^2.0.12
+  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:
