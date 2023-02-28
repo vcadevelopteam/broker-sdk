@@ -50,13 +50,15 @@ class _SocketContainerState extends State<SocketContainer> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(
-                      socket: socket!,
-                      customMessage: widget.customMessage,
-                    )));
+        if (socket != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                        socket: socket!,
+                        customMessage: widget.customMessage,
+                      )));
+        }
       },
       child: SizedBox(
         height: widget.height,

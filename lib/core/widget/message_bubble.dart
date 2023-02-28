@@ -53,7 +53,7 @@ class MessageBubble extends StatelessWidget {
     //  else if (message.type == MessageType.carousel) {
     //   return MessageCarousel(message.data!, color, _socket);
     // }
-     else if (message.type == MessageType.media) {
+    else if (message.type == MessageType.media) {
       return MediaMessageBubble(message);
     } else if (message.type == MessageType.button) {
       return MessageButtons(message.data!, color, _socket);
@@ -137,6 +137,9 @@ class MessageBubble extends StatelessWidget {
           children: [
             if (!message.isUser!)
               CircleAvatar(
+                onBackgroundImageError: (exception, stackTrace) {
+                  print("No Image loaded");
+                },
                 backgroundImage: NetworkImage(imageUrl),
               ),
             Padding(

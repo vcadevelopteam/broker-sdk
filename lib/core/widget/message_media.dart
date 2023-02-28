@@ -93,6 +93,9 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                                       borderRadius: BorderRadius.circular(20),
                                       image: DecorationImage(
                                           fit: BoxFit.contain,
+                                          onError: (exception, stackTrace) {
+                                            print("No Image loaded");
+                                          },
                                           image: NetworkImage(widget
                                               .message.data![0].mediaUrl!))),
                                 );
@@ -108,6 +111,9 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   image: DecorationImage(
+                      onError: (exception, stackTrace) {
+                        print("No Image loaded");
+                      },
                       fit: BoxFit.cover,
                       image: NetworkImage(widget.message.data![0].mediaUrl!))),
             ))

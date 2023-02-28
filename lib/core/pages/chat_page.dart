@@ -165,6 +165,9 @@ class _ChatPageState extends State<ChatPage> {
             title: Row(
               children: [
                 CircleAvatar(
+                  onBackgroundImageError: (exception, stackTrace) {
+                    print("No Image loaded");
+                  },
                   backgroundImage: NetworkImage(headerIcons.chatHeaderImage!),
                   backgroundColor:
                       HexColor(colorPreference.chatHeaderColor.toString()),

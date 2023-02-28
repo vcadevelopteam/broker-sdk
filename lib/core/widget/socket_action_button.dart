@@ -60,8 +60,12 @@ class _SocketActionButtonState extends State<SocketActionButton> {
       backgroundColor: widget.backgroundColor ?? Colors.purple,
       child: isInitialized ? widget.icon : const CircularProgressIndicator(),
       onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ChatPage(socket: socket!)));
+        if (socket != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatPage(socket: socket!)));
+        }
       },
     );
   }

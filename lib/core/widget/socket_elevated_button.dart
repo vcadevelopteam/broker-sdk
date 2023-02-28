@@ -49,13 +49,15 @@ class _SocketElevatedButtonState extends State<SocketElevatedButton> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(
-                      socket: socket!,
-                      customMessage: widget.customMessage,
-                    )));
+        if (socket != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                        socket: socket!,
+                        customMessage: widget.customMessage,
+                      )));
+        }
       },
       child: isInitialized
           ? widget.child
