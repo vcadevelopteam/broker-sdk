@@ -46,9 +46,37 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   initSocket() async {
-    await widget.socket.connect();
-    await fillWithChatHistory();
-    await sendCustomMessage(widget.customMessage);
+    try {
+      await widget.socket.connect().onError((error, stackTrace) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              title: Text('Error de conexión'),
+              content: Text(
+                  'Por favor verifique su conexión de internet e intentelo nuevamente'),
+            );
+          },
+        ).then((value) {
+          Navigator.pop(context);
+        });
+      });
+      await fillWithChatHistory();
+      await sendCustomMessage(widget.customMessage);
+    } catch (exception, _) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text('Error general'),
+            content: Text(
+                'Por favor verifique su conexión de internet e intentelo nuevamente'),
+          );
+        },
+      ).then((value) {
+        Navigator.pop(context);
+      });
+    }
   }
 
   sendCustomMessage(String customMessage) async {
@@ -130,7 +158,8 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            iconTheme: IconThemeData(color:  HexColor(colorPreference.iconsColor!)),
+            iconTheme:
+                IconThemeData(color: HexColor(colorPreference.iconsColor!)),
             backgroundColor:
                 HexColor(colorPreference.chatHeaderColor.toString()),
             title: Row(

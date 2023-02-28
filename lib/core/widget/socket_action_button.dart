@@ -34,11 +34,24 @@ class _SocketActionButtonState extends State<SocketActionButton> {
   }
 
   _initchatSocket() async {
-    socket = await ChatSocket.getInstance(widget.integrationId!);
-    colorPreference = socket!.integrationResponse!.metadata!.color!;
-    setState(() {
-      isInitialized = true;
-    });
+    try {
+      socket = await ChatSocket.getInstance(widget.integrationId!);
+      colorPreference = socket!.integrationResponse!.metadata!.color!;
+      setState(() {
+        isInitialized = true;
+      });
+    } catch (exception, stacktrace) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text('Error de conexión'),
+            content: Text(
+                'Por favor verifique su conexión de internet e intentelo nuevamente'),
+          );
+        },
+      );
+    }
   }
 
   @override

@@ -78,27 +78,29 @@ class _MessagesAreaState extends State<MessagesArea> {
       opacity: _visible ? 1.0 : 0.0,
       child: Transform.rotate(
         angle: 270 * math.pi / 180,
-        child: messages.isNotEmpty? ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              shape: const CircleBorder(),
-              backgroundColor: Colors.white,
-              padding: const EdgeInsets.all(0),
-            ),
-            onPressed: () {
-              scrollController!.animateTo(
-                scrollController!.position.maxScrollExtent,
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 500),
-              );
-              setState(() {
-                _visible = false;
-              });
-            },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            ),
-            label: const Text("")):SizedBox(),
+        child: messages.isNotEmpty
+            ? ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.all(0),
+                ),
+                onPressed: () {
+                  scrollController!.animateTo(
+                    scrollController!.position.maxScrollExtent,
+                    curve: Curves.easeOut,
+                    duration: const Duration(milliseconds: 500),
+                  );
+                  setState(() {
+                    _visible = false;
+                  });
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
+                label: const Text(""))
+            : SizedBox(),
       ),
     );
   }
@@ -235,15 +237,43 @@ class _MessagesAreaState extends State<MessagesArea> {
   }
 
   initChat() async {
-    widget.socket.channel!.stream.asBroadcastStream().listen((event) async {
-      var decodedJson = jsonDecode(event);
-      decodedJson['sender'] = SenderType.chat.name;
-      widget.socket.controller!.sink.add(decodedJson);
-    });
-    await Future.delayed(const Duration(milliseconds: 500));
-    var messagesCount = await ChatSocketRepository.getLocalMessages();
-    if (messagesCount.isNotEmpty) {
-      scrollDown();
+    try {
+      widget.socket.channel!.stream.asBroadcastStream().listen((event) async {
+        var decodedJson = jsonDecode(event);
+        decodedJson['sender'] = SenderType.chat.name;
+        widget.socket.controller!.sink.add(decodedJson);
+      }).onDone(() {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              title: Text('Error de conexión'),
+              content: Text(
+                  'Por favor verifique su conexión de internet e intentelo nuevamente'),
+            );
+          },
+        ).then((value) {
+          Navigator.pop(context);
+        });
+      });
+      await Future.delayed(const Duration(milliseconds: 500));
+      var messagesCount = await ChatSocketRepository.getLocalMessages();
+      if (messagesCount.isNotEmpty) {
+        scrollDown();
+      }
+    } catch (exception, stacktrace) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text('Error de conexión'),
+            content: Text(
+                'Por favor verifique su conexión de internet e intentelo nuevamente'),
+          );
+        },
+      ).then((value) {
+        Navigator.pop(context);
+      });
     }
   }
 

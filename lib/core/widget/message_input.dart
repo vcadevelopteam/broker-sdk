@@ -33,7 +33,7 @@ class _MessageInputState extends State<MessageInput> {
 
   Future<bool> hasNetwork() async {
     try {
-      final result = await InternetAddress.lookup('8.8.8.8');
+      final result = await InternetAddress.lookup('google.com');
 
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
     } on SocketException catch (_) {
@@ -326,7 +326,7 @@ class _MessageInputState extends State<MessageInput> {
                   return GestureDetector(
                     onTap: () async {
                       final connection = await hasNetwork();
-                      if (connection == true) {
+                      if (connection) {
                         if (_textController.text.isNotEmpty) {
                           sendMessage();
                         }
@@ -337,7 +337,7 @@ class _MessageInputState extends State<MessageInput> {
                               return const AlertDialog(
                                 title: Text('Error de conexión'),
                                 content: Text(
-                                    'Por favor verifique su estado de internet e intentelo nuevamente'),
+                                    'Por favor verifique su conexión de internet e intentelo nuevamente'),
                               );
                             }));
                       }
