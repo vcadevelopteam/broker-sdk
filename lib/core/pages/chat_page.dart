@@ -8,6 +8,7 @@ import 'package:laraigo_chat/model/models.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../helpers/message_type.dart';
@@ -57,9 +58,7 @@ class _ChatPageState extends State<ChatPage> {
                   'Por favor verifique su conexión de internet e intentelo nuevamente'),
             );
           },
-        ).then((value) {
-          Navigator.pop(context);
-        });
+        );
       });
       await fillWithChatHistory();
       await sendCustomMessage(widget.customMessage);
@@ -73,9 +72,7 @@ class _ChatPageState extends State<ChatPage> {
                 'Por favor verifique su conexión de internet e intentelo nuevamente'),
           );
         },
-      ).then((value) {
-        Navigator.pop(context);
-      });
+      );
     }
   }
 
@@ -152,9 +149,14 @@ class _ChatPageState extends State<ChatPage> {
 
     return WillPopScope(
       onWillPop: () async {
-        await widget.socket.channel!.sink.close();
-
-        return true;
+        try {
+          await widget.socket.channel!.sink.close();
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setBool("cerradoManualmente", true);
+          return true;
+        } catch (ex, st) {
+          return true;
+        }
       },
       child: Scaffold(
           appBar: AppBar(

@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables, unused_local_variable
+// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables, unused_local_variable, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/message_type.dart';
 import '../../helpers/sender_type.dart';
@@ -242,20 +243,26 @@ class _MessagesAreaState extends State<MessagesArea> {
         var decodedJson = jsonDecode(event);
         decodedJson['sender'] = SenderType.chat.name;
         widget.socket.controller!.sink.add(decodedJson);
-      }).onDone(() {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return const AlertDialog(
-              title: Text('Error de conexión'),
-              content: Text(
-                  'Por favor verifique su conexión de internet e intentelo nuevamente'),
-            );
-          },
-        ).then((value) {
-          Navigator.pop(context);
-        });
+      }, onDone: () async {
+        var prefs = await SharedPreferences.getInstance();
+        if (prefs.getBool("cerradoManualmente") == false) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                title: Text('Error de conexión'),
+                content: Text(
+                    'Por favor verifique su conexión de internet e intentelo nuevamente'),
+              );
+            },
+          );
+        }
+        prefs.setBool("cerradoManualmente", false);
+      }, onError: (error, stacktrace) async {
+        var prefs = await SharedPreferences.getInstance();
+        prefs.setBool("cerradoManualmente", false);
       });
+
       await Future.delayed(const Duration(milliseconds: 500));
       var messagesCount = await ChatSocketRepository.getLocalMessages();
       if (messagesCount.isNotEmpty) {
@@ -271,9 +278,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                 'Por favor verifique su conexión de internet e intentelo nuevamente'),
           );
         },
-      ).then((value) {
-        Navigator.pop(context);
-      });
+      );
     }
   }
 

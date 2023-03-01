@@ -1,8 +1,10 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/color_preference.dart';
+import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
 import '../pages/chat_page.dart';
 
@@ -42,6 +44,7 @@ class _SocketActionButtonState extends State<SocketActionButton> {
       });
     } catch (exception, stacktrace) {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return const AlertDialog(
@@ -51,7 +54,16 @@ class _SocketActionButtonState extends State<SocketActionButton> {
           );
         },
       );
+      await Future.delayed(Duration(seconds: 2));
+      Navigator.pop(context);
+      retryFuture(_initchatSocket, 15000);
     }
+  }
+
+  retryFuture(future, delay) {
+    Future.delayed(Duration(milliseconds: delay), () {
+      future();
+    });
   }
 
   @override
@@ -59,12 +71,28 @@ class _SocketActionButtonState extends State<SocketActionButton> {
     return FloatingActionButton(
       backgroundColor: widget.backgroundColor ?? Colors.purple,
       child: isInitialized ? widget.icon : const CircularProgressIndicator(),
-      onPressed: () {
-        if (socket != null) {
+      onPressed: () async {
+        final connection = await ChatSocketRepository.hasNetwork();
+        if (socket != null && connection) {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatPage(socket: socket!)));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatPage(socket: socket!)))
+              .then((value) async {
+            var prefs = await SharedPreferences.getInstance();
+            if (prefs.getBool("cerradoManualmente")! == false) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return const AlertDialog(
+                    title: Text('Error de conexión'),
+                    content: Text(
+                        'Por favor verifique su conexión de internet e intentelo nuevamente'),
+                  );
+                },
+              );
+            }
+          });
         }
       },
     );

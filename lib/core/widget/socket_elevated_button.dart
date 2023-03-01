@@ -1,9 +1,11 @@
-// ignore_for_file: must_be_immutable, use_key_in_widget_constructors
+// ignore_for_file: must_be_immutable, use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:laraigo_chat/core/pages/chat_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/color_preference.dart';
+import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
 
 class SocketElevatedButton extends StatefulWidget {
@@ -48,15 +50,30 @@ class _SocketElevatedButtonState extends State<SocketElevatedButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        if (socket != null) {
+      onPressed: () async {
+        final connection = await ChatSocketRepository.hasNetwork();
+
+        if (socket != null && connection) {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                        socket: socket!,
-                        customMessage: widget.customMessage,
-                      )));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatPage(socket: socket!)))
+              .then((value) async {
+            final prefs = await SharedPreferences.getInstance();
+            if (prefs.getBool("cerradoManualmente")! == false) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return const AlertDialog(
+                    title: Text('Error de conexión'),
+                    content: Text(
+                        'Por favor verifique su conexión de internet e intentelo nuevamente'),
+                  );
+                },
+              );
+            }
+          });
+          ;
         }
       },
       child: isInitialized

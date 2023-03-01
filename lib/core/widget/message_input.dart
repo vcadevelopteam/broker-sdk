@@ -31,16 +31,6 @@ class MessageInput extends StatefulWidget {
 class _MessageInputState extends State<MessageInput> {
   final _textController = TextEditingController();
 
-  Future<bool> hasNetwork() async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-
-      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException catch (_) {
-      return false;
-    }
-  }
-
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
       var response = await ChatSocketRepository.sendMessage(
@@ -324,7 +314,8 @@ class _MessageInputState extends State<MessageInput> {
                 child: StreamBuilder(builder: (context, snapshot) {
                   return GestureDetector(
                     onTap: () async {
-                      final connection = await hasNetwork();
+                      final connection =
+                          await ChatSocketRepository.hasNetwork();
                       if (connection) {
                         if (_textController.text.isNotEmpty) {
                           sendMessage();

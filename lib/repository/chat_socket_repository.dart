@@ -217,6 +217,16 @@ using internal databases as SQLite, Hive, etc.
     }
   }
 
+  static Future<bool> hasNetwork() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
   //This function is related to obtain all the local messages that were saved in the device to allow having a history
   //If there is any message saved we obtain it otherwise we return an empty array
   static Future<List<dynamic>> getLocalMessages() async {
