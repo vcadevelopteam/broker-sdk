@@ -154,14 +154,15 @@ class _ChatPageState extends State<ChatPage> {
           final prefs = await SharedPreferences.getInstance();
           prefs.setBool("cerradoManualmente", true);
           return true;
-        } catch (ex, st) {
+        } catch (ex) {
           return true;
         }
       },
       child: Scaffold(
           appBar: AppBar(
-            iconTheme:
-                IconThemeData(color: HexColor(colorPreference.iconsColor!)),
+            automaticallyImplyLeading: false,
+            // iconTheme:
+            //     IconThemeData(color: HexColor(colorPreference.iconsColor!)),
             backgroundColor:
                 HexColor(colorPreference.chatHeaderColor.toString()),
             title: Row(
@@ -190,7 +191,8 @@ class _ChatPageState extends State<ChatPage> {
                     const SizedBox(
                       height: 1,
                     ),
-                    if (header.headerSubtitle != null)
+
+                    if (header.headerSubtitle != null && header.headerSubtitle!.length>5)
                       Text(header.headerSubtitle.toString(),
                           style: TextStyle(
                               fontSize: 15,
@@ -200,6 +202,42 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ],
             ),
+            actions: [
+              GestureDetector(
+                onTap: () async {
+                  try {
+                    await widget.socket.channel!.sink.close();
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool("cerradoManualmente", true);
+                    Navigator.pop(context);
+
+                  } catch (ex) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  padding: const EdgeInsets.all(8),
+                  // decoration: BoxDecoration(
+                  //   color: HexColor('#8c8c8e'),
+
+                  //   //  HexColor(colorPreference.messageBotColor!)
+                  //   //             .computeLuminance() >
+                  //   //         0.5
+                  //   //     ? Colors.black
+                  //   //     : Colors.white,
+                  //   //      // border color
+
+                  //   shape: BoxShape.circle,
+                  // ),
+                  child: Icon(
+                    Icons.cancel_rounded,
+                    color: HexColor('#8c8c8e'),
+                    size: 25,
+                  ),
+                ),
+              ),
+            ],
             elevation: 0,
             centerTitle: false,
           ),

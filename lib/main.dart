@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -57,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         floatingActionButton: SocketActionButton(
-          integrationId: '63ff5fc8273d5f64e3d82a38',
+          integrationId: '63fe5143762b546856d9deb0',
           icon: Icon(Icons.read_more),
         ));
   }

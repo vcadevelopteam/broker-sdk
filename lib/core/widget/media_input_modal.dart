@@ -225,15 +225,15 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                   context: context,
                                   builder: (locationDialogContext) {
                                     return AlertDialog(
-                                      title:
-                                          Text('Librería de archivos denegada'),
-                                      content: Text(
+                                      title: const Text(
+                                          'Librería de archivos denegada'),
+                                      content: const Text(
                                           'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su imagen.'),
                                       actions: [
                                         TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: Text('Cerrar'))
+                                            child: const Text('Cerrar'))
                                       ],
                                     );
                                   });
@@ -241,9 +241,16 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           }),
                           child: Row(
                             children: [
-                              Icon(Icons.photo,
-                                  color: HexColor(
-                                      widget.colorPreference.iconsColor!)),
+                              Container(
+                                margin: const EdgeInsets.only(right: 5),
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: HexColor('#8c8c8e'),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Icon(Icons.photo,
+                                    color: HexColor(
+                                        widget.colorPreference.iconsColor!)),
+                              ),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -312,15 +319,15 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                   context: context,
                                   builder: (locationDialogContext) {
                                     return AlertDialog(
-                                      title:
-                                          Text('Librería de archivos denegada'),
-                                      content: Text(
+                                      title: const Text(
+                                          'Librería de archivos denegada'),
+                                      content: const Text(
                                           'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su archivo.'),
                                       actions: [
                                         TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: Text('Cerrar'))
+                                            child: const Text('Cerrar'))
                                       ],
                                     );
                                   });
@@ -328,9 +335,16 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           }),
                           child: Row(
                             children: [
-                              Icon(Icons.attach_file_rounded,
-                                  color: HexColor(
-                                      widget.colorPreference.iconsColor!)),
+                              Container(
+                                margin: const EdgeInsets.only(right: 5),
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: HexColor('#8c8c8e'),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Icon(Icons.attach_file_rounded,
+                                    color: HexColor(
+                                        widget.colorPreference.iconsColor!)),
+                              ),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -349,7 +363,9 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           )),
                       TextButton(
                           onPressed: (() async {
-                            bool locationPermission = Platform.isAndroid? await askGps(): await askGpsForIos();
+                            bool locationPermission = Platform.isAndroid
+                                ? await askGps()
+                                : await askGpsForIos();
 
                             if (locationPermission) {
                               showDialog(
@@ -390,14 +406,14 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                   context: context,
                                   builder: (locationDialogContext) {
                                     return AlertDialog(
-                                      title: Text('Ubicación denegada'),
-                                      content: Text(
+                                      title: const Text('Ubicación denegada'),
+                                      content: const Text(
                                           'Por favor brinde acceso a su ubicación desde ajustes, para que pueda compartirla.'),
                                       actions: [
                                         TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: Text('Cerrar'))
+                                            child: const Text('Cerrar'))
                                       ],
                                     );
                                   });
@@ -405,9 +421,16 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           }),
                           child: Row(
                             children: [
-                              Icon(Icons.location_on,
-                                  color: HexColor(
-                                      widget.colorPreference.iconsColor!)),
+                              Container(
+                                margin: const EdgeInsets.only(right: 5),
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: HexColor('#8c8c8e'),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Icon(Icons.location_on,
+                                    color: HexColor(
+                                        widget.colorPreference.iconsColor!)),
+                              ),
                               const SizedBox(
                                 width: 5,
                               ),
@@ -439,8 +462,13 @@ class _MediaInputModalState extends State<MediaInputModal> {
                       Text(
                         'Cancelar',
                         style: TextStyle(
-                            color:
-                                HexColor(widget.colorPreference.iconsColor!)),
+                            color: HexColor(widget
+                                            .colorPreference.chatBackgroundColor
+                                            .toString())
+                                        .computeLuminance() >
+                                    0.5
+                                ? Colors.black
+                                : Colors.white),
                       )
                     ],
                   )),
@@ -455,7 +483,12 @@ class _MediaInputModalState extends State<MediaInputModal> {
                 },
                 child: Icon(
                   Icons.cancel_outlined,
-                  color: HexColor(widget.colorPreference.iconsColor!),
+                  color: HexColor(widget.colorPreference.chatBackgroundColor
+                                  .toString())
+                              .computeLuminance() >
+                          0.5
+                      ? Colors.black
+                      : Colors.white,
                 )),
           ),
         ],
