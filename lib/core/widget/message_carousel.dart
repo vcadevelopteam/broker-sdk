@@ -36,7 +36,7 @@ class MessageCarousel extends StatelessWidget {
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Divider(
                   color: HexColor(color.messageClientColor!),
@@ -44,7 +44,11 @@ class MessageCarousel extends StatelessWidget {
                 Text(
                   buttons[indx].text!,
                   style: TextStyle(
-                    color: HexColor(color.messageClientColor!),
+                    color: HexColor(color.messageBotColor.toString())
+                                .computeLuminance() >
+                            0.5
+                        ? Colors.black
+                        : Colors.white,
                   ),
                 ),
               ],
@@ -67,7 +71,6 @@ class MessageCarousel extends StatelessWidget {
         // controller: PageController(viewportFraction: 0.95),
         itemBuilder: (context, index) {
           return Container(
-            
             // padding: const EdgeInsets.only(right: 10, left: 10, top: 5),
             height: screenWidth * 0.75,
             width: 250,
@@ -90,44 +93,46 @@ class MessageCarousel extends StatelessWidget {
                         height: 100,
                       )),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Column(
                       children: [
                         Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Text(
-                        data[index].title!, maxLines: 1,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: HexColor(color.messageBotColor.toString())
-                                      .computeLuminance() >
-                                  0.5
-                              ? Colors.black
-                              : Colors.white,
-                        ),
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: SizedBox(
-                        height: 40,
-                        child: Text(data[index].description!,
-                            maxLines: 5,
+                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          child: Text(
+                            data[index].title!,
+                            maxLines: 1,
                             style: TextStyle(
+                              fontWeight: FontWeight.w600,
                               color: HexColor(color.messageBotColor.toString())
                                           .computeLuminance() >
                                       0.5
                                   ? Colors.black
                                   : Colors.white,
-                            )),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: SizedBox(
-                        height: 40,
-                        child: getButton(data[index].buttons!)),
-                    )
+                            ),
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: SizedBox(
+                            height: 40,
+                            child: Text(data[index].description!,
+                                maxLines: 5,
+                                style: TextStyle(
+                                  color:
+                                      HexColor(color.messageBotColor.toString())
+                                                  .computeLuminance() >
+                                              0.5
+                                          ? Colors.black
+                                          : Colors.white,
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: SizedBox(
+                              height: 40,
+                              child: getButton(data[index].buttons!)),
+                        )
                       ],
                     ),
                   )
