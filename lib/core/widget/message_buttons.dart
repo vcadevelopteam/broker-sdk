@@ -28,7 +28,7 @@ class MessageButtons extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical:8.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
             data[0].message!,
             style: TextStyle(
@@ -41,11 +41,11 @@ class MessageButtons extends StatelessWidget {
                     : Colors.white),
           ),
         ),
-        
         Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10), color: Colors.transparent),
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.transparent),
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: data[0].buttons!.length,
@@ -55,7 +55,7 @@ class MessageButtons extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: HexColor(color.messageClientColor !),
+                      backgroundColor: HexColor(color.messageClientColor!),
                     ),
                     onPressed: () {
                       sendMessage(data[0].buttons![indx].payload!,

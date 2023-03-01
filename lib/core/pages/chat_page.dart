@@ -91,11 +91,11 @@ class _ChatPageState extends State<ChatPage> {
                 isUser: true,
                 error: false,
                 message: MessageSingleResponse(
-                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
                     data: data,
                     type: MessageType.text.name,
                     id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().millisecondsSinceEpoch)
+                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
             .toJson();
 
         setState(() {

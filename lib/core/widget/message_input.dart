@@ -46,11 +46,11 @@ class _MessageInputState extends State<MessageInput> {
                 isUser: true,
                 error: false,
                 message: MessageSingleResponse(
-                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
                     data: data,
                     type: MessageType.text.name,
                     id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().millisecondsSinceEpoch)
+                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
             .toJson();
 
         setState(() {
@@ -79,11 +79,11 @@ class _MessageInputState extends State<MessageInput> {
                 isUser: true,
                 error: false,
                 message: MessageSingleResponse(
-                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
                     data: data,
                     type: type.name,
                     id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().millisecondsSinceEpoch)
+                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
             .toJson();
 
         messagesToSend.add(messageSent);
@@ -113,11 +113,13 @@ class _MessageInputState extends State<MessageInput> {
                       isUser: true,
                       error: false,
                       message: MessageSingleResponse(
-                          createdAt: DateTime.now().millisecondsSinceEpoch,
+                          createdAt:
+                              DateTime.now().toUtc().millisecondsSinceEpoch,
                           data: data,
                           type: type.name,
                           id: const Uuid().v4().toString()),
-                      receptionDate: DateTime.now().millisecondsSinceEpoch)
+                      receptionDate:
+                          DateTime.now().toUtc().millisecondsSinceEpoch)
                   .toJson();
 
               messagesToSend.add(messageSent);
@@ -143,11 +145,13 @@ class _MessageInputState extends State<MessageInput> {
                       isUser: true,
                       error: false,
                       message: MessageSingleResponse(
-                          createdAt: DateTime.now().millisecondsSinceEpoch,
+                          createdAt:
+                              DateTime.now().toUtc().millisecondsSinceEpoch,
                           data: data,
                           type: type.name,
                           id: const Uuid().v4().toString()),
-                      receptionDate: DateTime.now().millisecondsSinceEpoch)
+                      receptionDate:
+                          DateTime.now().toUtc().millisecondsSinceEpoch)
                   .toJson();
 
               messagesToSend.add(messageSent);
