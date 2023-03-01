@@ -24,6 +24,7 @@ class MessageButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -42,6 +43,7 @@ class MessageButtons extends StatelessWidget {
           ),
         ),
         Container(
+          constraints: BoxConstraints(maxHeight: size.height * 0.3),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -64,7 +66,7 @@ class MessageButtons extends StatelessWidget {
                     child: Text(
                       data[0].buttons![indx].text!,
                       style: TextStyle(
-                          color: HexColor(color.messageClientColor.toString())
+                          color: HexColor(color.messageBotColor.toString())
                                       .computeLuminance() >
                                   0.5
                               ? Colors.black
