@@ -15,10 +15,12 @@ class SocketActionButton extends StatefulWidget {
   String? integrationId;
   Color? backgroundColor;
   Icon icon;
+  String customMessage;
   SocketActionButton(
       {super.key,
       required this.integrationId,
       required this.icon,
+      this.customMessage = "",
       this.backgroundColor});
 
   @override

@@ -131,7 +131,9 @@ class MessageSingleResponse {
           type: json["type"] ?? "",
           data: [MessageResponseData.buttons(data)],
           sessionUuid: json["sessionUuid"] ?? "");
-    } else if (type == MessageType.media.name) {
+    } else if (type == MessageType.media.name ||
+        type == MessageType.image.name ||
+        type == MessageType.video.name) {
       var data = json["data"] as Map<String, dynamic>;
       return MessageSingleResponse(
           createdAt: json["createdAt"] ?? 0,
