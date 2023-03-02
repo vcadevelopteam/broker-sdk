@@ -138,6 +138,8 @@ class _MediaInputModalState extends State<MediaInputModal> {
   Widget build(BuildContext context) {
     var _screenWidth = MediaQuery.of(context).size.width;
     var _screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
+    bool locationRequest = true;
+
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
       padding: const EdgeInsets.all(10),
@@ -363,61 +365,64 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           )),
                       TextButton(
                           onPressed: (() async {
-                            bool locationPermission = Platform.isAndroid
-                                ? await askGps()
-                                : await askGpsForIos();
+                            if (locationRequest) {
+                              locationRequest = false;
+                              bool locationPermission = Platform.isAndroid
+                                  ? await askGps()
+                                  : await askGpsForIos();
+                              if (locationPermission) {
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (locationDialogContext) {
+                                      return Dialog(
+                                        child: SizedBox(
+                                          width: _screenWidth * 0.2,
+                                          height: _screenHeight * 0.1,
+                                          child: Center(
+                                              child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              Text("Obteniendo Ubicacion..."),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              CircularProgressIndicator()
+                                            ],
+                                          )),
+                                        ),
+                                      );
+                                    }).then((value) {
+                                  Navigator.pop(context, value);
+                                });
+                                Position location =
+                                    await LocationManager.determinePosition();
 
-                            if (locationPermission) {
-                              showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (locationDialogContext) {
-                                    return Dialog(
-                                      child: SizedBox(
-                                        width: _screenWidth * 0.2,
-                                        height: _screenHeight * 0.1,
-                                        child: Center(
-                                            child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: const [
-                                            Text("Obteniendo Ubicacion..."),
-                                            SizedBox(
-                                              width: 15,
-                                            ),
-                                            CircularProgressIndicator()
-                                          ],
-                                        )),
-                                      ),
-                                    );
-                                  }).then((value) {
-                                Navigator.pop(context, value);
-                              });
-                              Position location =
-                                  await LocationManager.determinePosition();
-
-                              Navigator.pop(context, {
-                                "type": MessageType.location,
-                                "data": [location]
-                              });
-                            } else {
-                              showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (locationDialogContext) {
-                                    return AlertDialog(
-                                      title: const Text('Ubicación denegada'),
-                                      content: const Text(
-                                          'Por favor brinde acceso a su ubicación desde ajustes, para que pueda compartirla.'),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text('Cerrar'))
-                                      ],
-                                    );
-                                  });
+                                Navigator.pop(context, {
+                                  "type": MessageType.location,
+                                  "data": [location]
+                                });
+                              } else {
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (locationDialogContext) {
+                                      return AlertDialog(
+                                        title: const Text('Ubicación denegada'),
+                                        content: const Text(
+                                            'Por favor brinde acceso a su ubicación desde ajustes, para que pueda compartirla.'),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('Cerrar'))
+                                        ],
+                                      );
+                                    });
+                              }
                             }
+                            locationRequest = true;
                           }),
                           child: Row(
                             children: [

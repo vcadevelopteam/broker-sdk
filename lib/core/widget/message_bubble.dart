@@ -90,7 +90,8 @@ class MessageBubble extends StatelessWidget {
         child: Padding(
           padding:
               const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
-          child: Row(
+          child: TextButton(onPressed: (){}, child: 
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
@@ -115,7 +116,8 @@ class MessageBubble extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+          ),)
+          
         ),
       );
     }

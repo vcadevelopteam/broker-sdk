@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: SocketActionButton(
           integrationId: '63fe5143762b546856d9deb0',
-          icon: Icon(Icons.read_more),
+          icon: const Icon(Icons.read_more),
         ));
   }
 }
