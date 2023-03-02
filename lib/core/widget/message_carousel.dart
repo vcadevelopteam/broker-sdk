@@ -11,6 +11,40 @@ import '../chat_socket.dart';
 /*
 Message Widget for Carousel MessageType
  */
+class SingleTapEvent extends StatefulWidget {
+  final Widget child;
+  final Function() onTap;
+
+  const SingleTapEvent(
+      {Key? key, required this.child, required this.onTap, singleTap = false})
+      : super(key: key);
+
+  @override
+  State<SingleTapEvent> createState() => _SingleTapEventState();
+}
+
+class _SingleTapEventState extends State<SingleTapEvent> {
+  bool singleTap = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: !singleTap?() {
+          
+            Function.apply(widget.onTap, []);
+            setState(() {
+              singleTap = true;
+            });
+            Future.delayed(const Duration(seconds: 10))
+                .then((value) => setState((() {
+                      singleTap = false;
+                    })));
+          
+        }:null,
+        child: !singleTap ? widget.child : const SizedBox());
+  }
+}
+
 class MessageCarousel extends StatelessWidget {
   ColorPreference color;
   final ChatSocket _socket;
@@ -27,13 +61,7 @@ class MessageCarousel extends StatelessWidget {
       shrinkWrap: true,
       itemCount: buttons.length,
       itemBuilder: (context, indx) {
-        return TextButton(
-            // style: ButtonStyle(padding:MaterialStatePropertyAll(EdgeInsets.zero)  ),
-
-            onPressed: () {
-              sendMessage(buttons[indx].payload.toString(),
-                  buttons[indx].text.toString());
-            },
+        return SingleTapEvent(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +80,39 @@ class MessageCarousel extends StatelessWidget {
                   ),
                 ),
               ],
-            ));
+            ),
+            onTap: () {
+              sendMessage(buttons[indx].payload.toString(),
+                  buttons[indx].text.toString());
+            });
+
+        //  TextButton(
+        //     // style: ButtonStyle(padding:MaterialStatePropertyAll(EdgeInsets.zero)  ),
+
+        //     onPressed:
+        // () {
+        //       sendMessage(buttons[indx].payload.toString(),
+        //           buttons[indx].text.toString());
+        //     },
+        //     child: Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Divider(
+        //           color: HexColor(color.messageClientColor!),
+        //         ),
+        //         Text(
+        //           buttons[indx].text!,
+        //           style: TextStyle(
+        //             color: HexColor(color.messageBotColor.toString())
+        //                         .computeLuminance() >
+        //                     0.5
+        //                 ? Colors.black
+        //                 : Colors.white,
+        //           ),
+        //         ),
+        //       ],
+        //     ));
       },
     );
   }

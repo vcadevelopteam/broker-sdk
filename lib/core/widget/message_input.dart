@@ -18,6 +18,32 @@ import 'media_input_modal.dart';
 /*
 This widget is used as an input for the whole chat page
  */
+
+class SingleTapEvent extends StatelessWidget {
+  final Widget child;
+  final Function() onTap;
+
+  bool singleTap = false;
+
+  SingleTapEvent(
+      {Key? key, required this.child, required this.onTap, singleTap = false})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () {
+          if (!singleTap) {
+            Function.apply(onTap, []);
+            singleTap = true;
+            Future.delayed(const Duration(seconds: 3))
+                .then((value) => singleTap = false);
+          }
+        },
+        child: child);
+  }
+}
+
 class MessageInput extends StatefulWidget {
   ChatSocket socket;
   MessageInput(this.socket, {super.key});
@@ -327,7 +353,7 @@ class _MessageInputState extends State<MessageInput> {
               Container(
                 margin: const EdgeInsets.only(left: 10),
                 child: StreamBuilder(builder: (context, snapshot) {
-                  return GestureDetector(
+                  return SingleTapEvent(
                     onTap: () async {
                       final connection =
                           await ChatSocketRepository.hasNetwork();
