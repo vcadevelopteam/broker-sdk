@@ -101,7 +101,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                   color: Colors.black,
                 ),
                 label: const Text(""))
-            : SizedBox(),
+            : const SizedBox(),
       ),
     );
   }
@@ -155,6 +155,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                   children: [
                     Expanded(
                       child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
                           controller: scrollController,
                           reverse: false,
                           keyboardDismissBehavior:
@@ -268,7 +269,7 @@ class _MessagesAreaState extends State<MessagesArea> {
       if (messagesCount.isNotEmpty) {
         scrollDown();
       }
-    } catch (exception, stacktrace) {
+    } catch (exception) {
       showDialog(
         context: context,
         builder: (context) {

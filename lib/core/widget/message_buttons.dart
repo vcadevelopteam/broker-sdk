@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:laraigo_chat/helpers/single_tap.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../model/color_preference.dart';
@@ -48,14 +49,20 @@ class MessageButtons extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Colors.transparent),
-          child: ListView.builder(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                childAspectRatio: 1,
+                crossAxisSpacing: 20,
+                mainAxisExtent: 40),
             shrinkWrap: true,
             itemCount: data[0].buttons!.length,
             itemBuilder: (context, indx) {
-              return Padding(
+              return Container(
+                  margin: const EdgeInsets.all(5),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  child: ElevatedButton(
+                  child: SingleTapEventElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: HexColor(color.messageClientColor!),
                     ),
@@ -66,7 +73,7 @@ class MessageButtons extends StatelessWidget {
                     child: Text(
                       data[0].buttons![indx].text!,
                       style: TextStyle(
-                          color: HexColor(color.messageBotColor.toString())
+                          color: HexColor(color.messageClientColor.toString())
                                       .computeLuminance() >
                                   0.5
                               ? Colors.black

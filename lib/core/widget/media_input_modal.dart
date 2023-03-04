@@ -54,6 +54,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
                   itemCount: files.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
