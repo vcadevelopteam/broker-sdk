@@ -144,9 +144,9 @@ class _MessagesAreaState extends State<MessagesArea> {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             if (messages.isNotEmpty) {
               scrollController!.animateTo(
-                  scrollController!.position.maxScrollExtent,
-                  duration: const Duration(milliseconds: 100),
-                  curve: Curves.easeInOut);
+                  scrollController!.position.maxScrollExtent + 200,
+                  duration: const Duration(milliseconds: 1),
+                  curve: Curves.linear);
             }
           });
 
