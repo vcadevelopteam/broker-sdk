@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, must_be_immutable
+// ignore_for_file: use_key_in_widget_constructors, must_be_immutable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:laraigo_chat/core/pages/chat_page.dart';
@@ -54,13 +54,14 @@ class _SocketTextButtonState extends State<SocketTextButton> {
         final connection = await ChatSocketRepository.hasNetwork();
         if (socket != null && connection) {
           Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChatPage(socket: socket!)))
-              .then((value) async {
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                        socket: socket!,
+                        customMessage: widget.customMessage,
+                      ))).then((value) async {
             final prefs = await SharedPreferences.getInstance();
             if (prefs.getBool("cerradoManualmente")! == false) {
-              // ignore: use_build_context_synchronously
               showDialog(
                 context: context,
                 builder: (context) {

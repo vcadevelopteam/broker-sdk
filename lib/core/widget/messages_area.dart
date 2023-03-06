@@ -51,11 +51,11 @@ class _MessagesAreaState extends State<MessagesArea> {
   }
 
   void scrollDown() {
-    scrollController!.animateTo(
-      scrollController!.position.maxScrollExtent,
-      curve: Curves.easeOut,
-      duration: const Duration(seconds: 3),
-    );
+    // scrollController!.animateTo(
+    //   scrollController!.position.maxScrollExtent,
+    //   curve: Curves.easeOut,
+    //   duration: const Duration(seconds: 3),
+    // );
   }
 
   void _scrollListener() {
@@ -87,14 +87,14 @@ class _MessagesAreaState extends State<MessagesArea> {
                   padding: const EdgeInsets.all(0),
                 ),
                 onPressed: () {
+                  setState(() {
+                    _visible = false;
+                  });
                   scrollController!.animateTo(
                     scrollController!.position.maxScrollExtent,
                     curve: Curves.easeOut,
                     duration: const Duration(milliseconds: 500),
                   );
-                  setState(() {
-                    _visible = false;
-                  });
                 },
                 icon: const Icon(
                   Icons.arrow_back,
@@ -145,7 +145,7 @@ class _MessagesAreaState extends State<MessagesArea> {
             if (messages.isNotEmpty) {
               scrollController!.animateTo(
                   scrollController!.position.maxScrollExtent,
-                  duration: const Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 100),
                   curve: Curves.easeInOut);
             }
           });
@@ -264,11 +264,11 @@ class _MessagesAreaState extends State<MessagesArea> {
         prefs.setBool("cerradoManualmente", false);
       });
 
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 50));
       var messagesCount = await ChatSocketRepository.getLocalMessages();
-      if (messagesCount.isNotEmpty) {
-        scrollDown();
-      }
+      // if (messagesCount.isNotEmpty) {
+      //   // scrollDown();
+      // }
     } catch (exception) {
       showDialog(
         context: context,
