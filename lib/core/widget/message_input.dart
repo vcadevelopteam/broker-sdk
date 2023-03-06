@@ -360,8 +360,7 @@ class _MessageInputState extends State<MessageInput> {
                         color: (_textController.text.isEmpty ||
                                 _textController.text == '')
                             ? HexColor('#8c8c8e')
-                            : HexColor(colorPreference.messageClientColor!)
-                                .withOpacity(0.35),
+                            : HexColor(colorPreference.messageClientColor!),
 
                         //  HexColor(colorPreference.messageBotColor!)
                         //             .computeLuminance() >
