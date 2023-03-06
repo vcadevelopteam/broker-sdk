@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/message_type.dart';
@@ -103,15 +106,24 @@ class _MessageBubbleState extends State<MessageBubble> {
                 const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
             child: TextButton(
               onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                });
-                var file = await ChatSocketRepository.downloadFile(
-                    message.data![0].mediaUrl!, message.data![0].filename!);
-                setState(() {
-                  isLoading = false;
-                });
-                await OpenFilex.open(file.path);
+                String dir = (await getApplicationDocumentsDirectory()).path;
+
+                if (!File('$dir/${message.data![0].filename!}').existsSync()) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  var file = await ChatSocketRepository.downloadFile(
+                      message.data![0].mediaUrl!, message.data![0].filename!);
+                  setState(() {
+                    isLoading = false;
+                  });
+
+                  await DocumentFileSavePlus().saveFile(file.readAsBytesSync(),
+                      message.data![0].filename!, message.data![0].mimeType!);
+                  await OpenFilex.open(file.path);
+                } else {
+                  await OpenFilex.open('$dir/${message.data![0].filename!}');
+                }
               },
               child: isLoading
                   ? const CircularProgressIndicator()
