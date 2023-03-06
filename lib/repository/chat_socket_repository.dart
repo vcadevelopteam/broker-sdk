@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -239,5 +240,17 @@ using internal databases as SQLite, Hive, etc.
       return Future.value(decodedList);
     }
     return [];
+  }
+
+  static Future<File> downloadFile(String url, String filename) async {
+    var httpClient = new HttpClient();
+
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    var bytes = await consolidateHttpClientResponseBytes(response);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = File('$dir/$filename');
+    // await file.writeAsBytes(bytes);
+    return file;
   }
 }

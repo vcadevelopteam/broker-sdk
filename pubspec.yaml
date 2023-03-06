@@ -48,6 +48,8 @@ dependencies:
   google_maps_flutter: ^2.2.3
   path_provider: ^2.0.12
   permission_handler: ^9.2.0
+  document_file_save_plus: ^2.0.0
+  open_filex: ^4.3.2
 
 dev_dependencies:
   flutter_test:
