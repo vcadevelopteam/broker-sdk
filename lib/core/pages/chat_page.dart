@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable, use_key_in_widget_constructors
 
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
@@ -27,6 +29,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<Message> messages = [];
   bool visible = true;
+  var messagesCount = [];
 
   final f = DateFormat('dd/mm/yyyy');
   ScrollController? scrollController;
@@ -39,6 +42,8 @@ class _ChatPageState extends State<ChatPage> {
       DeviceOrientation.portraitUp,
     ]);
   }
+
+  
 
   @override
   void dispose() {
@@ -152,6 +157,10 @@ class _ChatPageState extends State<ChatPage> {
     Color textColor =
         backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
+    double finalHeight = Platform.isAndroid
+        ? screenHeight - padding.bottom - padding.top
+        : screenHeight - padding.top;
+
     return WillPopScope(
       onWillPop: () async {
         try {
@@ -249,9 +258,9 @@ class _ChatPageState extends State<ChatPage> {
               HexColor(colorPreference.chatBackgroundColor.toString()),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+            // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
             child: Container(
-              height: screenHeight - padding.bottom - padding.top,
+              height: finalHeight,
               decoration: BoxDecoration(color: backgroundColor),
               child: Container(
                   width: screenWidth,

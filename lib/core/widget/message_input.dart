@@ -278,7 +278,7 @@ class _MessageInputState extends State<MessageInput> {
                             style: TextStyle(
                                 fontSize: 18,
                                 color: HexColor('#8c8c8e'),
-                                fontWeight: FontWeight.w900
+                                fontWeight: FontWeight.w500
 
                                 // HexColor(
                                 //     colorPreference.iconsColor.toString())
@@ -297,7 +297,9 @@ class _MessageInputState extends State<MessageInput> {
 
                               hintText: "Mensaje...",
                               contentPadding: const EdgeInsets.only(left: 10),
-                              hintStyle: TextStyle(color: HexColor('#8c8c8e')
+                              hintStyle: TextStyle(
+                                  color: HexColor('#8c8c8e'),
+                                  fontWeight: FontWeight.w900
 
                                   // HexColor(
                                   //     colorPreference.iconsColor.toString())
