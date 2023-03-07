@@ -75,7 +75,6 @@ class _SocketElevatedButtonState extends State<SocketElevatedButton> {
               );
             }
           });
-          ;
         }
       },
       child: isInitialized

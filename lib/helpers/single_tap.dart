@@ -1,3 +1,6 @@
+// ignore_for_file: must_be_immutable
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SingleTapEvent extends StatelessWidget {
@@ -57,7 +60,9 @@ class _SingleTapEventElevatedButtonState
         onPressed: (!singleTap && mounted)
             ? () {
                 Function.apply(widget.onPressed, []);
-                print("en el delay esta $singleTap");
+                if (kDebugMode) {
+                  print("en el delay esta $singleTap");
+                }
 
                 setState(() {
                   singleTap = true;
@@ -69,7 +74,9 @@ class _SingleTapEventElevatedButtonState
                   setState(() {
                     singleTap = false;
                   });
-                  print("en el delay esta $singleTap");
+                  if (kDebugMode) {
+                    print("en el delay esta $singleTap");
+                  }
                 });
               }
             : null,

@@ -30,7 +30,7 @@ class MediaInputModal extends StatefulWidget {
 }
 
 class _MediaInputModalState extends State<MediaInputModal> {
-  AndroidDeviceInfo? _osAndroidDevice = null;
+  AndroidDeviceInfo? _osAndroidDevice;
 
   @override
   void initState() {

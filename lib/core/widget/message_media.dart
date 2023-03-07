@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 import 'package:http/http.dart' as http;
@@ -94,7 +95,9 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                                       image: DecorationImage(
                                           fit: BoxFit.contain,
                                           onError: (exception, stackTrace) {
-                                            print("No Image loaded");
+                                            if (kDebugMode) {
+                                              print("No Image loaded");
+                                            }
                                           },
                                           image: NetworkImage(widget
                                               .message.data![0].mediaUrl!))),
@@ -112,7 +115,9 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                   borderRadius: BorderRadius.circular(5),
                   image: DecorationImage(
                       onError: (exception, stackTrace) {
-                        print("No Image loaded");
+                        if (kDebugMode) {
+                          print("No Image loaded");
+                        }
                       },
                       fit: BoxFit.cover,
                       image: NetworkImage(widget.message.data![0].mediaUrl!))),

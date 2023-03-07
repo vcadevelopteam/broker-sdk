@@ -34,7 +34,9 @@ class ChatSocketRepository {
     //Saved into shared preferences as IntegrationId
     pref.setString(IdentifierType.integrationId.name, integrationId);
 
-    print(IntegrationResponse.fromJson(jsonDecode(response.body)));
+    if (kDebugMode) {
+      print(IntegrationResponse.fromJson(jsonDecode(response.body)));
+    }
 
     return IntegrationResponse.fromJson(jsonDecode(response.body));
   }
@@ -149,6 +151,10 @@ class ChatSocketRepository {
       //No avalaible here
       case MessageType.carousel:
         break;
+      case MessageType.image:
+        break;
+      case MessageType.video:
+        break;
     }
     //Waiting for response while is sent as an Http Post
     var response = await ApiManager.post(
@@ -251,17 +257,20 @@ using internal databases as SQLite, Hive, etc.
         directory = Directory('/storage/emulated/0/Download');
         // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
         // ignore: avoid_slow_async_io
-        if (!await directory.exists())
+        if (!await directory.exists()) {
           directory = await getExternalStorageDirectory();
+        }
       }
-    } catch (err, stack) {
-      print("Cannot get download folder path");
+    } catch (err, _) {
+      if (kDebugMode) {
+        print("Cannot get download folder path");
+      }
     }
     return directory?.path;
   }
 
   static Future<File> downloadFile(String url, String filename) async {
-    var httpClient = new HttpClient();
+    var httpClient = HttpClient();
 
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();

@@ -74,7 +74,6 @@ class _SocketTextButtonState extends State<SocketTextButton> {
               );
             }
           });
-          ;
         }
       },
       child: isInitialized
