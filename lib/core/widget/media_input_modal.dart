@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -29,9 +30,16 @@ class MediaInputModal extends StatefulWidget {
 }
 
 class _MediaInputModalState extends State<MediaInputModal> {
+  AndroidDeviceInfo? _osAndroidDevice = null;
+
   @override
   void initState() {
     super.initState();
+    getAndroidInfo();
+  }
+
+  Future<void> getAndroidInfo() async {
+    _osAndroidDevice = await DeviceInfoPlugin().androidInfo;
   }
 
   var isSendingMessage = false;
@@ -194,8 +202,14 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           onPressed: (() async {
                             if (storageRequest) {
                               storageRequest = false;
+                              bool photoPermission = true;
 
-                              bool photoPermission = await askStorage();
+                              if (Platform.isAndroid &&
+                                  _osAndroidDevice!.version.sdkInt >= 31) {
+                                photoPermission = true;
+                              } else {
+                                photoPermission = await askStorage();
+                              }
 
                               if (photoPermission) {
                                 FilePickerResult? result =
@@ -282,8 +296,15 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           onPressed: (() async {
                             if (storageRequest) {
                               storageRequest = false;
+                              bool storagePermission = true;
 
-                              bool storagePermission = await askStorage();
+                              if (Platform.isAndroid &&
+                                  _osAndroidDevice!.version.sdkInt >= 31) {
+                                storagePermission = true;
+                              } else {
+                                storagePermission = await askStorage();
+                              }
+
                               if (storagePermission) {
                                 FilePickerResult? result =
                                     await FilePicker.platform.pickFiles(
