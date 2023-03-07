@@ -248,9 +248,9 @@ using internal databases as SQLite, Hive, etc.
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
-    String dir = (await getApplicationDocumentsDirectory()).path;
+    String dir = "/storage/emulated/0/Download/";
     File file = File('$dir/$filename');
-    // await file.writeAsBytes(bytes);
+    await file.writeAsBytes(bytes);
     return file;
   }
 }

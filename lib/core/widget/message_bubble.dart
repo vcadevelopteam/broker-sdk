@@ -106,7 +106,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                 const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
             child: TextButton(
               onPressed: () async {
-                String dir = (await getApplicationDocumentsDirectory()).path;
+                String dir = "/storage/emulated/0/Download/";
 
                 if (!File('$dir/${message.data![0].filename!}').existsSync()) {
                   setState(() {
@@ -117,9 +117,6 @@ class _MessageBubbleState extends State<MessageBubble> {
                   setState(() {
                     isLoading = false;
                   });
-
-                  await DocumentFileSavePlus().saveFile(file.readAsBytesSync(),
-                      message.data![0].filename!, message.data![0].mimeType!);
                   await OpenFilex.open(file.path);
                 } else {
                   await OpenFilex.open('$dir/${message.data![0].filename!}');
