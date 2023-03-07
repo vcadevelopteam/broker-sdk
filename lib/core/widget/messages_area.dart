@@ -50,14 +50,6 @@ class _MessagesAreaState extends State<MessagesArea> {
     super.dispose();
   }
 
-  void scrollDown() {
-    // scrollController!.animateTo(
-    //   scrollController!.position.maxScrollExtent,
-    //   curve: Curves.easeOut,
-    //   duration: const Duration(seconds: 3),
-    // );
-  }
-
   void _scrollListener() {
     if (scrollController?.position.userScrollDirection ==
         ScrollDirection.reverse) {
@@ -91,7 +83,7 @@ class _MessagesAreaState extends State<MessagesArea> {
                     _visible = false;
                   });
                   scrollController!.animateTo(
-                    scrollController!.position.maxScrollExtent,
+                    scrollController!.position.maxScrollExtent + 100,
                     curve: Curves.easeOut,
                     duration: const Duration(milliseconds: 500),
                   );
@@ -144,7 +136,7 @@ class _MessagesAreaState extends State<MessagesArea> {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             if (messages.isNotEmpty) {
               scrollController!.animateTo(
-                  scrollController!.position.maxScrollExtent + 200,
+                  scrollController!.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 100),
                   curve: Curves.linear);
             }
@@ -297,34 +289,6 @@ class _MessagesAreaState extends State<MessagesArea> {
 
   @override
   Widget build(BuildContext context) {
-    Widget downButton = Positioned(
-      left: 0,
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 500),
-        opacity: _visible ? 1.0 : 0.0,
-        child: Transform.rotate(
-          angle: 270 * math.pi / 180,
-          child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                backgroundColor: const Color.fromRGBO(106, 194, 194, 1),
-                padding: const EdgeInsets.all(0),
-              ),
-              onPressed: () {
-                scrollController!.animateTo(
-                  scrollController!.position.maxScrollExtent,
-                  curve: Curves.easeOut,
-                  duration: const Duration(milliseconds: 500),
-                );
-                setState(() {
-                  _visible = true;
-                });
-              },
-              icon: const Icon(Icons.arrow_back),
-              label: const Text("")),
-        ),
-      ),
-    );
     return Stack(
       children: [
         mystreambuilder,
