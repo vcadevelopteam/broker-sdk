@@ -106,7 +106,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                 const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
             child: TextButton(
               onPressed: () async {
-                String dir = "/storage/emulated/0/Download/";
+                String? dir = await ChatSocketRepository.getDownloadPath();
 
                 if (!File('$dir/${message.data![0].filename!}').existsSync()) {
                   setState(() {

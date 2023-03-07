@@ -145,7 +145,7 @@ class _MessagesAreaState extends State<MessagesArea> {
             if (messages.isNotEmpty) {
               scrollController!.animateTo(
                   scrollController!.position.maxScrollExtent + 200,
-                  duration: const Duration(milliseconds: 1),
+                  duration: const Duration(milliseconds: 100),
                   curve: Curves.linear);
             }
           });
