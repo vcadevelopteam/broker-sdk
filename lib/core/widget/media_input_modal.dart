@@ -2,8 +2,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -30,7 +30,7 @@ class MediaInputModal extends StatefulWidget {
 }
 
 class _MediaInputModalState extends State<MediaInputModal> {
-  AndroidDeviceInfo? _osAndroidDevice = null;
+  AndroidDeviceInfo? _osAndroidDevice;
 
   @override
   void initState() {

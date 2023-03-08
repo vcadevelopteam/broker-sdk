@@ -76,7 +76,6 @@ class _SocketContainerState extends State<SocketContainer> {
               );
             }
           });
-          ;
         }
       },
       child: SizedBox(

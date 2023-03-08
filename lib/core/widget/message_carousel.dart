@@ -90,7 +90,7 @@ class MessageCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
+    // var screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
     var screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
       width: double.infinity,

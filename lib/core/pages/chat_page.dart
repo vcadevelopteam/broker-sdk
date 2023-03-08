@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
@@ -42,8 +43,6 @@ class _ChatPageState extends State<ChatPage> {
       DeviceOrientation.portraitUp,
     ]);
   }
-
-  
 
   @override
   void dispose() {
@@ -183,7 +182,9 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 CircleAvatar(
                   onBackgroundImageError: (exception, stackTrace) {
-                    print("No Image loaded");
+                    if (kDebugMode) {
+                      print("No Image loaded");
+                    }
                   },
                   backgroundImage: NetworkImage(headerIcons.chatHeaderImage!),
                   backgroundColor:
@@ -223,6 +224,7 @@ class _ChatPageState extends State<ChatPage> {
                     await widget.socket.channel!.sink.close();
                     final prefs = await SharedPreferences.getInstance();
                     prefs.setBool("cerradoManualmente", true);
+                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   } catch (ex) {
                     Navigator.pop(context);

@@ -44,7 +44,7 @@ class _SocketActionButtonState extends State<SocketActionButton> {
       setState(() {
         isInitialized = true;
       });
-    } catch (exception, stacktrace) {
+    } catch (exception, _) {
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -56,7 +56,7 @@ class _SocketActionButtonState extends State<SocketActionButton> {
           );
         },
       );
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
       Navigator.pop(context);
       retryFuture(_initchatSocket, 15000);
     }
