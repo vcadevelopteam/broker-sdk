@@ -29,7 +29,7 @@ Future<bool> gpsVerification(BuildContext context) async {
 }
 
 Future<bool> askGpsForIos() async {
-  // final service = await Geolocator.requestPermission();
+  await Geolocator.requestPermission();
   final serviceEnabled = await Geolocator.checkPermission();
 
   if (serviceEnabled == LocationPermission.always ||

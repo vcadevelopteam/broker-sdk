@@ -35,7 +35,8 @@ class _MediaInputModalState extends State<MediaInputModal> {
   @override
   void initState() {
     super.initState();
-    getAndroidInfo();
+
+    if (Platform.isAndroid) getAndroidInfo();
   }
 
   Future<void> getAndroidInfo() async {
@@ -402,9 +403,10 @@ class _MediaInputModalState extends State<MediaInputModal> {
                           onPressed: (() async {
                             if (locationRequest) {
                               locationRequest = false;
-                              final bool gpsAvailable= await gpsVerification(context);
+                              final bool gpsAvailable =
+                                  await gpsVerification(context);
 
-                              if ( gpsAvailable == false) return;
+                              if (gpsAvailable == false) return;
                               bool locationPermission = Platform.isAndroid
                                   ? await askGps()
                                   : await askGpsForIos();
