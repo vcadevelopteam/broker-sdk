@@ -50,19 +50,19 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SocketElevatedButton(
-                child: Text("fasdfa"),
                 integrationId: '63fe5143762b546856d9deb0',
                 customMessage: "Hola",
+                child: Text("fasdfa"),
               ),
               SocketTextButton(
-                child: Text("fasdfa"),
                 integrationId: '63fe5143762b546856d9deb0',
                 customMessage: "Hola",
+                child: Text("fasdfa"),
               ),
               SocketContainer(
-                child: Text("fasdfa"),
                 integrationId: '63fe5143762b546856d9deb0',
                 customMessage: "Hola",
+                child: Text("fasdfa"),
               )
             ],
           ),

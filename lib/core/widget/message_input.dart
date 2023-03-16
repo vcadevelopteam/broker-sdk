@@ -198,6 +198,7 @@ class _MessageInputState extends State<MessageInput> {
                     children: [
                       GestureDetector(
                         onTap: () {
+                          FocusScope.of(context).unfocus();
                           showModalBottomSheet(
                                   backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
