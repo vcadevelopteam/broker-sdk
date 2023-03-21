@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:laraigo_chat/core/widget/message_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/message_type.dart';
@@ -100,6 +101,7 @@ class _MessagesAreaState extends State<MessagesArea> {
 
   initStreamBuilder() {
     scrollController = ScrollController()..addListener(_scrollListener);
+    bool counterExceptions = false;
 
     ColorPreference colorPreference =
         widget.socket.integrationResponse!.metadata!.color!;
@@ -142,77 +144,94 @@ class _MessagesAreaState extends State<MessagesArea> {
             }
           });
 
-          return messages.isNotEmpty
-              ? Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          controller: scrollController,
-                          reverse: false,
-                          keyboardDismissBehavior:
-                              ScrollViewKeyboardDismissBehavior.onDrag,
-                          itemCount: messages.length,
-                          itemBuilder: (ctx, indx) {
-                            Widget separator = const SizedBox();
+          return
+              //  messages.isNotEmpty
+              //     ?
+              Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    controller: scrollController,
+                    reverse: false,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    itemCount: messages.length,
+                    itemBuilder: (ctx, indx) {
+                      Widget separator = const SizedBox();
 
-                            if (indx == 0) {
-                              separator = _labelDay(f.format(DateTime.parse(
-                                  MessageBubble.parseTime(
-                                      messages[0].messageDate!))));
-                            }
-                            if (indx != 0 &&
-                                DateTime.fromMillisecondsSinceEpoch(
-                                            messages[indx].messageDate!)
-                                        .day !=
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                            messages[indx - 1].messageDate!)
-                                        .day) {
-                              separator = _labelDay(f.format(DateTime.parse(
-                                  MessageBubble.parseTime(
-                                      messages[indx].messageDate!))));
-                            }
+                      if (indx == 0) {
+                        separator = _labelDay(f.format(DateTime.parse(
+                            MessageBubble.parseTime(
+                                messages[0].messageDate!))));
+                      }
+                      if (indx != 0 &&
+                          DateTime.fromMillisecondsSinceEpoch(
+                                      messages[indx].messageDate!)
+                                  .day !=
+                              DateTime.fromMillisecondsSinceEpoch(
+                                      messages[indx - 1].messageDate!)
+                                  .day) {
+                        separator = _labelDay(f.format(DateTime.parse(
+                            MessageBubble.parseTime(
+                                messages[indx].messageDate!))));
+                      }
+                      //                 else if (message.type == MessageType.button) {
+                      // return MessageButtons(message.data!, widget.color, widget._socket);
+                      // }
 
-                            return messages[indx].type == MessageType.carousel
-                                ? MessageCarousel(messages[indx].data!,
-                                    colorPreference, widget.socket)
-                                : Column(
-                                    children: [
-                                      separator,
-                                      MessageBubble(
-                                          messages[indx],
-                                          indx,
-                                          colorPreference,
-                                          widget
-                                              .socket
-                                              .integrationResponse!
-                                              .metadata!
-                                              .icons!
-                                              .chatHeaderImage!,
-                                          widget.socket)
-                                    ],
-                                  );
-                          }),
-                    ),
-                  ],
-                )
-              : SizedBox(
-                  height: MediaQuery.of(context).size.height - kToolbarHeight,
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.message,
-                        color: Theme.of(context).textTheme.bodyLarge!.color,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Text("No ha enviado mensajes")
-                    ],
-                  ),
-                );
+                      if (messages[indx].type == MessageType.carousel) {
+                        return MessageCarousel(
+                            messages[indx].data!,
+                            colorPreference,
+                            widget.socket,
+                            indx == (messages.length - 1) ? true : null,
+                            widget.socket.integrationResponse!.metadata!.icons!
+                                .chatHeaderImage!);
+                      }
+                      if (messages[indx].type == MessageType.button) {
+                        if (indx == (messages.length - 2)) {
+                          counterExceptions = true;
+                        }
+
+                        return MessageButtons(messages[indx].data!,
+                            colorPreference, widget.socket);
+                      } else {
+                        return Column(
+                          children: [
+                            separator,
+                            MessageBubble(
+                                messages[indx],
+                                indx,
+                                colorPreference,
+                                widget.socket.integrationResponse!.metadata!
+                                    .icons!.chatHeaderImage!,
+                                widget.socket,
+                                indx == (messages.length - 1))
+                          ],
+                        );
+                      }
+                    }),
+              ),
+            ],
+          );
+          // : SizedBox(
+          //     height: MediaQuery.of(context).size.height - kToolbarHeight,
+          //     width: MediaQuery.of(context).size.width,
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Icon(
+          //           Icons.message,
+          //           color: Theme.of(context).textTheme.bodyLarge!.color,
+          //         ),
+          //         const SizedBox(
+          //           width: 10,
+          //         ),
+          //         const Text("No ha enviado mensajes")
+          //       ],
+          //     ),
+          //   );
         } else {
           return const Center(child: CircularProgressIndicator());
         }

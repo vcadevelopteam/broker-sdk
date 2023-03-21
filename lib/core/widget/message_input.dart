@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
@@ -186,7 +188,15 @@ class _MessageInputState extends State<MessageInput> {
 
     return SafeArea(
       child: Container(
-        color: backgroundColor,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border(
+              top: BorderSide(
+            //                   <--- left side
+            color: HexColor('#8c8c8e').withOpacity(0.5),
+            width: 1.0,
+          )),
+        ),
         width: screenWidth,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -304,11 +314,14 @@ class _MessageInputState extends State<MessageInput> {
                               //     ? Colors.black
                               //     : Colors.white,
 
-                              hintText: "Mensaje...",
+                              hintText: "Escribe un mensaje...",
+                              hintMaxLines: 1,
+
                               contentPadding: const EdgeInsets.only(left: 10),
                               hintStyle: TextStyle(
                                   color: HexColor('#8c8c8e'),
-                                  fontWeight: FontWeight.w900
+                                  fontWeight: FontWeight.w500,
+                                  overflow: TextOverflow.ellipsis
 
                                   // HexColor(
                                   //     colorPreference.iconsColor.toString())
@@ -363,31 +376,44 @@ class _MessageInputState extends State<MessageInput> {
                             }));
                       }
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: (_textController.text.isEmpty ||
-                                _textController.text == '')
-                            ? HexColor('#8c8c8e')
-                            : HexColor(colorPreference.messageClientColor!),
+                    child: Platform.isIOS
+                        ? Text(
+                            "Enviar",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 17,
+                                color: (_textController.text.isEmpty ||
+                                        _textController.text == '')
+                                    ? HexColor('#8c8c8e')
+                                    : HexColor(
+                                        colorPreference.messageClientColor!)),
+                          )
+                        : Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: (_textController.text.isEmpty ||
+                                      _textController.text == '')
+                                  ? HexColor('#8c8c8e')
+                                  : HexColor(
+                                      colorPreference.messageClientColor!),
 
-                        //  HexColor(colorPreference.messageBotColor!)
-                        //             .computeLuminance() >
-                        //         0.5
-                        //     ? Colors.black
-                        //     : Colors.white,
-                        //      // border color
+                              //  HexColor(colorPreference.messageBotColor!)
+                              //             .computeLuminance() >
+                              //         0.5
+                              //     ? Colors.black
+                              //     : Colors.white,
+                              //      // border color
 
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.send,
-                          color: HexColor(colorPreference.iconsColor!),
-                          size: 20,
-                        ),
-                      ),
-                    ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.send,
+                                color: HexColor(colorPreference.iconsColor!),
+                                size: 20,
+                              ),
+                            ),
+                          ),
                   );
                 }),
               )

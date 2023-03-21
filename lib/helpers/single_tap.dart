@@ -32,7 +32,9 @@ class SingleTapEvent extends StatelessWidget {
 class SingleTapEventElevatedButton extends StatefulWidget {
   final Widget child;
   final Function() onPressed;
+  final Function()? onPressedLoading;
   final ButtonStyle style;
+  final bool? dissapear;
   final Widget? loader;
 
   const SingleTapEventElevatedButton(
@@ -41,7 +43,9 @@ class SingleTapEventElevatedButton extends StatefulWidget {
       required this.onPressed,
       singleTap = false,
       required this.style,
-      this.loader})
+      this.loader,
+      this.onPressedLoading,
+      this.dissapear})
       : super(key: key);
 
   @override
@@ -55,31 +59,33 @@ class _SingleTapEventElevatedButtonState
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        style: widget.style,
-        onPressed: (!singleTap && mounted)
-            ? () {
-                Function.apply(widget.onPressed, []);
-                if (kDebugMode) {
-                  print("en el delay esta $singleTap");
-                }
+    return (widget.dissapear == true && !((!singleTap && mounted)))
+        ? const SizedBox()
+        : ElevatedButton(
+            style: widget.style,
+            onPressed: (!singleTap && mounted)
+                ? () {
+                    Function.apply(widget.onPressed, []);
+                    if (kDebugMode) {
+                      print("en el delay esta $singleTap");
+                    }
 
-                setState(() {
-                  singleTap = true;
-                });
+                    setState(() {
+                      singleTap = true;
+                    });
 
-                Future.delayed(const Duration(seconds: 10)).then((value) {
-                  if (!mounted) return;
+                    Future.delayed(const Duration(seconds: 10)).then((value) {
+                      if (!mounted) return;
 
-                  setState(() {
-                    singleTap = false;
-                  });
-                  if (kDebugMode) {
-                    print("en el delay esta $singleTap");
+                      setState(() {
+                        singleTap = false;
+                      });
+                      if (kDebugMode) {
+                        print("en el delay esta $singleTap");
+                      }
+                    });
                   }
-                });
-              }
-            : null,
-        child: (!singleTap) ? widget.child : widget.loader ?? widget.child);
+                : widget.onPressedLoading,
+            child: (!singleTap) ? widget.child : widget.loader ?? widget.child);
   }
 }
