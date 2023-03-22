@@ -9,8 +9,7 @@ import 'package:open_filex/open_filex.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/message_type.dart';
-import '../../model/color_preference.dart';
-import '../../model/message.dart';
+import '../../model/models.dart';
 import '../chat_socket.dart';
 import 'message_media.dart';
 
@@ -168,6 +167,8 @@ class _MessageBubbleState extends State<MessageBubble> {
 
   @override
   Widget build(BuildContext context) {
+    final Extra extraOptions =
+        widget._socket.integrationResponse!.metadata!.extra!;
 
     final f = DateFormat('hh:mm');
     var screenWidth = MediaQuery.of(context).size.width;
@@ -214,7 +215,12 @@ class _MessageBubbleState extends State<MessageBubble> {
                         : const Radius.circular(0),
                     topLeft: const Radius.circular(10),
                     bottomRight: const Radius.circular(10)),
-                elevation: widget.message.type != MessageType.button ? 5 : 0,
+                elevation: widget.message.type != MessageType.button
+                    ? (widget.message.type == MessageType.media &&
+                            extraOptions.withBorder == false)
+                        ? 0
+                        : 5
+                    : 0,
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   constraints: BoxConstraints(
@@ -227,7 +233,11 @@ class _MessageBubbleState extends State<MessageBubble> {
                   ),
                   decoration: BoxDecoration(
                       color: (widget.message.isUser!)
-                          ? HexColor(widget.color.messageClientColor.toString())
+                          ? (widget.message.type == MessageType.media &&
+                                  extraOptions.withBorder == false)
+                              ? Colors.transparent
+                              : HexColor(
+                                  widget.color.messageClientColor.toString())
                           : (widget.message.type == MessageType.button
                               ? Colors.transparent
                               : HexColor(
@@ -252,42 +262,48 @@ class _MessageBubbleState extends State<MessageBubble> {
                             child: Stack(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(bottom: 20),
+                                  padding: extraOptions.withHour == true
+                                      ? const EdgeInsets.only(bottom: 20)
+                                      : const EdgeInsets.only(),
                                   child: _getMessage(widget.message,
                                       screenHeight, screenWidth, context),
                                 ),
-                                const SizedBox(
-                                  height: 40,
-                                  width: 50,
-                                ),
-                                Positioned(
-                                  left: widget.message.isUser! ? 0 : 10,
-                                  right: widget.message.isUser! ? 10 : 0,
-                                  bottom: 0,
-                                  child: Text(
-                                    f.format(DateTime.parse(
-                                        MessageBubble.parseTime(
-                                            widget.message.messageDate!))),
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                        color: widget.message.isUser!
-                                            ? HexColor(widget.color
-                                                            .messageClientColor
-                                                            .toString())
-                                                        .computeLuminance() >
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white
-                                            : HexColor(widget.color
-                                                            .messageBotColor
-                                                            .toString())
-                                                        .computeLuminance() >
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white,
-                                        fontSize: 12),
-                                  ),
-                                )
+                                extraOptions.withHour == true
+                                    ? const SizedBox(
+                                        height: 40,
+                                        width: 50,
+                                      )
+                                    : const SizedBox(),
+                                extraOptions.withHour == true
+                                    ? Positioned(
+                                        left: widget.message.isUser! ? 0 : 10,
+                                        right: widget.message.isUser! ? 10 : 0,
+                                        bottom: 0,
+                                        child: Text(
+                                          f.format(DateTime.parse(
+                                              MessageBubble.parseTime(widget
+                                                  .message.messageDate!))),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                              color: widget.message.isUser!
+                                                  ? HexColor(widget.color
+                                                                  .messageClientColor
+                                                                  .toString())
+                                                              .computeLuminance() >
+                                                          0.5
+                                                      ? Colors.black
+                                                      : Colors.white
+                                                  : HexColor(widget.color
+                                                                  .messageBotColor
+                                                                  .toString())
+                                                              .computeLuminance() >
+                                                          0.5
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                              fontSize: 12),
+                                        ),
+                                      )
+                                    : const SizedBox()
                               ],
                             ))
                       ]),
