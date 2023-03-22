@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
@@ -29,6 +30,11 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
   void initState() {
     loadVideoPlayer();
     super.initState();
+  }
+
+  loadImage() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: true, type: FileType.media);
   }
 
   loadVideoPlayer() async {
@@ -65,6 +71,7 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
+
     return isImage
         ? GestureDetector(
             onTap: () {
@@ -109,19 +116,29 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                   });
             },
             child: Container(
-              width: double.infinity,
-              height: screenHeight * 0.25,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  image: DecorationImage(
-                      onError: (exception, stackTrace) {
-                        if (kDebugMode) {
-                          print("No Image loaded");
-                        }
-                      },
-                      fit: BoxFit.cover,
-                      image: NetworkImage(widget.message.data![0].mediaUrl!))),
-            ))
+                width: double.infinity,
+                height: screenHeight * 0.25,
+                decoration: const BoxDecoration(),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(widget.message.data![0].mediaUrl!,
+                      fit: BoxFit.cover, frameBuilder:
+                          (context, child, frame, wasSynchronouslyLoaded) {
+                    return child;
+                  }, loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
+                )
+
+                //  FadeInImage(image:NetworkImage(widget.message.data![0].mediaUrl!) ,placeholder: ,)
+
+                ))
         : startedPlaying
             ? GestureDetector(
                 onTap: () async {

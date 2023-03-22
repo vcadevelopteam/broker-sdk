@@ -73,6 +73,7 @@ class _MessageBubbleState extends State<MessageBubble> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: GoogleMap(
+            myLocationButtonEnabled: false,
             initialCameraPosition: CameraPosition(
               target: LatLng(message.data![0].lat!.toDouble(),
                   message.data![0].long!.toDouble()),
@@ -216,7 +217,8 @@ class _MessageBubbleState extends State<MessageBubble> {
                     topLeft: const Radius.circular(10),
                     bottomRight: const Radius.circular(10)),
                 elevation: widget.message.type != MessageType.button
-                    ? (widget.message.type == MessageType.media &&
+                    ? ((widget.message.type == MessageType.media ||
+                                widget.message.type == MessageType.location) &&
                             extraOptions.withBorder == false)
                         ? 0
                         : 5
@@ -233,7 +235,9 @@ class _MessageBubbleState extends State<MessageBubble> {
                   ),
                   decoration: BoxDecoration(
                       color: (widget.message.isUser!)
-                          ? (widget.message.type == MessageType.media &&
+                          ? ((widget.message.type == MessageType.media ||
+                                      widget.message.type ==
+                                          MessageType.location) &&
                                   extraOptions.withBorder == false)
                               ? Colors.transparent
                               : HexColor(
