@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
 import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
@@ -58,14 +59,8 @@ class _SocketActionButtonState extends State<SocketActionButton> {
       );
       await Future.delayed(const Duration(seconds: 2));
       Navigator.pop(context);
-      retryFuture(_initchatSocket, 15000);
+      Utils.retryFuture(_initchatSocket, 15000);
     }
-  }
-
-  retryFuture(future, delay) {
-    Future.delayed(Duration(milliseconds: delay), () {
-      future();
-    });
   }
 
   @override

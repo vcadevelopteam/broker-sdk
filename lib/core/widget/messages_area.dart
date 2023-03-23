@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/message_type.dart';
 import '../../helpers/sender_type.dart';
+import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
 import '../../model/message.dart';
 import '../../repository/chat_socket_repository.dart';
@@ -39,7 +40,6 @@ class _MessagesAreaState extends State<MessagesArea> {
   @override
   void initState() {
     initStreamBuilder();
-    initChat();
     scrollController = ScrollController()..addListener(_scrollListener);
 
     super.initState();
@@ -99,7 +99,7 @@ class _MessagesAreaState extends State<MessagesArea> {
     );
   }
 
-  initStreamBuilder() {
+  initStreamBuilder() async {
     scrollController = ScrollController()..addListener(_scrollListener);
     bool counterExceptions = false;
 
@@ -239,49 +239,12 @@ class _MessagesAreaState extends State<MessagesArea> {
     );
   }
 
-  Future<bool> hasNetwork() async {
+  _retryConnectSocket() async {
     try {
-      final result = await InternetAddress.lookup('8.8.8.8');
-
-      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException catch (_) {
-      return false;
-    }
-  }
-
-  initChat() async {
-    try {
-      widget.socket.channel!.stream.asBroadcastStream().listen((event) async {
-        var decodedJson = jsonDecode(event);
-        decodedJson['sender'] = SenderType.chat.name;
-        widget.socket.controller!.sink.add(decodedJson);
-      }, onDone: () async {
-        var prefs = await SharedPreferences.getInstance();
-        if (prefs.getBool("cerradoManualmente") == false) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return const AlertDialog(
-                title: Text('Error de conexión'),
-                content: Text(
-                    'Por favor verifique su conexión de internet e intentelo nuevamente'),
-              );
-            },
-          );
-        }
-        prefs.setBool("cerradoManualmente", false);
-      }, onError: (error, stacktrace) async {
-        var prefs = await SharedPreferences.getInstance();
-        prefs.setBool("cerradoManualmente", false);
-      });
-
-      await Future.delayed(const Duration(milliseconds: 50));
-      var messagesCount = await ChatSocketRepository.getLocalMessages();
-      // if (messagesCount.isNotEmpty) {
-      //   // scrollDown();
-      // }
-    } catch (exception) {
+      await widget.socket.connect();
+    } catch (exception, _) {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return const AlertDialog(
@@ -291,6 +254,8 @@ class _MessagesAreaState extends State<MessagesArea> {
           );
         },
       );
+      print("sigue sin conectarse");
+      Navigator.pop(context);
     }
   }
 

@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable, use_key_in_widget_constructors
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -8,6 +10,7 @@ import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
 import 'package:laraigo_chat/helpers/color_convert.dart';
+import 'package:laraigo_chat/helpers/util.dart';
 import 'package:laraigo_chat/model/models.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../helpers/message_type.dart';
+import '../../helpers/sender_type.dart';
 
 class ChatPage extends StatefulWidget {
   String customMessage;
@@ -30,10 +34,13 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<Message> messages = [];
   bool visible = true;
+  bool isClosed = false;
+  bool hasConnection = true;
   var messagesCount = [];
 
   final f = DateFormat('dd/mm/yyyy');
   ScrollController? scrollController;
+  Timer? timer;
 
   @override
   void initState() {
@@ -42,10 +49,31 @@ class _ChatPageState extends State<ChatPage> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    timer = Timer.periodic(
+        const Duration(seconds: 5), (Timer t) => checkConnection(t));
+  }
+
+  checkConnection(Timer t) async {
+    print("Checking connection");
+    setState(() {
+      Utils.hasNetwork().then((value) async {
+        hasConnection = value;
+        if (hasConnection && isClosed == true) {
+          widget.socket.disconnect();
+
+          await Future.delayed(Duration(seconds: 5));
+          await initSocket();
+          setState(() {
+            isClosed = false;
+          });
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
+    timer?.cancel();
     disposeSocket();
     super.dispose();
   }
@@ -68,6 +96,7 @@ class _ChatPageState extends State<ChatPage> {
           },
         );
       });
+      await initChat();
       await fillWithChatHistory();
       await sendCustomMessage(widget.customMessage);
     } catch (exception, _) {
@@ -124,20 +153,49 @@ class _ChatPageState extends State<ChatPage> {
     widget.socket.controller!.sink.add(savedMessages);
   }
 
-  // void _scrollListener() {
-  //   if (scrollController!.position.userScrollDirection ==
-  //       ScrollDirection.reverse) {
-  //     setState(() {
-  //       visible = false;
-  //     });
-  //   }
-  //   if (scrollController!.position.userScrollDirection ==
-  //       ScrollDirection.forward) {
-  //     setState(() {
-  //       visible = true;
-  //     });
-  //   }
-  // }
+  initChat() async {
+    try {
+      widget.socket.channel!.stream.listen((event) async {
+        var decodedJson = jsonDecode(event);
+        decodedJson['sender'] = SenderType.chat.name;
+        widget.socket.controller!.sink.add(decodedJson);
+      }, onDone: () async {
+        print("Socket cerrado");
+        setState(() {
+          hasConnection = false;
+          isClosed = true;
+        });
+
+        // prefs.setBool("cerradoManualmente", false);
+      }, onError: (error, stacktrace) async {
+        setState(() {
+          hasConnection = false;
+          isClosed = true;
+        });
+      });
+
+      await Future.delayed(const Duration(milliseconds: 50));
+      var messagesCount = await ChatSocketRepository.getLocalMessages();
+      // if (messagesCount.isNotEmpty) {
+      //   // scrollDown();
+      // }
+    } catch (exception) {
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return const AlertDialog(
+      //       title: Text('Error de conexión'),
+      //       content: Text(
+      //           'Por favor verifique su conexión de internet e intentelo nuevamente'),
+      //     );
+      //   },
+      // );
+      setState(() {
+        hasConnection = false;
+        isClosed = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,9 +221,9 @@ class _ChatPageState extends State<ChatPage> {
     return WillPopScope(
       onWillPop: () async {
         try {
-          await widget.socket.channel!.sink.close();
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setBool("cerradoManualmente", true);
+          if (widget.socket.channel != null) {
+            await widget.socket.channel!.sink.close();
+          }
           return true;
         } catch (ex) {
           return true;
@@ -173,6 +231,19 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: Scaffold(
           appBar: AppBar(
+            bottom: !hasConnection
+                ? PreferredSize(
+                    preferredSize: Size.fromHeight(30),
+                    child: Container(
+                        width: double.infinity,
+                        height: 30,
+                        color: Colors.black,
+                        alignment: Alignment.center,
+                        child: const Text(
+                          "Sin conexión",
+                          style: TextStyle(color: Colors.grey),
+                        )))
+                : null,
             automaticallyImplyLeading: false,
             // iconTheme:
             //     IconThemeData(color: HexColor(colorPreference.iconsColor!)),
@@ -221,9 +292,10 @@ class _ChatPageState extends State<ChatPage> {
               GestureDetector(
                 onTap: () async {
                   try {
-                    await widget.socket.channel!.sink.close();
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool("cerradoManualmente", true);
+                    if (widget.socket.channel != null) {
+                      await widget.socket.channel!.sink.close();
+                    }
+
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   } catch (ex) {
@@ -267,7 +339,7 @@ class _ChatPageState extends State<ChatPage> {
               child: Container(
                   width: screenWidth,
                   height: screenHeight,
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     children: [
                       Flexible(
