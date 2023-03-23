@@ -199,7 +199,9 @@ class _MessageInputState extends State<MessageInput> {
         ),
         width: screenWidth,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+
+          // padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
             children: [
               Expanded(
@@ -280,69 +282,71 @@ class _MessageInputState extends State<MessageInput> {
                           child: Icon(
                             Icons.add,
                             color: HexColor(colorPreference.iconsColor!),
-                            size: 30,
+                            size: 25,
                           ),
                         ),
                       ),
                       Expanded(
                         child: SizedBox(
                           height: 50,
-                          child: TextFormField(
-                            controller: _textController,
-                            textAlign: TextAlign.left,
-                            onChanged: (String val) {
-                              setState(() {});
-                            },
-                            autofocus: false,
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: HexColor('#8c8c8e'),
-                                fontWeight: FontWeight.w500
-
-                                // HexColor(
-                                //     colorPreference.iconsColor.toString())
-
-                                ),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.transparent,
-
-                              // HexColor(colorPreference.iconsColor
-                              //                 .toString())
-                              //             .computeLuminance() >
-                              //         0.5
-                              //     ? Colors.black
-                              //     : Colors.white,
-
-                              hintText: "Escribe un mensaje...",
-                              hintMaxLines: 1,
-
-                              contentPadding: const EdgeInsets.only(left: 10),
-                              hintStyle: TextStyle(
+                          child: Center(
+                            child: TextFormField(
+                              controller: _textController,
+                              textAlign: TextAlign.left,
+                              onChanged: (String val) {
+                                setState(() {});
+                              },
+                              autofocus: false,
+                              style: TextStyle(
+                                  fontSize: 18,
                                   color: HexColor('#8c8c8e'),
-                                  fontWeight: FontWeight.w500,
-                                  overflow: TextOverflow.ellipsis
+                                  fontWeight: FontWeight.w500
 
                                   // HexColor(
                                   //     colorPreference.iconsColor.toString())
 
                                   ),
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .color),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.transparent,
+
+                                // HexColor(colorPreference.iconsColor
+                                //                 .toString())
+                                //             .computeLuminance() >
+                                //         0.5
+                                //     ? Colors.black
+                                //     : Colors.white,
+
+                                hintText: "Escribe un mensaje...",
+                                hintMaxLines: 1,
+
+                                contentPadding: const EdgeInsets.only(left: 10),
+                                hintStyle: TextStyle(
+                                    color: HexColor('#8c8c8e'),
+                                    fontWeight: FontWeight.w500,
+                                    overflow: TextOverflow.ellipsis
+
+                                    // HexColor(
+                                    //     colorPreference.iconsColor.toString())
+
+                                    ),
+                                labelStyle: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
-                                  width: 2.0,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                    width: 2.0,
+                                  ),
                                 ),
                               ),
                             ),

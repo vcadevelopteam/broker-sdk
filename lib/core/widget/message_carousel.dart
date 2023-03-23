@@ -38,7 +38,14 @@ class MessageCarousel extends StatelessWidget {
                       width: 10,
                       child: CircularProgressIndicator()),
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent, elevation: 0),
+                      // visualDensity: ,
+                      surfaceTintColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      disabledForegroundColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      disabledBackgroundColor: Colors.transparent,
+                      foregroundColor: Colors.transparent),
                   onPressed: () {
                     sendMessage(buttons[indx].payload.toString(),
                         buttons[indx].text.toString());
@@ -69,9 +76,13 @@ class MessageCarousel extends StatelessWidget {
             loader: const SizedBox(
                 height: 10, width: 10, child: CircularProgressIndicator()),
             style: ElevatedButton.styleFrom(
-              backgroundColor: HexColor(color.messageBotColor!),
-              elevation: 0,
-            ),
+                surfaceTintColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                disabledForegroundColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                disabledBackgroundColor: Colors.transparent,
+                foregroundColor: Colors.transparent),
             onPressed: () {
               sendMessage(
                   buttons[0].payload.toString(), buttons[0].text.toString());
@@ -105,7 +116,7 @@ class MessageCarousel extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
       width: double.infinity,
-      height: 270,
+      height: 320,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -135,8 +146,11 @@ class MessageCarousel extends StatelessWidget {
                   height: screenWidth * 0.75,
                   width: 250,
                   decoration: BoxDecoration(
-                      color: HexColor(color.messageBotColor.toString()),
-                      borderRadius: BorderRadius.circular(5)),
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          width: 1,
+                          color: HexColor(color.messageBotColor.toString()))),
                   margin: const EdgeInsets.all(10),
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -145,32 +159,41 @@ class MessageCarousel extends StatelessWidget {
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                topRight: Radius.circular(5)),
                             child: Image.network(
                               data[index].mediaUrl!,
-                              fit: BoxFit.fitWidth,
+                              fit: BoxFit.cover,
                               width: double.infinity,
-                              height: 100,
+                              height: 150,
                             )),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 10.0),
-                                child: Text(
-                                  data[index].title!,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: HexColor(color.messageBotColor
-                                                    .toString())
-                                                .computeLuminance() >
-                                            0.5
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data[index].title!,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: HexColor(color.messageBotColor
+                                                        .toString())
+                                                    .computeLuminance() >
+                                                0.5
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               SingleChildScrollView(
@@ -180,12 +203,13 @@ class MessageCarousel extends StatelessWidget {
                                   child: Text(data[index].description!,
                                       maxLines: 5,
                                       style: TextStyle(
+                                        fontWeight: FontWeight.w400,
                                         color: HexColor(color.messageBotColor
                                                         .toString())
                                                     .computeLuminance() >
                                                 0.5
-                                            ? Colors.black
-                                            : Colors.white,
+                                            ? Colors.black.withOpacity(0.7)
+                                            : Colors.white.withOpacity(0.7),
                                       )),
                                 ),
                               ),

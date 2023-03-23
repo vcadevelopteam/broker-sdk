@@ -15,7 +15,6 @@ import 'package:laraigo_chat/model/models.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../helpers/message_type.dart';
@@ -61,7 +60,7 @@ class _ChatPageState extends State<ChatPage> {
         if (hasConnection && isClosed == true) {
           widget.socket.disconnect();
 
-          await Future.delayed(Duration(seconds: 5));
+          await Future.delayed(const Duration(seconds: 5));
           await initSocket();
           setState(() {
             isClosed = false;
@@ -233,7 +232,7 @@ class _ChatPageState extends State<ChatPage> {
           appBar: AppBar(
             bottom: !hasConnection
                 ? PreferredSize(
-                    preferredSize: Size.fromHeight(30),
+                    preferredSize: const Size.fromHeight(30),
                     child: Container(
                         width: double.infinity,
                         height: 30,
@@ -319,8 +318,8 @@ class _ChatPageState extends State<ChatPage> {
                   // ),
                   child: Icon(
                     Icons.cancel_rounded,
-                    color: HexColor('#8c8c8e'),
-                    size: 25,
+                    color: HexColor('#838387'),
+                    size: 30,
                   ),
                 ),
               ),
@@ -336,10 +335,10 @@ class _ChatPageState extends State<ChatPage> {
             child: Container(
               height: finalHeight,
               decoration: BoxDecoration(color: backgroundColor),
-              child: Container(
+              child: SizedBox(
                   width: screenWidth,
                   height: screenHeight,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  // padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     children: [
                       Flexible(
