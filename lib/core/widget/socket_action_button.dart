@@ -34,11 +34,11 @@ class _SocketActionButtonState extends State<SocketActionButton> {
   ColorPreference colorPreference = ColorPreference();
   @override
   void initState() {
-    _initchatSocket();
+    initchatSocketInButton();
     super.initState();
   }
 
-  _initchatSocket() async {
+  initchatSocketInButton() async {
     try {
       socket = await ChatSocket.getInstance(widget.integrationId!);
       colorPreference = socket!.integrationResponse!.metadata!.color!;
@@ -46,20 +46,7 @@ class _SocketActionButtonState extends State<SocketActionButton> {
         isInitialized = true;
       });
     } catch (exception, _) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text('Error de conexión'),
-            content: Text(
-                'Por favor verifique su conexión de internet e intentelo nuevamente'),
-          );
-        },
-      );
-      await Future.delayed(const Duration(seconds: 2));
-      Navigator.pop(context);
-      Utils.retryFuture(_initchatSocket, 15000);
+      Utils.retryFuture(initchatSocketInButton, 15000);
     }
   }
 

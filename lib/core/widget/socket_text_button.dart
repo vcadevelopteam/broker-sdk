@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:laraigo_chat/core/pages/chat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
 import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
@@ -35,16 +36,20 @@ class _SocketTextButtonState extends State<SocketTextButton> {
 
   @override
   void initState() {
-    _initchatSocket();
+    initchatSocketInButton();
     super.initState();
   }
 
-  _initchatSocket() async {
-    socket = await ChatSocket.getInstance(widget.integrationId!);
-    colorPreference = socket!.integrationResponse!.metadata!.color!;
-    setState(() {
-      isInitialized = true;
-    });
+  initchatSocketInButton() async {
+    try {
+      socket = await ChatSocket.getInstance(widget.integrationId!);
+      colorPreference = socket!.integrationResponse!.metadata!.color!;
+      setState(() {
+        isInitialized = true;
+      });
+    } catch (exception, _) {
+      Utils.retryFuture(initchatSocketInButton, 15000);
+    }
   }
 
   @override
