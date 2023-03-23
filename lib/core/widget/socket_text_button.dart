@@ -64,21 +64,7 @@ class _SocketTextButtonState extends State<SocketTextButton> {
                   builder: (context) => ChatPage(
                         socket: socket!,
                         customMessage: widget.customMessage,
-                      ))).then((value) async {
-            final prefs = await SharedPreferences.getInstance();
-            if (prefs.getBool("cerradoManualmente")! == false) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return const AlertDialog(
-                    title: Text('Error de conexión'),
-                    content: Text(
-                        'Por favor verifique su conexión de internet e intentelo nuevamente'),
-                  );
-                },
-              );
-            }
-          });
+                      )));
         }
       },
       child: isInitialized
