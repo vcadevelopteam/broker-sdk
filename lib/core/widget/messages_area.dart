@@ -67,34 +67,37 @@ class _MessagesAreaState extends State<MessagesArea> {
   }
 
   Widget scrollDownButton() {
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 500),
-      opacity: _visible ? 1.0 : 0.0,
-      child: Transform.rotate(
-        angle: 270 * math.pi / 180,
-        child: messages.isNotEmpty
-            ? ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  backgroundColor: Colors.white,
-                  padding: const EdgeInsets.all(0),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _visible = false;
-                  });
-                  scrollController!.animateTo(
-                    scrollController!.position.maxScrollExtent + 100,
-                    curve: Curves.easeOut,
-                    duration: const Duration(milliseconds: 500),
-                  );
-                },
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                ),
-                label: const Text(""))
-            : const SizedBox(),
+    return IgnorePointer(
+      ignoring: !_visible,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 500),
+        opacity: _visible ? 1.0 : 0.0,
+        child: Transform.rotate(
+          angle: 270 * math.pi / 180,
+          child: messages.isNotEmpty
+              ? ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(0),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _visible = false;
+                    });
+                    scrollController!.animateTo(
+                      scrollController!.position.maxScrollExtent + 100,
+                      curve: Curves.easeOut,
+                      duration: const Duration(milliseconds: 500),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                  label: const Text(""))
+              : const SizedBox(),
+        ),
       ),
     );
   }
