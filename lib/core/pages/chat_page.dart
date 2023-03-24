@@ -302,26 +302,29 @@ class _ChatPageState extends State<ChatPage> {
                   }
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(right: 10),
-                  padding: const EdgeInsets.all(8),
-                  // decoration: BoxDecoration(
-                  //   color: HexColor('#8c8c8e'),
+                    margin: const EdgeInsets.only(right: 10),
+                    padding: const EdgeInsets.all(8),
+                    // decoration: BoxDecoration(
+                    //   color: HexColor('#8c8c8e'),
 
-                  //   //  HexColor(colorPreference.messageBotColor!)
-                  //   //             .computeLuminance() >
-                  //   //         0.5
-                  //   //     ? Colors.black
-                  //   //     : Colors.white,
-                  //   //      // border color
+                    //   //  HexColor(colorPreference.messageBotColor!)
+                    //   //             .computeLuminance() >
+                    //   //         0.5
+                    //   //     ? Colors.black
+                    //   //     : Colors.white,
+                    //   //      // border color
 
-                  //   shape: BoxShape.circle,
-                  // ),
-                  child: Icon(
-                    Icons.cancel_rounded,
-                    color: HexColor('#838387'),
-                    size: 30,
-                  ),
-                ),
+                    //   shape: BoxShape.circle,
+                    // ),
+                    child: CircleAvatar(
+                      backgroundColor: HexColor('#eeeeef'),
+                      radius: 18,
+                      child: Icon(
+                        color: HexColor('#838387'),
+                        Icons.close,
+                        size: 22,
+                      ),
+                    )),
               ),
             ],
             elevation: 0,

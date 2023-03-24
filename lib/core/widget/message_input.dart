@@ -288,7 +288,7 @@ class _MessageInputState extends State<MessageInput> {
                       ),
                       Expanded(
                         child: SizedBox(
-                          height: 50,
+                          height: 51,
                           child: Center(
                             child: TextFormField(
                               controller: _textController,
