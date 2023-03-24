@@ -1,34 +1,47 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:laraigo_chat/repository/chat_socket_repository.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/message_type.dart';
-import '../../model/color_preference.dart';
-import '../../model/message.dart';
+import '../../model/models.dart';
 import '../chat_socket.dart';
-import 'message_buttons.dart';
-import 'message_carousel.dart';
+import 'message_media.dart';
 
 /*
 This widget is used for showing a single message, the widget changes between the types of messages
 we can filter the message using the MessageType parameter and show different widgets 
  */
-class MessageBubble extends StatelessWidget {
+class MessageBubble extends StatefulWidget {
   final ChatSocket _socket;
   final Message message;
+  final bool? isLastMessage;
   final int indx;
+
   final ColorPreference color;
-  final Color textColor = Colors.black;
   final String imageUrl;
-  const MessageBubble(
-      this.message, this.indx, this.color, this.imageUrl, this._socket,
+  MessageBubble(this.message, this.indx, this.color, this.imageUrl,
+      this._socket, this.isLastMessage,
       {super.key});
 
   static String parseTime(int time) {
     var dt = DateTime.fromMillisecondsSinceEpoch(time);
     return dt.toString();
   }
+
+  @override
+  State<MessageBubble> createState() => _MessageBubbleState();
+}
+
+class _MessageBubbleState extends State<MessageBubble> {
+  bool isLoading = false;
+
+  final Color textColor = Colors.black;
 
   Widget _getMessage(Message message, screenHeight, screenWidth, context) {
     if (message.type == MessageType.text) {
@@ -38,66 +51,22 @@ class MessageBubble extends StatelessWidget {
               : message.data![0].message!,
           style: TextStyle(
               color: message.isUser!
-                  ? HexColor(color.messageClientColor.toString())
+                  ? HexColor(widget.color.messageClientColor.toString())
                               .computeLuminance() >
                           0.5
                       ? Colors.black
                       : Colors.white
-                  : HexColor(color.messageBotColor.toString())
+                  : HexColor(widget.color.messageBotColor.toString())
                               .computeLuminance() >
                           0.5
                       ? Colors.black
                       : Colors.white));
-    } else if (message.type == MessageType.carousel) {
-      return MessageCarousel(message.data!, color, _socket);
-    } else if (message.type == MessageType.media) {
-      return GestureDetector(
-        onTap: () {
-          showDialog(
-              context: context,
-              builder: (ctx) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Dialog(
-                    insetPadding: const EdgeInsets.all(0),
-                    backgroundColor: Colors.transparent,
-                    child: SizedBox(
-                      width: screenWidth,
-                      height: screenHeight,
-                      child: PageView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          controller: PageController(viewportFraction: 0.95),
-                          itemCount: 1,
-                          itemBuilder: (ctx, indx) {
-                            return Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  image: DecorationImage(
-                                      fit: BoxFit.contain,
-                                      image: NetworkImage(
-                                          message.data![0].mediaUrl!))),
-                            );
-                          }),
-                    ),
-                  ),
-                );
-              });
-        },
-        child: Container(
-          width: double.infinity,
-          height: screenHeight * 0.25,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(message.data![0].mediaUrl!))),
-        ),
-      );
-    } else if (message.type == MessageType.button) {
-      return MessageButtons(message.data!, color, _socket);
+    }
+    //  else if (message.type == MessageType.carousel) {
+    //   return MessageCarousel(message.data!, color, _socket);
+    // }
+    else if (message.type == MessageType.media) {
+      return MediaMessageBubble(message);
     } else if (message.type == MessageType.location) {
       return SizedBox(
         width: screenWidth * 0.5,
@@ -105,6 +74,7 @@ class MessageBubble extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: GoogleMap(
+            myLocationButtonEnabled: false,
             initialCameraPosition: CameraPosition(
               target: LatLng(message.data![0].lat!.toDouble(),
                   message.data![0].long!.toDouble()),
@@ -130,137 +100,252 @@ class MessageBubble extends StatelessWidget {
     } else {
       return SizedBox(
         child: Padding(
-          padding:
-              const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.attach_file_rounded,
-                color: HexColor(color.messageClientColor.toString())
-                            .computeLuminance() >
-                        0.5
-                    ? Colors.black
-                    : Colors.white,
-              ),
+            padding:
+                const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
+            child: TextButton(
+              onPressed: () async {
+                String? dir = await ChatSocketRepository.getDownloadPath();
 
-              // SizedBox(width: 5,),
-              Text(
-                message.data![0].filename.toString(),
-                style: TextStyle(
-                    color: HexColor(color.messageClientColor.toString())
-                                .computeLuminance() >
-                            0.5
-                        ? Colors.black
-                        : Colors.white),
-              ),
-            ],
-          ),
+                if (!File('$dir/${message.data![0].filename!}').existsSync()) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  var file = await ChatSocketRepository.downloadFile(
+                      message.data![0].mediaUrl!, message.data![0].filename!);
+                  setState(() {
+                    isLoading = false;
+                  });
+                  await OpenFilex.open(file.path);
+                } else {
+                  await OpenFilex.open('$dir/${message.data![0].filename!}');
+                }
+              },
+              child: isLoading
+                  ? const CircularProgressIndicator()
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.attach_file_rounded,
+                            color: message.isUser!
+                                ? HexColor(widget.color.messageClientColor
+                                                .toString())
+                                            .computeLuminance() >
+                                        0.5
+                                    ? Colors.black
+                                    : Colors.white
+                                : HexColor(widget.color.messageBotColor
+                                                .toString())
+                                            .computeLuminance() >
+                                        0.5
+                                    ? Colors.black
+                                    : Colors.white),
+
+                        // SizedBox(width: 5,),
+                        Flexible(
+                          child: Text(
+                            message.data![0].filename.toString(),
+                            style: TextStyle(
+                                color: message.isUser!
+                                    ? HexColor(widget.color.messageClientColor
+                                                    .toString())
+                                                .computeLuminance() >
+                                            0.5
+                                        ? Colors.black
+                                        : Colors.white
+                                    : HexColor(widget.color.messageBotColor
+                                                    .toString())
+                                                .computeLuminance() >
+                                            0.5
+                                        ? Colors.black
+                                        : Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+            )),
+      );
+    }
+  }
+
+  generateIconPhoto() {
+    if (widget.message.haveIcon) {
+      return SizedBox(
+        width: 30,
+        height: 30,
+        child: CircleAvatar(
+          onBackgroundImageError: (exception, stackTrace) {
+            if (kDebugMode) {
+              print("No Image loaded");
+            }
+          },
+          backgroundImage: NetworkImage(widget.imageUrl),
         ),
       );
+    } else {
+      return const SizedBox(width: 30);
+    }
+  }
+
+  generateTitle(String systemOS) {
+    if (widget.message.haveTitle) {
+      return Row(
+        children: [
+          Text(
+            '${widget._socket.integrationResponse!.metadata!.personalization!.headerTitle} - $systemOS',
+            style: TextStyle(
+              color: HexColor(widget.color.messageBotColor.toString())
+                          .computeLuminance() >
+                      0.5
+                  ? Colors.black.withOpacity(0.7)
+                  : Colors.white.withOpacity(0.7),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return SizedBox();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final Extra extraOptions =
+        widget._socket.integrationResponse!.metadata!.extra!;
+
     final f = DateFormat('hh:mm');
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
+    final bool isLast = widget.isLastMessage ?? false;
+    final String systemOS = Platform.isAndroid ? 'Android' : 'iOS';
 
     return Align(
       alignment:
-          !message.isUser! ? Alignment.centerLeft : Alignment.centerRight,
+          (!widget.message.isUser! && widget.message.type != MessageType.button)
+              ? Alignment.centerLeft
+              : Alignment.centerRight,
       child: Container(
         margin: const EdgeInsets.all(5),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!message.isUser!)
-              CircleAvatar(
-                backgroundImage: NetworkImage(imageUrl),
-              ),
+            generateIconPhoto(),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Material(
                 borderRadius: BorderRadius.only(
-                    topRight: !message.isUser!
+                    topRight: !widget.message.isUser!
                         ? const Radius.circular(10)
                         : const Radius.circular(0),
-                    bottomLeft: const Radius.circular(10),
-                    topLeft: message.isUser!
+                    bottomLeft: widget.message.isUser!
                         ? const Radius.circular(10)
                         : const Radius.circular(0),
+                    topLeft: const Radius.circular(10),
                     bottomRight: const Radius.circular(10)),
-                elevation: 10,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  constraints: BoxConstraints(
-                    maxWidth: screenWidth * 0.7,
-                    minHeight: 10,
-                    maxHeight: screenHeight * 0.6,
-                    minWidth: 10,
-                  ),
-                  decoration: BoxDecoration(
-                      color: message.isUser!
-                          ? HexColor(color.messageClientColor.toString())
-                          : HexColor(color.messageBotColor.toString()),
-                      borderRadius: BorderRadius.only(
-                          topRight: !message.isUser!
-                              ? const Radius.circular(10)
-                              : const Radius.circular(0),
-                          bottomLeft: const Radius.circular(10),
-                          topLeft: message.isUser!
-                              ? const Radius.circular(10)
-                              : const Radius.circular(0),
-                          bottomRight: const Radius.circular(10))),
-                  child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: message.isUser!
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                            fit: FlexFit.loose,
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 20),
-                                  child: _getMessage(message, screenHeight,
-                                      screenWidth, context),
-                                ),
-                                const SizedBox(
-                                  height: 40,
-                                  width: 50,
-                                ),
-                                Positioned(
-                                  left: message.isUser! ? 0 : 10,
-                                  right: message.isUser! ? 10 : 0,
-                                  bottom: 0,
-                                  child: Text(
-                                    f.format(DateTime.parse(
-                                        parseTime(message.messageDate!))),
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                        color: message.isUser!
-                                            ? HexColor(color.messageClientColor
-                                                            .toString())
-                                                        .computeLuminance() >
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white
-                                            : HexColor(color.messageBotColor
-                                                            .toString())
-                                                        .computeLuminance() >
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white,
-                                        fontSize: 12),
-                                  ),
-                                )
-                              ],
-                            ))
-                      ]),
+                // elevation: widget.message.type != MessageType.button
+                //     ? ((widget.message.type == MessageType.media ||
+                //                 widget.message.type == MessageType.location) &&
+                //             extraOptions.withBorder == false)
+                //         ? 0
+                //         : 5
+                //     : 0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    generateTitle(systemOS),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      constraints: BoxConstraints(
+                        maxWidth: widget.message.type == MessageType.button
+                            ? screenWidth * 0.8
+                            : screenWidth * 0.7,
+                        minHeight: 10,
+                        maxHeight: screenHeight * 0.6,
+                        minWidth: 10,
+                      ),
+                      decoration: BoxDecoration(
+                          color: (widget.message.isUser!)
+                              ? ((widget.message.type == MessageType.media ||
+                                          widget.message.type ==
+                                              MessageType.location) &&
+                                      extraOptions.withBorder == false)
+                                  ? Colors.transparent
+                                  : HexColor(widget.color.messageClientColor
+                                      .toString())
+                              : (widget.message.type == MessageType.button
+                                  ? Colors.transparent
+                                  : HexColor(
+                                      widget.color.messageBotColor.toString())),
+                          borderRadius: BorderRadius.only(
+                              topRight: !widget.message.isUser!
+                                  ? const Radius.circular(10)
+                                  : const Radius.circular(0),
+                              bottomLeft: widget.message.isUser!
+                                  ? const Radius.circular(10)
+                                  : const Radius.circular(0),
+                              topLeft: const Radius.circular(10),
+                              bottomRight: const Radius.circular(10))),
+                      child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: widget.message.isUser!
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                                fit: FlexFit.loose,
+                                child: Stack(
+                                  children: [
+                                    Padding(
+                                      padding: extraOptions.withHour == true
+                                          ? const EdgeInsets.only(bottom: 20)
+                                          : const EdgeInsets.only(),
+                                      child: _getMessage(widget.message,
+                                          screenHeight, screenWidth, context),
+                                    ),
+                                    extraOptions.withHour == true
+                                        ? const SizedBox(
+                                            height: 40,
+                                            width: 50,
+                                          )
+                                        : const SizedBox(),
+                                    extraOptions.withHour == true
+                                        ? Positioned(
+                                            left:
+                                                widget.message.isUser! ? 0 : 10,
+                                            right:
+                                                widget.message.isUser! ? 10 : 0,
+                                            bottom: 0,
+                                            child: Text(
+                                              f.format(DateTime.parse(
+                                                  MessageBubble.parseTime(widget
+                                                      .message.messageDate!))),
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(
+                                                  color: widget.message.isUser!
+                                                      ? HexColor(widget.color
+                                                                      .messageClientColor
+                                                                      .toString())
+                                                                  .computeLuminance() >
+                                                              0.5
+                                                          ? Colors.black
+                                                          : Colors.white
+                                                      : HexColor(widget.color
+                                                                      .messageBotColor
+                                                                      .toString())
+                                                                  .computeLuminance() >
+                                                              0.5
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                  fontSize: 12),
+                                            ),
+                                          )
+                                        : const SizedBox()
+                                  ],
+                                ))
+                          ]),
+                    ),
+                  ],
                 ),
               ),
             ),

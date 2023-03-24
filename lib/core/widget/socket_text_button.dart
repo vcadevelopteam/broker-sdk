@@ -1,37 +1,39 @@
-// ignore_for_file: must_be_immutable, use_build_context_synchronously
+// ignore_for_file: use_key_in_widget_constructors, must_be_immutable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:laraigo_chat/core/pages/chat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
 import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
-import '../pages/chat_page.dart';
 
-/*
-This widget is used as main widget for calling or initalizing the whole package for chat
- */
-class SocketActionButton extends StatefulWidget {
+class SocketTextButton extends StatefulWidget {
+  Widget child;
   String? integrationId;
-  Color? backgroundColor;
-  Icon icon;
+  Color? circularProgressIndicatorColor;
+  double? height;
+  double? width;
   String customMessage;
-  SocketActionButton(
-      {super.key,
+
+  SocketTextButton(
+      {required this.child,
       required this.integrationId,
-      required this.icon,
+      this.circularProgressIndicatorColor,
+      this.width,
       this.customMessage = "",
-      this.backgroundColor});
+      this.height});
 
   @override
-  State<SocketActionButton> createState() => _SocketActionButtonState();
+  State<SocketTextButton> createState() => _SocketTextButtonState();
 }
 
-class _SocketActionButtonState extends State<SocketActionButton> {
+class _SocketTextButtonState extends State<SocketTextButton> {
   ChatSocket? socket;
   bool isInitialized = false;
   ColorPreference colorPreference = ColorPreference();
+
   @override
   void initState() {
     initchatSocketInButton();
@@ -52,9 +54,7 @@ class _SocketActionButtonState extends State<SocketActionButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      backgroundColor: widget.backgroundColor ?? Colors.purple,
-      child: isInitialized ? widget.icon : const CircularProgressIndicator(),
+    return TextButton(
       onPressed: () async {
         final connection = await ChatSocketRepository.hasNetwork();
         if (socket != null && connection) {
@@ -67,6 +67,18 @@ class _SocketActionButtonState extends State<SocketActionButton> {
                       )));
         }
       },
+      child: isInitialized
+          ? widget.child
+          : Container(
+              padding: const EdgeInsets.all(10),
+              width: 50,
+              height: 50,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: widget.circularProgressIndicatorColor,
+                ),
+              ),
+            ),
     );
   }
 }

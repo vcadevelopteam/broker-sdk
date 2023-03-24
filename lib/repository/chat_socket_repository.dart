@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
 
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,6 +34,10 @@ class ChatSocketRepository {
     //Saved into shared preferences as IntegrationId
     pref.setString(IdentifierType.integrationId.name, integrationId);
 
+    if (kDebugMode) {
+      print(IntegrationResponse.fromJson(jsonDecode(response.body)));
+    }
+
     return IntegrationResponse.fromJson(jsonDecode(response.body));
   }
 
@@ -47,7 +52,7 @@ class ChatSocketRepository {
         type: type.name,
         data: MessageRequestData(message: message, title: title),
         metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
-        createdAt: DateTime.now().millisecondsSinceEpoch,
+        createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
         senderId: pref.getString(IdentifierType.userId.name),
         sessionUuid: pref.getString(IdentifierType.sessionId.name),
         recipinetId: "HOOK",
@@ -93,7 +98,7 @@ class ChatSocketRepository {
                 mimeType: mimeType,
                 fileName: parseName[parseName.length - 1]),
             metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
-            createdAt: DateTime.now().millisecondsSinceEpoch,
+            createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
             senderId: pref.getString(IdentifierType.userId.name),
             sessionUuid: pref.getString(IdentifierType.sessionId.name),
             recipinetId: "HOOK",
@@ -103,7 +108,7 @@ class ChatSocketRepository {
         break;
       case MessageType.location:
         //In case of location it gets the coordinates that are going to be sent
-        var position = data["data"] as Position;
+        var position = data["data"][0] as Position;
         MessageRequest request = MessageRequest(
             type: type.name,
             data: MessageRequestData(
@@ -111,7 +116,7 @@ class ChatSocketRepository {
                 long: position.longitude,
                 message: "Se envió data de localización"),
             metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
-            createdAt: DateTime.now().millisecondsSinceEpoch,
+            createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
             senderId: pref.getString(IdentifierType.userId.name),
             sessionUuid: pref.getString(IdentifierType.sessionId.name),
             recipinetId: "HOOK",
@@ -130,7 +135,7 @@ class ChatSocketRepository {
                 mimeType: mimeType,
                 fileName: parseName[parseName.length - 1]),
             metadata: MessageRequestMetadata(idTemp: const Uuid().v4()),
-            createdAt: DateTime.now().millisecondsSinceEpoch,
+            createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
             senderId: pref.getString(IdentifierType.userId.name),
             sessionUuid: pref.getString(IdentifierType.sessionId.name),
             recipinetId: "HOOK",
@@ -145,6 +150,10 @@ class ChatSocketRepository {
         break;
       //No avalaible here
       case MessageType.carousel:
+        break;
+      case MessageType.image:
+        break;
+      case MessageType.video:
         break;
     }
     //Waiting for response while is sent as an Http Post
@@ -215,6 +224,16 @@ using internal databases as SQLite, Hive, etc.
     }
   }
 
+  static Future<bool> hasNetwork() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
   //This function is related to obtain all the local messages that were saved in the device to allow having a history
   //If there is any message saved we obtain it otherwise we return an empty array
   static Future<List<dynamic>> getLocalMessages() async {
@@ -227,5 +246,38 @@ using internal databases as SQLite, Hive, etc.
       return Future.value(decodedList);
     }
     return [];
+  }
+
+  static Future<String?> getDownloadPath() async {
+    Directory? directory;
+    try {
+      if (Platform.isIOS) {
+        directory = await getApplicationDocumentsDirectory();
+      } else {
+        directory = Directory('/storage/emulated/0/Download');
+        // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
+        // ignore: avoid_slow_async_io
+        if (!await directory.exists()) {
+          directory = await getExternalStorageDirectory();
+        }
+      }
+    } catch (err, _) {
+      if (kDebugMode) {
+        print("Cannot get download folder path");
+      }
+    }
+    return directory?.path;
+  }
+
+  static Future<File> downloadFile(String url, String filename) async {
+    var httpClient = HttpClient();
+
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    var bytes = await consolidateHttpClientResponseBytes(response);
+    String? dir = await getDownloadPath();
+    File file = File('$dir/$filename');
+    await file.writeAsBytes(bytes);
+    return file;
   }
 }

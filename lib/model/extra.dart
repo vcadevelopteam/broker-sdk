@@ -13,20 +13,38 @@ class Extra {
   bool? uploadFile;
   bool? uploadImage;
   bool? uploadVideo;
-  Extra(
-      {this.cssBody,
-      this.cssHeader,
-      this.enableFormHistory,
-      this.inputAlwaysActive,
-      this.playerAlertSound,
-      this.showChatRestart,
-      this.showLaraigoLogo,
-      this.showPlatformLogo,
-      this.uploadAudio,
-      this.uploadFile,
-      this.jsscript,
-      this.uploadImage,
-      this.uploadVideo});
+  int? chatTextSize;
+  int? chatTextWeight;
+  String? iconColorActive;
+  String? iconColorDisabled;
+  int? inputTextSize;
+  int? inputTextWeight;
+  bool? withBorder;
+  bool? withHour;
+
+  Extra({
+    this.cssBody,
+    this.cssHeader,
+    this.enableFormHistory,
+    this.inputAlwaysActive,
+    this.playerAlertSound,
+    this.showChatRestart,
+    this.showLaraigoLogo,
+    this.showPlatformLogo,
+    this.uploadAudio,
+    this.uploadFile,
+    this.jsscript,
+    this.uploadImage,
+    this.uploadVideo,
+    this.chatTextSize,
+    this.chatTextWeight,
+    this.iconColorActive,
+    this.iconColorDisabled,
+    this.inputTextSize,
+    this.inputTextWeight,
+    this.withBorder,
+    this.withHour,
+  });
 
   factory Extra.fromJson(Map<String, dynamic> json) {
     return Extra(
@@ -43,6 +61,14 @@ class Extra {
       uploadFile: json["uploadfile"] ?? "",
       uploadImage: json["uploadimage"] ?? "",
       uploadVideo: json["uploadvideo"] ?? "",
+      chatTextSize: json["chatTextSize"] ?? 0,
+      chatTextWeight: json["chatTextWeight"] ?? 0,
+      iconColorActive: json["iconColorActive"] ?? "",
+      iconColorDisabled: json["iconColorDisabled"] ?? "",
+      inputTextSize: json["inputTextSize"] ?? 0,
+      inputTextWeight: json["inputTextWeight"] ?? 0,
+      withBorder: json["withBorder"] ?? false,
+      withHour: json["withHour"] ?? false,
     );
   }
 }

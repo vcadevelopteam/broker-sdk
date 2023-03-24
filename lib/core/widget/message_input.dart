@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/message_type.dart';
+import '../../helpers/single_tap.dart';
 import '../../model/color_preference.dart';
 import '../../model/message_response.dart';
 import '../../repository/chat_socket_repository.dart';
@@ -18,6 +21,7 @@ import 'media_input_modal.dart';
 /*
 This widget is used as an input for the whole chat page
  */
+
 class MessageInput extends StatefulWidget {
   ChatSocket socket;
   MessageInput(this.socket, {super.key});
@@ -44,15 +48,16 @@ class _MessageInputState extends State<MessageInput> {
                 isUser: true,
                 error: false,
                 message: MessageSingleResponse(
-                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
                     data: data,
                     type: MessageType.text.name,
                     id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().millisecondsSinceEpoch)
+                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
             .toJson();
 
         setState(() {
           widget.socket.controller!.sink.add(messageSent);
+          FocusManager.instance.primaryFocus?.unfocus();
         });
 
         _textController.clear();
@@ -62,6 +67,34 @@ class _MessageInputState extends State<MessageInput> {
 
   void sendMultiMediaMessage(Map media, MessageType type) async {
     List<Map<String, dynamic>> messagesToSend = [];
+    if (type == MessageType.location) {
+      List<MessageResponseData> data = [];
+
+      var response = await ChatSocketRepository.sendMediaMessage(media, type);
+      var position = media["data"][0] as Position;
+      data.add(MessageResponseData(
+          lat: position.latitude,
+          long: position.longitude,
+          message: "Se envió data de localización"));
+      if (response.statusCode != 500 || response.statusCode != 400) {
+        var messageSent = MessageResponse(
+                type: type.name,
+                isUser: true,
+                error: false,
+                message: MessageSingleResponse(
+                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
+                    data: data,
+                    type: type.name,
+                    id: const Uuid().v4().toString()),
+                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
+            .toJson();
+
+        messagesToSend.add(messageSent);
+        widget.socket.controller!.sink.add({'data': messagesToSend});
+      }
+      return;
+    }
+
     var toUse = media["data"] as List;
     for (String element in toUse) {
       List<MessageResponseData> data = [];
@@ -83,11 +116,13 @@ class _MessageInputState extends State<MessageInput> {
                       isUser: true,
                       error: false,
                       message: MessageSingleResponse(
-                          createdAt: DateTime.now().millisecondsSinceEpoch,
+                          createdAt:
+                              DateTime.now().toUtc().millisecondsSinceEpoch,
                           data: data,
                           type: type.name,
                           id: const Uuid().v4().toString()),
-                      receptionDate: DateTime.now().millisecondsSinceEpoch)
+                      receptionDate:
+                          DateTime.now().toUtc().millisecondsSinceEpoch)
                   .toJson();
 
               messagesToSend.add(messageSent);
@@ -95,28 +130,6 @@ class _MessageInputState extends State<MessageInput> {
           }
           break;
         case MessageType.location:
-          var response =
-              await ChatSocketRepository.sendMediaMessage(media, type);
-          var position = media["data"] as Position;
-          data.add(MessageResponseData(
-              lat: position.latitude,
-              long: position.longitude,
-              message: "Se envió data de localización"));
-          if (response.statusCode != 500 || response.statusCode != 400) {
-            var messageSent = MessageResponse(
-                    type: type.name,
-                    isUser: true,
-                    error: false,
-                    message: MessageSingleResponse(
-                        createdAt: DateTime.now().millisecondsSinceEpoch,
-                        data: data,
-                        type: type.name,
-                        id: const Uuid().v4().toString()),
-                    receptionDate: DateTime.now().millisecondsSinceEpoch)
-                .toJson();
-
-            messagesToSend.add(messageSent);
-          }
           break;
 
         case MessageType.file:
@@ -135,11 +148,13 @@ class _MessageInputState extends State<MessageInput> {
                       isUser: true,
                       error: false,
                       message: MessageSingleResponse(
-                          createdAt: DateTime.now().millisecondsSinceEpoch,
+                          createdAt:
+                              DateTime.now().toUtc().millisecondsSinceEpoch,
                           data: data,
                           type: type.name,
                           id: const Uuid().v4().toString()),
-                      receptionDate: DateTime.now().millisecondsSinceEpoch)
+                      receptionDate:
+                          DateTime.now().toUtc().millisecondsSinceEpoch)
                   .toJson();
 
               messagesToSend.add(messageSent);
@@ -151,6 +166,10 @@ class _MessageInputState extends State<MessageInput> {
         case MessageType.button:
           break;
         case MessageType.carousel:
+          break;
+        case MessageType.image:
+          break;
+        case MessageType.video:
           break;
       }
     }
@@ -166,13 +185,24 @@ class _MessageInputState extends State<MessageInput> {
         widget.socket.integrationResponse!.metadata!.color!;
     Color backgroundColor =
         HexColor(colorPreference.chatBackgroundColor.toString());
+    // bool sendValidator = false;
 
     return SafeArea(
       child: Container(
-        color: backgroundColor,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border(
+              top: BorderSide(
+            //                   <--- left side
+            color: HexColor('#8c8c8e').withOpacity(0.5),
+            width: 1.0,
+          )),
+        ),
         width: screenWidth,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+
+          // padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
             children: [
               Expanded(
@@ -181,12 +211,11 @@ class _MessageInputState extends State<MessageInput> {
                     children: [
                       GestureDetector(
                         onTap: () {
+                          FocusScope.of(context).unfocus();
                           showModalBottomSheet(
-                                  backgroundColor: HexColor(colorPreference
-                                      .chatBackgroundColor
-                                      .toString()),
+                                  backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(20)),
                                   builder: (modalBottomSheetContext) {
                                     return MediaInputModal(colorPreference);
                                   },
@@ -197,6 +226,11 @@ class _MessageInputState extends State<MessageInput> {
                             try {
                               var mapValueInBottomSheet =
                                   valueInBottomSheet as Map;
+
+                              if (kDebugMode) {
+                                print(mapValueInBottomSheet["data"]);
+                              }
+
                               if (mapValueInBottomSheet["data"].isNotEmpty) {
                                 var dataType = mapValueInBottomSheet["type"]
                                     as MessageType;
@@ -207,8 +241,7 @@ class _MessageInputState extends State<MessageInput> {
                                         MessageType.media);
                                     break;
                                   case MessageType.location:
-                                    sendMultiMediaMessage(
-                                        mapValueInBottomSheet["data"],
+                                    sendMultiMediaMessage(mapValueInBottomSheet,
                                         MessageType.location);
                                     break;
 
@@ -222,6 +255,10 @@ class _MessageInputState extends State<MessageInput> {
                                     break;
                                   case MessageType.carousel:
                                     break;
+                                  case MessageType.image:
+                                    break;
+                                  case MessageType.video:
+                                    break;
                                 }
                               }
                             } catch (ex) {
@@ -234,59 +271,83 @@ class _MessageInputState extends State<MessageInput> {
                         child: Container(
                           margin: const EdgeInsets.only(right: 10),
                           decoration: BoxDecoration(
-                            color: HexColor(colorPreference
-                                .messageBotColor!), // border color
+                            color: HexColor('#8c8c8e'),
+
+                            //  HexColor(colorPreference.messageBotColor!)
+                            //             .computeLuminance() >
+                            //         0.5
+                            //     ? Colors.black
+                            //     : Colors.white, // border color
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.add,
-                            color: HexColor(colorPreference.messageBotColor
-                                            .toString())
-                                        .computeLuminance() <
-                                    0.5
-                                ? Colors.black
-                                : Colors.white,
-                            size: 30,
+                            color: HexColor(colorPreference.iconsColor!),
+                            size: 25,
                           ),
                         ),
                       ),
                       Expanded(
                         child: SizedBox(
-                          height: 50,
-                          child: TextFormField(
-                            controller: _textController,
-                            textAlign: TextAlign.left,
-                            onChanged: (val) {},
-                            autofocus: false,
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .color),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: HexColor(
-                                  colorPreference.chatHeaderColor.toString()),
-                              hintText: "¡Escribe Algo!",
-                              hintStyle: TextStyle(
-                                  color: Colors.black.withOpacity(0.5)),
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .color),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
+                          height: 51,
+                          child: Center(
+                            child: TextFormField(
+                              controller: _textController,
+                              textAlign: TextAlign.left,
+                              onChanged: (String val) {
+                                setState(() {});
+                              },
+                              autofocus: false,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: HexColor('#8c8c8e'),
+                                  fontWeight: FontWeight.w500
+
+                                  // HexColor(
+                                  //     colorPreference.iconsColor.toString())
+
+                                  ),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.transparent,
+
+                                // HexColor(colorPreference.iconsColor
+                                //                 .toString())
+                                //             .computeLuminance() >
+                                //         0.5
+                                //     ? Colors.black
+                                //     : Colors.white,
+
+                                hintText: "Escribe un mensaje...",
+                                hintMaxLines: 1,
+
+                                contentPadding: const EdgeInsets.only(left: 10),
+                                hintStyle: TextStyle(
+                                    color: HexColor('#8c8c8e'),
+                                    fontWeight: FontWeight.w500,
+                                    overflow: TextOverflow.ellipsis
+
+                                    // HexColor(
+                                    //     colorPreference.iconsColor.toString())
+
+                                    ),
+                                labelStyle: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
-                                  width: 2.0,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                    width: 2.0,
+                                  ),
                                 ),
                               ),
                             ),
@@ -300,32 +361,64 @@ class _MessageInputState extends State<MessageInput> {
               Container(
                 margin: const EdgeInsets.only(left: 10),
                 child: StreamBuilder(builder: (context, snapshot) {
-                  return GestureDetector(
-                    onTap: () {
-                      if (_textController.text.isNotEmpty) {
-                        sendMessage();
+                  return SingleTapEvent(
+                    onTap: () async {
+                      final connection =
+                          await ChatSocketRepository.hasNetwork();
+                      if (connection) {
+                        if (_textController.text.isNotEmpty) {
+                          sendMessage();
+                        }
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: ((context) {
+                              return const AlertDialog(
+                                title: Text('Error de conexión'),
+                                content: Text(
+                                    'Por favor verifique su conexión de internet e intentelo nuevamente'),
+                              );
+                            }));
                       }
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: HexColor(
-                            colorPreference.messageBotColor!), // border color
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.send,
-                          color: HexColor(colorPreference.messageBotColor
-                                          .toString())
-                                      .computeLuminance() <
-                                  0.5
-                              ? Colors.black
-                              : Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
+                    child: Platform.isIOS
+                        ? Text(
+                            "Enviar",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 17,
+                                color: (_textController.text.isEmpty ||
+                                        _textController.text == '')
+                                    ? HexColor('#8c8c8e')
+                                    : HexColor(
+                                        colorPreference.messageClientColor!)),
+                          )
+                        : Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: (_textController.text.isEmpty ||
+                                      _textController.text == '')
+                                  ? HexColor('#8c8c8e')
+                                  : HexColor(
+                                      colorPreference.messageClientColor!),
+
+                              //  HexColor(colorPreference.messageBotColor!)
+                              //             .computeLuminance() >
+                              //         0.5
+                              //     ? Colors.black
+                              //     : Colors.white,
+                              //      // border color
+
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.send,
+                                color: HexColor(colorPreference.iconsColor!),
+                                size: 20,
+                              ),
+                            ),
+                          ),
                   );
                 }),
               )
