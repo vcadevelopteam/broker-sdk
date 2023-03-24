@@ -102,6 +102,16 @@ class _MessagesAreaState extends State<MessagesArea> {
     );
   }
 
+  validateMessage(int indx, List<Message> messages) {
+    if (messages[indx].type != MessageType.button &&
+        messages[indx].isUser == false) {
+      messages[indx].haveIcon = true;
+      messages[indx].haveTitle = true;
+    } else {
+      validateMessage(indx - 1, messages);
+    }
+  }
+
   initStreamBuilder() async {
     scrollController = ScrollController()..addListener(_scrollListener);
     bool counterExceptions = false;
@@ -200,6 +210,13 @@ class _MessagesAreaState extends State<MessagesArea> {
                         return MessageButtons(messages[indx].data!,
                             colorPreference, widget.socket);
                       } else {
+                        messages[indx].haveIcon = false;
+                        messages[indx].haveTitle = false;
+
+                        if (!messages[indx].isUser!) {
+                          validateMessage(messages.length - 1, messages);
+                        }
+
                         return Column(
                           children: [
                             separator,

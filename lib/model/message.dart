@@ -7,6 +7,8 @@ import 'message_response.dart';
 class Message {
   bool? isUser;
   bool isSaved = false;
+  bool haveIcon = false;
+  bool haveTitle = false;
   int? messageDate;
   String? message;
   MessageType type;

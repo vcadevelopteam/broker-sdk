@@ -22,9 +22,10 @@ class MessageBubble extends StatefulWidget {
   final Message message;
   final bool? isLastMessage;
   final int indx;
+
   final ColorPreference color;
   final String imageUrl;
-  const MessageBubble(this.message, this.indx, this.color, this.imageUrl,
+  MessageBubble(this.message, this.indx, this.color, this.imageUrl,
       this._socket, this.isLastMessage,
       {super.key});
 
@@ -166,6 +167,46 @@ class _MessageBubbleState extends State<MessageBubble> {
     }
   }
 
+  generateIconPhoto() {
+    if (widget.message.haveIcon) {
+      return SizedBox(
+        width: 30,
+        height: 30,
+        child: CircleAvatar(
+          onBackgroundImageError: (exception, stackTrace) {
+            if (kDebugMode) {
+              print("No Image loaded");
+            }
+          },
+          backgroundImage: NetworkImage(widget.imageUrl),
+        ),
+      );
+    } else {
+      return const SizedBox(width: 30);
+    }
+  }
+
+  generateTitle(String systemOS) {
+    if (widget.message.haveTitle) {
+      return Row(
+        children: [
+          Text(
+            '${widget._socket.integrationResponse!.metadata!.personalization!.headerTitle} - $systemOS',
+            style: TextStyle(
+              color: HexColor(widget.color.messageBotColor.toString())
+                          .computeLuminance() >
+                      0.5
+                  ? Colors.black.withOpacity(0.7)
+                  : Colors.white.withOpacity(0.7),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return SizedBox();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Extra extraOptions =
@@ -188,22 +229,7 @@ class _MessageBubbleState extends State<MessageBubble> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!widget.message.isUser! && isLast)
-              SizedBox(
-                width: 30,
-                height: 30,
-                child: CircleAvatar(
-                  onBackgroundImageError: (exception, stackTrace) {
-                    if (kDebugMode) {
-                      print("No Image loaded");
-                    }
-                  },
-                  backgroundImage: NetworkImage(widget.imageUrl),
-                ),
-              ),
-
-            if (!widget.message.isUser! && isLast == false)
-              const SizedBox(width: 30),
+            generateIconPhoto(),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -227,23 +253,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    (isLast && !widget.message.isUser!)
-                        ? Row(
-                            children: [
-                              Text(
-                                'Bitel - $systemOS',
-                                style: TextStyle(
-                                  color: HexColor(widget.color.messageBotColor
-                                                  .toString())
-                                              .computeLuminance() >
-                                          0.5
-                                      ? Colors.black.withOpacity(0.7)
-                                      : Colors.white.withOpacity(0.7),
-                                ),
-                              ),
-                            ],
-                          )
-                        : const SizedBox(),
+                    generateTitle(systemOS),
                     Container(
                       padding: const EdgeInsets.all(10),
                       constraints: BoxConstraints(
