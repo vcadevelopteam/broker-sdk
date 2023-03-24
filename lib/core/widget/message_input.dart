@@ -57,6 +57,7 @@ class _MessageInputState extends State<MessageInput> {
 
         setState(() {
           widget.socket.controller!.sink.add(messageSent);
+          FocusManager.instance.primaryFocus?.unfocus();
         });
 
         _textController.clear();
