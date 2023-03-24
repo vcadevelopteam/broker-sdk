@@ -52,17 +52,17 @@ class _MyHomePageState extends State<MyHomePage> {
               SocketElevatedButton(
                 integrationId: '63fe5143762b546856d9deb0',
                 customMessage: "Hola",
-                child: Text("fasdfa"),
+                child: const Text("Prueba"),
               ),
               SocketTextButton(
                 integrationId: '63fe5143762b546856d9deb0',
                 customMessage: "Hola",
-                child: Text("fasdfa"),
+                child: const Text("Prueba"),
               ),
               SocketContainer(
                 integrationId: '63fe5143762b546856d9deb0',
                 customMessage: "Hola",
-                child: Text("fasdfa"),
+                child: const Text("Prueba"),
               )
             ],
           ),
