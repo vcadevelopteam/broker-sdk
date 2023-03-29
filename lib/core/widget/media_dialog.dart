@@ -32,7 +32,10 @@ class _MediaDialogState extends State<MediaDialog> {
     return Dialog(
       insetPadding: const EdgeInsets.all(0),
       backgroundColor: Colors.transparent,
-      child: SizedBox(
+      child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20), color: Colors.white),
           width: screenWidth,
           height: screenHeight * 0.5,
           child: Stack(children: [
@@ -41,8 +44,51 @@ class _MediaDialogState extends State<MediaDialog> {
                 controller: PageController(viewportFraction: 0.95),
                 itemCount: widget.files.length,
                 itemBuilder: (ctx, indx) {
-                  return SingleMedia(
-                    path: widget.files[indx].path!,
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SingleMedia(
+                        path: widget.files[indx].path!,
+                        indx: indx + 1,
+                      ),
+                      if (widget.files.length > 1)
+                        SizedBox(
+                          width: screenWidth,
+                          height: 10,
+                          child: Center(
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: widget.files.length,
+                                itemBuilder: (context, indexSecond) {
+                                  return indx != indexSecond
+                                      ? Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          height: 10,
+                                          width: 10,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                            border: Border.all(),
+                                          ),
+                                        )
+                                      : Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          height: 10,
+                                          width: 10,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.black,
+                                            border: Border.all(),
+                                          ),
+                                        );
+                                }),
+                          ),
+                        ),
+                    ],
                   );
                 }),
             widget.isSendingMessage
@@ -56,65 +102,60 @@ class _MediaDialogState extends State<MediaDialog> {
                         child: const CircularProgressIndicator()))
                 : Align(
                     alignment: Alignment.bottomCenter,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(10),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red[800],
-                            radius: 30,
-                            child: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context,
-                                      {"type": MessageType.media, "data": []});
-                                },
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                )),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.all(10),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.green[800],
-                            radius: 30,
-                            child: IconButton(
-                                onPressed: () async {
-                                  setState(() {
-                                    widget.isSendingMessage = true;
-                                  });
-                                  var responseUrls = [];
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context,
+                                    {"type": MessageType.media, "data": []});
+                              },
+                              child: const Text('Cancelar')),
+                          TextButton(
+                              onPressed: () async {
+                                setState(() {
+                                  widget.isSendingMessage = true;
+                                });
+                                var responseUrls = [];
 
-                                  for (var element in widget.files) {
-                                    var resp =
-                                        await ChatSocketRepository.uploadFile(
-                                            element);
-                                    var decodedJson = jsonDecode(resp.body);
-                                    responseUrls.add(decodedJson["url"]);
-                                  }
-                                  await Future.delayed(
-                                      const Duration(seconds: 2));
-                                  setState(() {
-                                    widget.isSendingMessage = false;
-                                  });
-                                  //Pop is used for passing the data to the previous widget without any state manager
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.pop(context, {
-                                    "type": MessageType.media,
-                                    "data": responseUrls
-                                  });
-                                },
-                                icon: const Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                )),
-                          ),
-                        )
-                      ],
+                                for (var element in widget.files) {
+                                  var resp =
+                                      await ChatSocketRepository.uploadFile(
+                                          element);
+                                  var decodedJson = jsonDecode(resp.body);
+                                  responseUrls.add(decodedJson["url"]);
+                                }
+                                await Future.delayed(
+                                    const Duration(seconds: 2));
+                                setState(() {
+                                  widget.isSendingMessage = false;
+                                });
+                                //Pop is used for passing the data to the previous widget without any state manager
+                                // ignore: use_build_context_synchronously
+                                Navigator.pop(context, {
+                                  "type": MessageType.media,
+                                  "data": responseUrls
+                                });
+                              },
+                              child: const Text('Enviar')),
+                        ],
+                      ),
                     ),
                   ),
+            Align(
+                alignment: Alignment.topLeft,
+                child: Container(
+                  margin: const EdgeInsets.all(40),
+                  child: const Text(
+                    'Enviar multimedia',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                  ),
+                ))
           ])),
     );
   }
