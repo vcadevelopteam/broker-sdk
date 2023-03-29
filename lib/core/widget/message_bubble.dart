@@ -25,7 +25,7 @@ class MessageBubble extends StatefulWidget {
 
   final ColorPreference color;
   final String imageUrl;
-  MessageBubble(this.message, this.indx, this.color, this.imageUrl,
+  const MessageBubble(this.message, this.indx, this.color, this.imageUrl,
       this._socket, this.isLastMessage,
       {super.key});
 
@@ -101,7 +101,7 @@ class _MessageBubbleState extends State<MessageBubble> {
       return SizedBox(
         child: Padding(
             padding:
-                const EdgeInsets.only(left: 5, top: 20, bottom: 10, right: 10),
+                const EdgeInsets.only(left: 5, top: 0, bottom: 0, right: 10),
             child: TextButton(
               onPressed: () async {
                 String? dir = await ChatSocketRepository.getDownloadPath();
@@ -203,7 +203,7 @@ class _MessageBubbleState extends State<MessageBubble> {
         ],
       );
     } else {
-      return SizedBox();
+      return const SizedBox();
     }
   }
 
@@ -270,11 +270,13 @@ class _MessageBubbleState extends State<MessageBubble> {
                                           widget.message.type ==
                                               MessageType.location) &&
                                       extraOptions.withBorder == false)
-                                  ? Colors.transparent
+                                  ? HexColor(widget.color.chatBackgroundColor
+                                      .toString())
                                   : HexColor(widget.color.messageClientColor
                                       .toString())
                               : (widget.message.type == MessageType.button
-                                  ? Colors.transparent
+                                  ? HexColor(widget.color.chatBackgroundColor
+                                      .toString())
                                   : HexColor(
                                       widget.color.messageBotColor.toString())),
                           borderRadius: BorderRadius.only(

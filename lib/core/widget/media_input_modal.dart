@@ -52,94 +52,152 @@ class _MediaInputModalState extends State<MediaInputModal> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20), color: Colors.white),
           width: _screenWidth,
-          height: _screenHeight * 0.5,
+          height: _screenHeight * 0.3,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(children: [
-              const Text(
-                "Archivos a compartir",
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: files.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Text(files[index].name);
-                  },
-                ),
-              ),
-              const Expanded(child: SizedBox()),
-              isSendingMessage
-                  ? Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white),
-                          padding: const EdgeInsets.all(10),
-                          child: const CircularProgressIndicator()))
-                  : Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(10),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.red[800],
-                              radius: 30,
-                              child: IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(dialogContext, []);
-                                  },
-                                  icon: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                  )),
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const Text(
+                    "Archivos a compartir",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  isSendingMessage
+                      ? SizedBox(
+                          height: _screenHeight * 0.2,
+                          child: Center(
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white),
+                                  padding: const EdgeInsets.all(10),
+                                  child: const CircularProgressIndicator())),
+                        )
+                      : SizedBox(
+                          height: _screenHeight * 0.14,
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: files.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: const EdgeInsets.all(5),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Material(
+                                          elevation: 10,
+                                          child: Container(
+                                            margin: const EdgeInsets.all(5),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                    Icons.attach_file_rounded),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(files[index].name),
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                  );
+                                },
+                              ),
                             ),
                           ),
-                          Container(
-                            margin: const EdgeInsets.all(10),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.green[800],
-                              radius: 30,
-                              child: IconButton(
-                                  onPressed: () async {
-                                    setStateCustom(() {
-                                      isSendingMessage = true;
-                                    });
-                                    var responseUrls = [];
-
-                                    for (var element in files) {
-                                      var resp =
-                                          await ChatSocketRepository.uploadFile(
-                                              element);
-                                      var decodedJson = jsonDecode(resp.body);
-                                      responseUrls.add(decodedJson["url"]);
-                                    }
-                                    await Future.delayed(
-                                        const Duration(seconds: 2));
-                                    setStateCustom(() {
-                                      isSendingMessage = false;
-                                    });
-                                    Navigator.pop(dialogContext, {
-                                      "type": MessageType.file,
-                                      "data": responseUrls
-                                    });
-                                  },
-                                  icon: const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
+                        ),
+                  const Expanded(child: SizedBox()),
+                  isSendingMessage
+                      ? const SizedBox()
+                      : Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.all(10),
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(dialogContext, []);
+                                    },
+                                    child: const Text('Cancelar'),
                                   )),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-            ]),
+                              Container(
+                                  margin: const EdgeInsets.all(10),
+                                  child: TextButton(
+                                    child: const Text('Enviar'),
+                                    onPressed: () async {
+                                      setStateCustom(() {
+                                        isSendingMessage = true;
+                                      });
+                                      var responseUrls = [];
+
+                                      for (var element in files) {
+                                        var resp = await ChatSocketRepository
+                                            .uploadFile(element);
+                                        var decodedJson = jsonDecode(resp.body);
+                                        responseUrls.add(decodedJson["url"]);
+                                      }
+                                      await Future.delayed(
+                                          const Duration(seconds: 2));
+                                      setStateCustom(() {
+                                        isSendingMessage = false;
+                                      });
+                                      Navigator.pop(dialogContext, {
+                                        "type": MessageType.file,
+                                        "data": responseUrls
+                                      });
+                                    },
+                                  )
+
+                                  // CircleAvatar(
+                                  //   backgroundColor: Colors.green[800],
+                                  //   radius: 30,
+                                  //   child: IconButton(
+                                  //       onPressed: () async {
+                                  //         setStateCustom(() {
+                                  //           isSendingMessage = true;
+                                  //         });
+                                  //         var responseUrls = [];
+
+                                  //         for (var element in files) {
+                                  //           var resp =
+                                  //               await ChatSocketRepository.uploadFile(
+                                  //                   element);
+                                  //           var decodedJson = jsonDecode(resp.body);
+                                  //           responseUrls.add(decodedJson["url"]);
+                                  //         }
+                                  //         await Future.delayed(
+                                  //             const Duration(seconds: 2));
+                                  //         setStateCustom(() {
+                                  //           isSendingMessage = false;
+                                  //         });
+                                  //         Navigator.pop(dialogContext, {
+                                  //           "type": MessageType.file,
+                                  //           "data": responseUrls
+                                  //         });
+                                  //       },
+                                  //       icon: const Icon(
+                                  //         Icons.check,
+                                  //         color: Colors.white,
+                                  //       )),
+                                  // ),
+                                  )
+                            ],
+                          ),
+                        ),
+                ]),
           )),
     );
   }
