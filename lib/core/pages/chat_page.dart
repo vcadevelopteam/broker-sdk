@@ -217,147 +217,151 @@ class _ChatPageState extends State<ChatPage> {
         ? screenHeight - padding.bottom - padding.top
         : screenHeight - padding.top;
 
-    return WillPopScope(
-      onWillPop: () async {
-        try {
-          if (widget.socket.channel != null) {
-            await widget.socket.channel!.sink.close();
+    if (!mounted) {
+      return const SizedBox();
+    } else {
+      return WillPopScope(
+        onWillPop: () async {
+          try {
+            if (widget.socket.channel != null) {
+              await widget.socket.channel!.sink.close();
+            }
+            return true;
+          } catch (ex) {
+            return true;
           }
-          return true;
-        } catch (ex) {
-          return true;
-        }
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            bottom: !hasConnection
-                ? PreferredSize(
-                    preferredSize: const Size.fromHeight(30),
-                    child: Container(
-                        width: double.infinity,
-                        height: 30,
-                        color: Colors.black,
-                        alignment: Alignment.center,
-                        child: const Text(
-                          "Sin conexión",
-                          style: TextStyle(color: Colors.grey),
-                        )))
-                : null,
-            automaticallyImplyLeading: false,
-            // iconTheme:
-            //     IconThemeData(color: HexColor(colorPreference.iconsColor!)),
-            backgroundColor:
-                HexColor(colorPreference.chatHeaderColor.toString()),
-            title: Row(
-              children: [
-                CircleAvatar(
-                  onBackgroundImageError: (exception, stackTrace) {
-                    if (kDebugMode) {
-                      print("No Image loaded");
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              bottom: !hasConnection
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(30),
+                      child: Container(
+                          width: double.infinity,
+                          height: 30,
+                          color: Colors.black,
+                          alignment: Alignment.center,
+                          child: const Text(
+                            "Sin conexión",
+                            style: TextStyle(color: Colors.grey),
+                          )))
+                  : null,
+              automaticallyImplyLeading: false,
+              // iconTheme:
+              //     IconThemeData(color: HexColor(colorPreference.iconsColor!)),
+              backgroundColor:
+                  HexColor(colorPreference.chatHeaderColor.toString()),
+              title: Row(
+                children: [
+                  CircleAvatar(
+                    onBackgroundImageError: (exception, stackTrace) {
+                      if (kDebugMode) {
+                        print("No Image loaded");
+                      }
+                    },
+                    backgroundImage: NetworkImage(headerIcons.chatHeaderImage!),
+                    backgroundColor:
+                        HexColor(colorPreference.chatHeaderColor.toString()),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        header.headerTitle.toString().toUpperCase(),
+                        style: TextStyle(
+                            fontSize: 19,
+                            color: textColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 1,
+                      ),
+                      if (header.headerSubtitle != null &&
+                          header.headerSubtitle!.length > 5)
+                        Text(header.headerSubtitle.toString(),
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: textColor,
+                                fontWeight: FontWeight.w400))
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                GestureDetector(
+                  onTap: () async {
+                    try {
+                      if (widget.socket.channel != null) {
+                        await widget.socket.channel!.sink.close();
+                      }
+
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    } catch (ex) {
+                      Navigator.pop(context);
                     }
                   },
-                  backgroundImage: NetworkImage(headerIcons.chatHeaderImage!),
-                  backgroundColor:
-                      HexColor(colorPreference.chatHeaderColor.toString()),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      header.headerTitle.toString().toUpperCase(),
-                      style: TextStyle(
-                          fontSize: 19,
-                          color: textColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 1,
-                    ),
-                    if (header.headerSubtitle != null &&
-                        header.headerSubtitle!.length > 5)
-                      Text(header.headerSubtitle.toString(),
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: textColor,
-                              fontWeight: FontWeight.w400))
-                  ],
+                  child: Container(
+                      margin: const EdgeInsets.only(right: 10),
+                      padding: const EdgeInsets.all(8),
+                      // decoration: BoxDecoration(
+                      //   color: HexColor('#8c8c8e'),
+
+                      //   //  HexColor(colorPreference.messageBotColor!)
+                      //   //             .computeLuminance() >
+                      //   //         0.5
+                      //   //     ? Colors.black
+                      //   //     : Colors.white,
+                      //   //      // border color
+
+                      //   shape: BoxShape.circle,
+                      // ),
+                      child: CircleAvatar(
+                        backgroundColor: HexColor('#eeeeef'),
+                        radius: 18,
+                        child: Icon(
+                          color: HexColor('#838387'),
+                          Icons.close,
+                          size: 22,
+                        ),
+                      )),
                 ),
               ],
+              elevation: 0,
+              centerTitle: false,
             ),
-            actions: [
-              GestureDetector(
-                onTap: () async {
-                  try {
-                    if (widget.socket.channel != null) {
-                      await widget.socket.channel!.sink.close();
-                    }
-
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  } catch (ex) {
-                    Navigator.pop(context);
-                  }
-                },
-                child: Container(
-                    margin: const EdgeInsets.only(right: 10),
-                    padding: const EdgeInsets.all(8),
-                    // decoration: BoxDecoration(
-                    //   color: HexColor('#8c8c8e'),
-
-                    //   //  HexColor(colorPreference.messageBotColor!)
-                    //   //             .computeLuminance() >
-                    //   //         0.5
-                    //   //     ? Colors.black
-                    //   //     : Colors.white,
-                    //   //      // border color
-
-                    //   shape: BoxShape.circle,
-                    // ),
-                    child: CircleAvatar(
-                      backgroundColor: HexColor('#eeeeef'),
-                      radius: 18,
-                      child: Icon(
-                        color: HexColor('#838387'),
-                        Icons.close,
-                        size: 22,
-                      ),
+            backgroundColor:
+                HexColor(colorPreference.chatBackgroundColor.toString()),
+            body: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+              child: Container(
+                height: finalHeight,
+                decoration: BoxDecoration(color: backgroundColor),
+                child: SizedBox(
+                    width: screenWidth,
+                    height: screenHeight,
+                    // padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 10,
+                          child: Container(
+                            child: widget.socket.channel != null
+                                ? MessagesArea(widget.socket)
+                                : Container(),
+                          ),
+                        ),
+                        //send socket information to MessageInput component
+                        MessageInput(widget.socket)
+                      ],
                     )),
               ),
-            ],
-            elevation: 0,
-            centerTitle: false,
-          ),
-          backgroundColor:
-              HexColor(colorPreference.chatBackgroundColor.toString()),
-          body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
-            child: Container(
-              height: finalHeight,
-              decoration: BoxDecoration(color: backgroundColor),
-              child: SizedBox(
-                  width: screenWidth,
-                  height: screenHeight,
-                  // padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    children: [
-                      Flexible(
-                        flex: 10,
-                        child: Container(
-                          child: widget.socket.channel != null
-                              ? MessagesArea(widget.socket)
-                              : Container(),
-                        ),
-                      ),
-                      //send socket information to MessageInput component
-                      MessageInput(widget.socket)
-                    ],
-                  )),
-            ),
-          )),
-    );
+            )),
+      );
+    }
   }
 }
