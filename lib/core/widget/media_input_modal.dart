@@ -52,7 +52,7 @@ class _MediaInputModalState extends State<MediaInputModal> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20), color: Colors.white),
           width: _screenWidth,
-          height: _screenHeight * 0.3,
+          height: _screenHeight * 0.35,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -103,7 +103,15 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                                 const SizedBox(
                                                   width: 5,
                                                 ),
-                                                Text(files[index].name),
+                                                Expanded(
+                                                  child: Text(
+                                                    files[index].name,
+                                                    style: const TextStyle(
+                                                        overflow: TextOverflow
+                                                            .ellipsis),
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
