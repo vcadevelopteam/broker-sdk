@@ -50,17 +50,17 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SocketElevatedButton(
-                integrationId: '63fe5143762b546856d9deb0',
+                integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Hola",
                 child: const Text("Prueba"),
               ),
               SocketTextButton(
-                integrationId: '63fe5143762b546856d9deb0',
+                integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Hola",
                 child: const Text("Prueba"),
               ),
               SocketContainer(
-                integrationId: '63fe5143762b546856d9deb0',
+                integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Hola",
                 child: const Text("Prueba"),
               )
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         floatingActionButton: SocketActionButton(
-          integrationId: '63fe5143762b546856d9deb0',
+          integrationId: '642de154273d5f64e3daf7e2',
           icon: const Icon(Icons.read_more),
         ));
   }
