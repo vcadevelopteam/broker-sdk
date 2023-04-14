@@ -42,10 +42,10 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
     final documentDirectory = await getApplicationDocumentsDirectory();
 
     final mimeType = lookupMimeType(widget.message.data![0].mediaUrl!);
-    final filePath = path.join(documentDirectory.path,
-            widget.message.data![0].filename.toString());
 
     if (!mimeType!.startsWith('image/')) {
+      final filePath = path.join(
+          documentDirectory.path, widget.message.data![0].filename.toString());
       isImage = false;
       var file = File("");
       if (await File(filePath).exists()) {
@@ -53,24 +53,33 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
       } else {
         final response =
             await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
+        final filePath = path.join(documentDirectory.path,
+            widget.message.data![0].filename.toString());
 
         // file = File(documentDirectory.path +
         //     widget.message.data![0].filename.toString());
         // final filePath = path.join(documentDirectory.path,
         //     widget.message.data![0].filename.toString());
-        final file = File(filePath);
+        file = File(filePath);
 
         if (!await file.exists()) {
           await file.create(recursive: true);
         }
         file.writeAsBytesSync(response.bodyBytes);
+        file = File(filePath);
       }
+      if (!await file.exists()) file = File(filePath);
 
-      controller = VideoPlayerController.file(file);
-      controller!.initialize();
-      setState(() {
-        startedPlaying = true;
-      });
+      try {
+        if (!await file.exists()) file = File(filePath);
+        controller = VideoPlayerController.file(file);
+        await controller!.initialize();
+        setState(() {
+          startedPlaying = true;
+        });
+      } catch (e) {
+        print('Error loading video: $e');
+      }
     }
   }
 
