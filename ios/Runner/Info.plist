@@ -53,5 +53,11 @@
 		<string>Permiso de ubicación</string>
 		<key>NSLocationAlwaysAndWhenInUsageDescription</key>
 		<string>Permiso de ubicación</string>
+		<key>NSFileProtectionCompleteUntilFirstUserAuthentication</key>
+		<string>NSFileProtectionCompleteUntilFirstUserAuthentication</string>
+		<key>NSAllowsArbitraryLoads</key>
+		<true />
+
+
 	</dict>
 </plist>

@@ -9,6 +9,7 @@ import 'package:mime/mime.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path/path.dart' as path;
 
 import '../../model/message.dart';
 
@@ -38,24 +39,30 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
   }
 
   loadVideoPlayer() async {
+    final documentDirectory = await getApplicationDocumentsDirectory();
+
     final mimeType = lookupMimeType(widget.message.data![0].mediaUrl!);
+    final filePath = path.join(documentDirectory.path,
+            widget.message.data![0].filename.toString());
 
     if (!mimeType!.startsWith('image/')) {
       isImage = false;
-      final documentDirectory = await getApplicationDocumentsDirectory();
       var file = File("");
-      if (await File(documentDirectory.path +
-              widget.message.data![0].filename.toString())
-          .exists()) {
-        file = File(documentDirectory.path +
-            widget.message.data![0].filename.toString());
+      if (await File(filePath).exists()) {
+        file = File(filePath);
       } else {
         final response =
             await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
 
-        file = File(documentDirectory.path +
-            widget.message.data![0].filename.toString());
+        // file = File(documentDirectory.path +
+        //     widget.message.data![0].filename.toString());
+        // final filePath = path.join(documentDirectory.path,
+        //     widget.message.data![0].filename.toString());
+        final file = File(filePath);
 
+        if (!await file.exists()) {
+          await file.create(recursive: true);
+        }
         file.writeAsBytesSync(response.bodyBytes);
       }
 
