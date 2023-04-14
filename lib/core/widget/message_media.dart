@@ -138,18 +138,25 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.network(widget.message.data![0].mediaUrl!,
-                      fit: BoxFit.cover, frameBuilder:
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                      fit: BoxFit.cover,
+                      frameBuilder:
                           (context, child, frame, wasSynchronouslyLoaded) {
-                    return child;
-                  }, loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
+                        return child;
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }),
                 )
 
                 //  FadeInImage(image:NetworkImage(widget.message.data![0].mediaUrl!) ,placeholder: ,)
