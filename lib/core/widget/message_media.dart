@@ -24,7 +24,7 @@ class MediaMessageBubble extends StatefulWidget {
 class _MediaMessageBubbleState extends State<MediaMessageBubble> {
   VideoPlayerController? controller;
   bool startedPlaying = false;
-  bool isImage = true;
+  bool isImage = false;
 
   @override
   void initState() {
@@ -54,11 +54,6 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
             await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
         final filePath = path.join(documentDirectory.path,
             widget.message.data![0].filename.toString());
-
-        // file = File(documentDirectory.path +
-        //     widget.message.data![0].filename.toString());
-        // final filePath = path.join(documentDirectory.path,
-        //     widget.message.data![0].filename.toString());
         file = File(filePath);
 
         if (!await file.exists()) {
@@ -73,14 +68,17 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
         if (!await file.exists()) file = File(filePath);
         controller = VideoPlayerController.file(file);
         await controller!.initialize();
-        setState(() {
-          startedPlaying = true;
-        });
+        startedPlaying = true;
       } catch (e) {
         if (kDebugMode) {
           print('Error loading video: $e');
         }
       }
+    } else {
+      isImage = true;
+    }
+    if (mounted) {
+      setState(() {});
     }
   }
 

@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:laraigo_chat/helpers/util.dart';
 
 import '../../helpers/message_type.dart';
 import '../../repository/chat_socket_repository.dart';
@@ -122,8 +123,10 @@ class _MediaDialogState extends State<MediaDialog> {
                                   widget.isSendingMessage = true;
                                 });
                                 var responseUrls = [];
+                                var compressedImages =
+                                    await Utils.compressImages(widget.files);
 
-                                for (var element in widget.files) {
+                                for (var element in compressedImages) {
                                   var resp =
                                       await ChatSocketRepository.uploadFile(
                                           element);
