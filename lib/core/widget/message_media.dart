@@ -1,8 +1,7 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, depend_on_referenced_packages
 
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
@@ -33,10 +32,10 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
     super.initState();
   }
 
-  loadImage() async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: true, type: FileType.media);
-  }
+  // loadImage() async {
+  //   FilePickerResult? result = await FilePicker.platform
+  //       .pickFiles(allowMultiple: true, type: FileType.media);
+  // }
 
   loadVideoPlayer() async {
     final documentDirectory = await getApplicationDocumentsDirectory();
@@ -78,7 +77,9 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
           startedPlaying = true;
         });
       } catch (e) {
-        print('Error loading video: $e');
+        if (kDebugMode) {
+          print('Error loading video: $e');
+        }
       }
     }
   }

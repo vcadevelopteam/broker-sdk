@@ -39,7 +39,6 @@ class _SingleMediaState extends State<SingleMedia> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return controller == null
         ? Container(
             margin: const EdgeInsets.symmetric(vertical: 30),

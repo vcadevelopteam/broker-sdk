@@ -53,7 +53,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   checkConnection(Timer t) async {
-    print("Checking connection");
+    if (kDebugMode) {
+      print("Checking connection");
+    }
     setState(() {
       Utils.hasNetwork().then((value) async {
         hasConnection = value;
@@ -159,7 +161,9 @@ class _ChatPageState extends State<ChatPage> {
         decodedJson['sender'] = SenderType.chat.name;
         widget.socket.controller!.sink.add(decodedJson);
       }, onDone: () async {
-        print("Socket cerrado");
+        if (kDebugMode) {
+          print("Socket cerrado");
+        }
         setState(() {
           hasConnection = false;
           isClosed = true;
@@ -174,6 +178,7 @@ class _ChatPageState extends State<ChatPage> {
       });
 
       await Future.delayed(const Duration(milliseconds: 50));
+      // ignore: unused_local_variable
       var messagesCount = await ChatSocketRepository.getLocalMessages();
       // if (messagesCount.isNotEmpty) {
       //   // scrollDown();

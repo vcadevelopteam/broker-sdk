@@ -215,7 +215,6 @@ class _MessageBubbleState extends State<MessageBubble> {
     final f = DateFormat('hh:mm');
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    final bool isLast = widget.isLastMessage ?? false;
     final String systemOS = Platform.isAndroid ? 'Android' : 'iOS';
 
     return Align(

@@ -1,14 +1,11 @@
 // ignore_for_file: body_might_complete_normally_nullable, unused_field, avoid_init_to_null
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:laraigo_chat/helpers/util.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../helpers/identifier_type.dart';
