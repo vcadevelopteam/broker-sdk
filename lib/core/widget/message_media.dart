@@ -24,6 +24,7 @@ class MediaMessageBubble extends StatefulWidget {
 class _MediaMessageBubbleState extends State<MediaMessageBubble> {
   VideoPlayerController? controller;
   bool startedPlaying = false;
+  File image = File('');
   bool isImage = false;
 
   @override
@@ -42,28 +43,27 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
 
     final mimeType = lookupMimeType(widget.message.data![0].mediaUrl!);
 
-    if (!mimeType!.startsWith('image/')) {
+    final filePath = path.join(
+        documentDirectory.path, widget.message.data![0].filename.toString());
+    isImage = false;
+    var file = File("");
+    if (await File(filePath).exists()) {
+      file = File(filePath);
+    } else {
+      final response =
+          await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
       final filePath = path.join(
           documentDirectory.path, widget.message.data![0].filename.toString());
-      isImage = false;
-      var file = File("");
-      if (await File(filePath).exists()) {
-        file = File(filePath);
-      } else {
-        final response =
-            await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
-        final filePath = path.join(documentDirectory.path,
-            widget.message.data![0].filename.toString());
-        file = File(filePath);
+      file = File(filePath);
 
-        if (!await file.exists()) {
-          await file.create(recursive: true);
-        }
-        file.writeAsBytesSync(response.bodyBytes);
-        file = File(filePath);
+      if (!await file.exists()) {
+        await file.create(recursive: true);
       }
-      if (!await file.exists()) file = File(filePath);
-
+      file.writeAsBytesSync(response.bodyBytes);
+      file = File(filePath);
+    }
+    if (!await file.exists()) file = File(filePath);
+    if (!mimeType!.startsWith('image/')) {
       try {
         if (!await file.exists()) file = File(filePath);
         controller = VideoPlayerController.file(file);
@@ -76,6 +76,8 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
       }
     } else {
       isImage = true;
+      if (!await file.exists()) file = File(filePath);
+      image = file;
     }
     if (mounted) {
       setState(() {});
@@ -121,8 +123,7 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                                               print("No Image loaded");
                                             }
                                           },
-                                          image: NetworkImage(widget
-                                              .message.data![0].mediaUrl!))),
+                                          image: FileImage(image))),
                                 );
                               }),
                         ),
@@ -136,26 +137,19 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                 decoration: const BoxDecoration(),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(widget.message.data![0].mediaUrl!,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                      fit: BoxFit.cover,
-                      frameBuilder:
-                          (context, child, frame, wasSynchronouslyLoaded) {
-                        return child;
-                      },
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
+                  child: Image.file(
+                    image,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                    fit: BoxFit.cover,
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
+                      return child;
+                    },
+                  ),
                 )
 
                 //  FadeInImage(image:NetworkImage(widget.message.data![0].mediaUrl!) ,placeholder: ,)
