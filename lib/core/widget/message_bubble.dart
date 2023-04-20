@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/plugin_api.dart';
 import 'package:intl/intl.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:latlong2/latlong.dart' as latLng;
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/message_type.dart';
@@ -39,6 +40,9 @@ class MessageBubble extends StatefulWidget {
 }
 
 class _MessageBubbleState extends State<MessageBubble> {
+  final mapbox_token =
+      'pk.eyJ1IjoiamVhbnZjYSIsImEiOiJjbGdwb2s0eG8xMWVhM2ZxYXd4NW1wNDkwIn0.ZsNwO1RKrbqOPoToiby0tw';
+  final mapbox_style = 'mapbox/streets-v12';
   bool isLoading = false;
 
   final Color textColor = Colors.black;
@@ -73,28 +77,67 @@ class _MessageBubbleState extends State<MessageBubble> {
         height: 150,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
-          child: GoogleMap(
-            myLocationButtonEnabled: false,
-            initialCameraPosition: CameraPosition(
-              target: LatLng(message.data![0].lat!.toDouble(),
-                  message.data![0].long!.toDouble()),
-              zoom: 14.4746,
-            ),
-            zoomControlsEnabled: false,
-            rotateGesturesEnabled: false,
-            scrollGesturesEnabled: false,
-            markers: <Marker>{
-              Marker(
-                markerId: const MarkerId('place_name'),
-                position: LatLng(message.data![0].lat!.toDouble(),
-                    message.data![0].long!.toDouble()),
-                infoWindow: const InfoWindow(
-                  title: 'Mi ubicación',
-                ),
-              )
-            },
-            mapType: MapType.normal,
+          child: FlutterMap(
+            options: MapOptions(
+                zoom: 16,
+                onTap: null,
+                onLongPress: null,
+                interactiveFlags: InteractiveFlag.none,
+                center: latLng.LatLng(message.data![0].lat!.toDouble(),
+                    message.data![0].long!.toDouble())),
+            nonRotatedChildren: [
+              TileLayer(
+                urlTemplate:
+                    'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+                additionalOptions: {
+                  'accessToken': mapbox_token,
+                  'id': mapbox_style
+                },
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                      point: latLng.LatLng(message.data![0].lat!.toDouble(),
+                          message.data![0].long!.toDouble()),
+                      // width: 80,
+                      // height: 80,
+                      builder: (_) {
+                        return const SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: Icon(
+                            Icons.location_on,
+                            color: Colors.red,
+                            size: 23,
+                          ),
+                        );
+                      }),
+                ],
+              ),
+            ],
           ),
+          // GoogleMap(
+          //   myLocationButtonEnabled: false,
+          //   initialCameraPosition: CameraPosition(
+          //     target: LatLng(message.data![0].lat!.toDouble(),
+          //         message.data![0].long!.toDouble()),
+          //     zoom: 14.4746,
+          //   ),
+          //   zoomControlsEnabled: false,
+          //   rotateGesturesEnabled: false,
+          //   scrollGesturesEnabled: false,
+          //   markers: <Marker>{
+          //     Marker(
+          //       markerId: const MarkerId('place_name'),
+          //       position: LatLng(message.data![0].lat!.toDouble(),
+          //           message.data![0].long!.toDouble()),
+          //       infoWindow: const InfoWindow(
+          //         title: 'Mi ubicación',
+          //       ),
+          //     )
+          //   },
+          //   mapType: MapType.normal,
+          // ),
         ),
       );
     } else {
