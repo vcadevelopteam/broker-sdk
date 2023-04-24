@@ -172,8 +172,6 @@ class _MessagesAreaState extends State<MessagesArea> {
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
                     reverse: false,
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
                     itemCount: messages.length,
                     itemBuilder: (ctx, indx) {
                       Widget separator = const SizedBox();
