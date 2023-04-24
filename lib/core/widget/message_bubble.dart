@@ -276,6 +276,7 @@ class _MessageBubbleState extends State<MessageBubble> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Material(
+                color: HexColor(widget.color.chatBackgroundColor.toString()),
                 borderRadius: BorderRadius.only(
                     topRight: !widget.message.isUser!
                         ? const Radius.circular(10)
