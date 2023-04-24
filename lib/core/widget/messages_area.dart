@@ -117,6 +117,13 @@ class _MessagesAreaState extends State<MessagesArea> {
     }
   }
 
+  validateSent(List<Message> messages, int messageId) {
+    var test =
+        messages.firstWhere((element) => element.messageDate == messageId);
+    test.isSent = true;
+    ChatSocketRepository.updateMessageInLocal(test);
+  }
+
   initStreamBuilder() async {
     scrollController = ScrollController()..addListener(_scrollListener);
     bool counterExceptions = false;
@@ -147,11 +154,17 @@ class _MessagesAreaState extends State<MessagesArea> {
           } else {
             //Si no es una lista solo va a agregar el mensaje al arreglo
 
-            var message =
-                Message.fromJson((snapshot.data as Map<String, dynamic>));
-            messages.add(message);
-            message.isSaved = true;
-            ChatSocketRepository.saveMessageInLocal(message);
+            if ((snapshot.data as Map<String, dynamic>)["messageId"] == null) {
+              var message =
+                  Message.fromJson((snapshot.data as Map<String, dynamic>));
+              messages.add(message);
+              message.isSaved = true;
+              ChatSocketRepository.saveMessageInLocal(message);
+            } else {
+              validateSent(messages,
+                  (snapshot.data as Map<String, dynamic>)["messageId"]);
+              print((snapshot.data as Map<String, dynamic>)["messageId"]);
+            }
           }
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             if (messages.isNotEmpty) {
@@ -238,23 +251,6 @@ class _MessagesAreaState extends State<MessagesArea> {
               ),
             ],
           );
-          // : SizedBox(
-          //     height: MediaQuery.of(context).size.height - kToolbarHeight,
-          //     width: MediaQuery.of(context).size.width,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Icon(
-          //           Icons.message,
-          //           color: Theme.of(context).textTheme.bodyLarge!.color,
-          //         ),
-          //         const SizedBox(
-          //           width: 10,
-          //         ),
-          //         const Text("No ha enviado mensajes")
-          //       ],
-          //     ),
-          //   );
         } else {
           return const Center(child: CircularProgressIndicator());
         }

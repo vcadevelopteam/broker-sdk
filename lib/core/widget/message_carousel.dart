@@ -3,11 +3,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:laraigo_chat/helpers/single_tap.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
+import '../../helpers/message_type.dart';
 import '../../model/carousel_button.dart';
 import '../../model/color_preference.dart';
 import '../../model/message_response.dart';
+import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
 
 class MessageCarousel extends StatelessWidget {
@@ -21,8 +24,30 @@ class MessageCarousel extends StatelessWidget {
       {super.key});
 
   void sendMessage(String text, String title) async {
-    var messageSent = await ChatSocket.sendMessage(text, title);
+    var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
+
+    List<MessageResponseData> data = [];
+    data.add(MessageResponseData(message: text, title: title));
+    var messageSent = MessageResponse(
+            type: MessageType.text.name,
+            isUser: true,
+            error: false,
+            message: MessageSingleResponse(
+                createdAt: dateSent,
+                data: data,
+                type: MessageType.text.name,
+                id: const Uuid().v4().toString()),
+            receptionDate: dateSent)
+        .toJson();
     _socket.controller!.sink.add(messageSent);
+
+    var response =
+        await ChatSocketRepository.sendMessage(text, title, MessageType.text);
+    if (response.statusCode != 500 || response.statusCode != 400) {
+      _socket.controller!.sink.add({
+        "messageId": dateSent,
+      });
+    }
   }
 
   Widget getButton(List<CarouselButton> buttons) {

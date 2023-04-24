@@ -224,6 +224,45 @@ using internal databases as SQLite, Hive, etc.
     }
   }
 
+  static Future<void> updateMessageInLocal(Message message) async {
+    final pref = await SharedPreferences.getInstance();
+    var validateMessages = pref.getString('messages');
+    List<Message> messagesToSave = [];
+    //The list of messages are intialized if the messages are null (no messages),
+    //a new array of messages is created and the message is added to it
+    if (validateMessages == null) {
+      messagesToSave.add(message);
+    } else {
+      //If the list is not null we create a new decoded list where stores all the messages
+      //that were previously saved in the device
+      List decodedList = jsonDecode(validateMessages);
+      try {
+        messagesToSave = decodedList.map((e) => Message.fromJson(e)).toList();
+      } catch (ex) {
+        messagesToSave = [];
+      }
+      //If the message has the same TimeStamp means that the same message is going to be added twice
+      //we filter those messages to not allow any unncesary adding
+      var messageFound = messagesToSave.firstWhere(
+        (element) => element.messageDate == message.messageDate,
+        orElse: () {
+          messagesToSave.add(message);
+          return message;
+        },
+      );
+
+      messagesToSave[messagesToSave.indexOf(messageFound)].isSent =
+          message.isSent;
+    }
+    //Finally we encode the messages to save it
+    var encodedMessages = messagesToSave.map((e) => e.toJson()).toList();
+    pref.setString('messages', jsonEncode(encodedMessages));
+
+    if (kDebugMode) {
+      print("Size del arreglo ${encodedMessages.length}");
+    }
+  }
+
   static Future<bool> hasNetwork() async {
     try {
       final result = await InternetAddress.lookup('google.com');

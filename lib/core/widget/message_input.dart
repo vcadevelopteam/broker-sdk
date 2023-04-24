@@ -36,30 +36,34 @@ class _MessageInputState extends State<MessageInput> {
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
+      List<MessageResponseData> data = [];
+      data.add(MessageResponseData(
+        message: _textController.text,
+      ));
+      var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
+      var messageSent = MessageResponse(
+              type: MessageType.text.name,
+              isUser: true,
+              error: false,
+              message: MessageSingleResponse(
+                  createdAt: dateSent,
+                  data: data,
+                  type: MessageType.text.name,
+                  id: const Uuid().v4().toString()),
+              receptionDate: dateSent)
+          .toJson();
+      setState(() {
+        widget.socket.controller!.sink.add(messageSent);
+      });
+
       var response = await ChatSocketRepository.sendMessage(
           _textController.text, "null", MessageType.text);
+      _textController.clear();
 
       if (response.statusCode != 500 || response.statusCode != 400) {
-        List<MessageResponseData> data = [];
-        data.add(MessageResponseData(
-          message: _textController.text,
-        ));
-        var messageSent = MessageResponse(
-                type: MessageType.text.name,
-                isUser: true,
-                error: false,
-                message: MessageSingleResponse(
-                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
-                    data: data,
-                    type: MessageType.text.name,
-                    id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
-            .toJson();
-
-        setState(() {
-          widget.socket.controller!.sink.add(messageSent);
+        widget.socket.controller!.sink.add({
+          "messageId": dateSent,
         });
-
         _textController.clear();
       }
     }
@@ -72,25 +76,29 @@ class _MessageInputState extends State<MessageInput> {
 
       var response = await ChatSocketRepository.sendMediaMessage(media, type);
       var position = media["data"][0] as Position;
+      var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
       data.add(MessageResponseData(
           lat: position.latitude,
           long: position.longitude,
           message: "Se envió data de localización"));
-      if (response.statusCode != 500 || response.statusCode != 400) {
-        var messageSent = MessageResponse(
-                type: type.name,
-                isUser: true,
-                error: false,
-                message: MessageSingleResponse(
-                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
-                    data: data,
-                    type: type.name,
-                    id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
-            .toJson();
+      var messageSent = MessageResponse(
+              type: type.name,
+              isUser: true,
+              error: false,
+              message: MessageSingleResponse(
+                  createdAt: dateSent,
+                  data: data,
+                  type: type.name,
+                  id: const Uuid().v4().toString()),
+              receptionDate: dateSent)
+          .toJson();
 
-        messagesToSend.add(messageSent);
-        widget.socket.controller!.sink.add({'data': messagesToSend});
+      messagesToSend.add(messageSent);
+      widget.socket.controller!.sink.add({'data': messagesToSend});
+      if (response.statusCode != 500 || response.statusCode != 400) {
+        widget.socket.controller!.sink.add({
+          "messageId": dateSent,
+        });
       }
       return;
     }

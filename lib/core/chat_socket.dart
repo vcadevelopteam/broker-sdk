@@ -68,24 +68,4 @@ class ChatSocket {
   }
 
   //Method to send text messages
-  static Future<Map?> sendMessage(String text, String title) async {
-    var response =
-        await ChatSocketRepository.sendMessage(text, title, MessageType.text);
-    if (response.statusCode != 500 || response.statusCode != 400) {
-      List<MessageResponseData> data = [];
-      data.add(MessageResponseData(message: text, title: title));
-      var messageSent = MessageResponse(
-              type: MessageType.text.name,
-              isUser: true,
-              error: false,
-              message: MessageSingleResponse(
-                  createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
-                  data: data,
-                  type: MessageType.text.name,
-                  id: const Uuid().v4().toString()),
-              receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
-          .toJson();
-      return messageSent;
-    }
-  }
 }
