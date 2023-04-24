@@ -24,7 +24,8 @@ This widget is used as an input for the whole chat page
 
 class MessageInput extends StatefulWidget {
   ChatSocket socket;
-  MessageInput(this.socket, {super.key});
+  FocusNode focusNode;
+  MessageInput(this.socket, this.focusNode, {super.key});
 
   @override
   State<MessageInput> createState() => _MessageInputState();
@@ -57,7 +58,6 @@ class _MessageInputState extends State<MessageInput> {
 
         setState(() {
           widget.socket.controller!.sink.add(messageSent);
-          FocusManager.instance.primaryFocus?.unfocus();
         });
 
         _textController.clear();
@@ -211,7 +211,7 @@ class _MessageInputState extends State<MessageInput> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          FocusScope.of(context).unfocus();
+                          widget.focusNode.unfocus();
                           showModalBottomSheet(
                                   backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
@@ -292,6 +292,7 @@ class _MessageInputState extends State<MessageInput> {
                           height: 51,
                           child: Center(
                             child: TextFormField(
+                              focusNode: widget.focusNode,
                               controller: _textController,
                               textAlign: TextAlign.left,
                               onChanged: (String val) {

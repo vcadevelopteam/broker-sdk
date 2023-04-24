@@ -40,6 +40,7 @@ class _ChatPageState extends State<ChatPage> {
   final f = DateFormat('dd/mm/yyyy');
   ScrollController? scrollController;
   Timer? timer;
+  final _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _ChatPageState extends State<ChatPage> {
       DeviceOrientation.portraitUp,
     ]);
     timer = Timer.periodic(
-        const Duration(seconds: 5), (Timer t) => checkConnection(t));
+        const Duration(seconds: 15), (Timer t) => checkConnection(t));
   }
 
   checkConnection(Timer t) async {
@@ -62,7 +63,7 @@ class _ChatPageState extends State<ChatPage> {
         if (hasConnection && isClosed == true) {
           widget.socket.disconnect();
 
-          await Future.delayed(const Duration(seconds: 5));
+          await Future.delayed(const Duration(seconds: 15));
           await initSocket();
           setState(() {
             isClosed = false;
@@ -356,12 +357,12 @@ class _ChatPageState extends State<ChatPage> {
                           flex: 10,
                           child: Container(
                             child: widget.socket.channel != null
-                                ? MessagesArea(widget.socket)
+                                ? MessagesArea(widget.socket, _focusNode)
                                 : Container(),
                           ),
                         ),
                         //send socket information to MessageInput component
-                        MessageInput(widget.socket)
+                        MessageInput(widget.socket, _focusNode)
                       ],
                     )),
               ),

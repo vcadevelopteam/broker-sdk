@@ -20,7 +20,8 @@ This widget is used as an showing area for all the messages, the messages are re
  */
 class MessagesArea extends StatefulWidget {
   ChatSocket socket;
-  MessagesArea(this.socket, {super.key});
+  FocusNode focusNode;
+  MessagesArea(this.socket, this.focusNode, {super.key});
 
   @override
   State<MessagesArea> createState() => _MessagesAreaState();
@@ -36,6 +37,13 @@ class _MessagesAreaState extends State<MessagesArea> {
   void initState() {
     initStreamBuilder();
     scrollController = ScrollController()..addListener(_scrollListener);
+    widget.focusNode?.addListener(() {
+      if (widget.focusNode.hasFocus) {
+        setState(() {
+          _visible = false;
+        });
+      }
+    });
 
     super.initState();
   }
@@ -47,17 +55,19 @@ class _MessagesAreaState extends State<MessagesArea> {
   }
 
   void _scrollListener() {
-    if (scrollController?.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      setState(() {
-        _visible = false;
-      });
-    }
-    if (scrollController?.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      setState(() {
-        _visible = true;
-      });
+    if (!widget.focusNode.hasFocus) {
+      if (scrollController?.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        setState(() {
+          _visible = false;
+        });
+      }
+      if (scrollController?.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        setState(() {
+          _visible = true;
+        });
+      }
     }
   }
 
