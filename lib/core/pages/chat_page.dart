@@ -220,10 +220,6 @@ class _ChatPageState extends State<ChatPage> {
     Color textColor =
         backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
-    double finalHeight = Platform.isAndroid
-        ? screenHeight - padding.bottom - padding.top
-        : screenHeight - padding.top;
-
     if (!mounted) {
       return const SizedBox();
     } else {
@@ -344,8 +340,12 @@ class _ChatPageState extends State<ChatPage> {
                 HexColor(colorPreference.chatBackgroundColor.toString()),
             body: KeyboardVisibilityBuilder(
                 builder: (context, isKeyboardVisible) {
+              double finalHeight = Platform.isAndroid
+                  ? screenHeight - padding.bottom - padding.top
+                  : screenHeight - padding.top;
+
               return Container(
-                height: isKeyboardVisible ? finalHeight * 0.53 : finalHeight,
+                height: isKeyboardVisible ? screenHeight : finalHeight,
                 decoration: BoxDecoration(color: backgroundColor),
                 child: SizedBox(
                     width: screenWidth,
