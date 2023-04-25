@@ -168,7 +168,6 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                 borderRadius: BorderRadius.circular(15),
                 child: chewieController != null
                     ? Container(
-                        padding: const EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             color: Colors.black,
                             borderRadius: BorderRadius.circular(15)),

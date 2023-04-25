@@ -307,7 +307,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                           constraints: BoxConstraints(
                             maxWidth: widget.message.type == MessageType.button
                                 ? screenWidth * 0.8
-                                : screenWidth * 0.7,
+                                : screenWidth * 0.75,
                             minHeight: 10,
                             maxHeight: screenHeight * 0.6,
                             minWidth: 10,
