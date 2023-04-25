@@ -94,11 +94,8 @@ class _MessageInputState extends State<MessageInput> {
           .toJson();
 
       messagesToSend.add(messageSent);
-      widget.socket.controller!.sink.add({'data': messagesToSend});
       if (response.statusCode != 500 || response.statusCode != 400) {
-        widget.socket.controller!.sink.add({
-          "messageId": dateSent,
-        });
+        widget.socket.controller!.sink.add({'data': messagesToSend});
       }
       return;
     }

@@ -9,10 +9,8 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../helpers/identifier_type.dart';
-import '../helpers/message_type.dart';
 import '../helpers/socket_urls.dart';
 import '../model/integration_response.dart';
-import '../model/message_response.dart';
 import '../repository/chat_socket_repository.dart';
 
 /*

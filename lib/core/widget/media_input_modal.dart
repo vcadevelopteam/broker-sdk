@@ -8,7 +8,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:laraigo_chat/helpers/permissions_handler.dart';
-import 'package:laraigo_chat/helpers/util.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/location_manager.dart';

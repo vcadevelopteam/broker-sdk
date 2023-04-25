@@ -94,8 +94,6 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
 
@@ -168,20 +166,18 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
         : controller != null && chewieController != null
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(15),
-                child: Stack(
-                  children: [
-                    if (chewieController != null)
-                      Container(
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(15)),
-                          width: double.infinity,
-                          height: controller!.value.size.height,
-                          child: Chewie(
-                            controller: chewieController!,
-                          )),
-                  ],
-                ))
+                child: chewieController != null
+                    ? Container(
+                        padding: const EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(15)),
+                        width: double.infinity,
+                        height: controller!.value.size.height,
+                        child: Chewie(
+                          controller: chewieController!,
+                        ))
+                    : null)
             : const CircularProgressIndicator();
   }
 }

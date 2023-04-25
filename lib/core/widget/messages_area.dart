@@ -2,6 +2,7 @@
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
@@ -37,7 +38,7 @@ class _MessagesAreaState extends State<MessagesArea> {
   void initState() {
     initStreamBuilder();
     scrollController = ScrollController()..addListener(_scrollListener);
-    widget.focusNode?.addListener(() {
+    widget.focusNode.addListener(() {
       if (widget.focusNode.hasFocus) {
         setState(() {
           _visible = false;
@@ -163,7 +164,9 @@ class _MessagesAreaState extends State<MessagesArea> {
             } else {
               validateSent(messages,
                   (snapshot.data as Map<String, dynamic>)["messageId"]);
-              print((snapshot.data as Map<String, dynamic>)["messageId"]);
+              if (kDebugMode) {
+                print((snapshot.data as Map<String, dynamic>)["messageId"]);
+              }
             }
           }
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
