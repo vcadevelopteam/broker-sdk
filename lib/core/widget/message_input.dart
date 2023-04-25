@@ -7,9 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
+import '../../helpers/identifier_type.dart';
 import '../../helpers/message_type.dart';
 import '../../helpers/single_tap.dart';
 import '../../model/color_preference.dart';
@@ -33,6 +35,8 @@ class MessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<MessageInput> {
   final _textController = TextEditingController();
+  late SharedPreferences prefs;
+  late List<dynamic> messages;
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
@@ -52,9 +56,10 @@ class _MessageInputState extends State<MessageInput> {
                   id: const Uuid().v4().toString()),
               receptionDate: dateSent)
           .toJson();
-      setState(() {
-        widget.socket.controller!.sink.add(messageSent);
-      });
+      widget.socket.controller!.sink.add(messageSent);
+      if (messages.isEmpty) {
+        widget.focusNode.unfocus();
+      }
 
       var response = await ChatSocketRepository.sendMessage(
           _textController.text, "null", MessageType.text);
@@ -65,6 +70,9 @@ class _MessageInputState extends State<MessageInput> {
           "messageId": dateSent,
         });
         _textController.clear();
+        if (messages.isEmpty) {
+          messages = await ChatSocketRepository.getLocalMessages();
+        }
       }
     }
   }
@@ -181,6 +189,17 @@ class _MessageInputState extends State<MessageInput> {
     setState(() {
       widget.socket.controller!.sink.add({'data': messagesToSend});
     });
+  }
+
+  void initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    messages = await ChatSocketRepository.getLocalMessages();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPreferences();
   }
 
   @override

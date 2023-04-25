@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
@@ -341,11 +342,10 @@ class _ChatPageState extends State<ChatPage> {
             ),
             backgroundColor:
                 HexColor(colorPreference.chatBackgroundColor.toString()),
-            body: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
-              child: Container(
-                height: finalHeight,
+            body: KeyboardVisibilityBuilder(
+                builder: (context, isKeyboardVisible) {
+              return Container(
+                height: isKeyboardVisible ? finalHeight * 0.53 : finalHeight,
                 decoration: BoxDecoration(color: backgroundColor),
                 child: SizedBox(
                     width: screenWidth,
@@ -365,8 +365,8 @@ class _ChatPageState extends State<ChatPage> {
                         MessageInput(widget.socket, _focusNode)
                       ],
                     )),
-              ),
-            )),
+              );
+            })),
       );
     }
   }

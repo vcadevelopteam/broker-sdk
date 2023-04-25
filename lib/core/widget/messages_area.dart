@@ -38,13 +38,6 @@ class _MessagesAreaState extends State<MessagesArea> {
   void initState() {
     initStreamBuilder();
     scrollController = ScrollController()..addListener(_scrollListener);
-    widget.focusNode.addListener(() {
-      if (widget.focusNode.hasFocus) {
-        setState(() {
-          _visible = false;
-        });
-      }
-    });
 
     super.initState();
   }
@@ -88,14 +81,19 @@ class _MessagesAreaState extends State<MessagesArea> {
                     padding: const EdgeInsets.all(0),
                   ),
                   onPressed: () {
-                    setState(() {
-                      _visible = false;
-                    });
+                    scrollController!.animateTo(
+                      scrollController!.position.pixels,
+                      curve: Curves.easeOut,
+                      duration: const Duration(milliseconds: 1),
+                    );
                     scrollController!.animateTo(
                       scrollController!.position.maxScrollExtent + 100,
                       curve: Curves.easeOut,
                       duration: const Duration(milliseconds: 500),
                     );
+                    setState(() {
+                      _visible = false;
+                    });
                   },
                   icon: const Icon(
                     Icons.arrow_back,
@@ -175,6 +173,9 @@ class _MessagesAreaState extends State<MessagesArea> {
                   scrollController!.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 100),
                   curve: Curves.linear);
+              setState(() {
+                _visible = false;
+              });
             }
           });
 
