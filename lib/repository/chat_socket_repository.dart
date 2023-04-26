@@ -253,6 +253,8 @@ using internal databases as SQLite, Hive, etc.
 
       messagesToSave[messagesToSave.indexOf(messageFound)].isSent =
           message.isSent;
+      messagesToSave[messagesToSave.indexOf(messageFound)].hasError =
+          message.hasError;
     }
     //Finally we encode the messages to save it
     var encodedMessages = messagesToSave.map((e) => e.toJson()).toList();

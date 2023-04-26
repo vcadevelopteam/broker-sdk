@@ -5,6 +5,7 @@ import 'package:laraigo_chat/helpers/single_tap.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
+import '../../helpers/message_status.dart';
 import '../../helpers/message_type.dart';
 import '../../model/color_preference.dart';
 import '../../model/message_response.dart';
@@ -47,9 +48,11 @@ class _MessageButtonsState extends State<MessageButtons> {
     var response =
         await ChatSocketRepository.sendMessage(text, title, MessageType.text);
     if (response.statusCode != 500 || response.statusCode != 400) {
-      widget._socket.controller!.sink.add({
-        "messageId": dateSent,
-      });
+      widget._socket.controller!.sink
+          .add({"messageId": dateSent, "status": MessageStatus.sent});
+    } else {
+      widget._socket.controller!.sink
+          .add({"messageId": dateSent, "status": MessageStatus.error});
     }
   }
 

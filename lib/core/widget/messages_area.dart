@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:laraigo_chat/core/widget/message_buttons.dart';
+import 'package:laraigo_chat/helpers/message_status.dart';
 
 import '../../helpers/message_type.dart';
 import '../../model/color_preference.dart';
@@ -116,10 +117,14 @@ class _MessagesAreaState extends State<MessagesArea> {
     }
   }
 
-  validateSent(List<Message> messages, int messageId) {
+  validateSent(List<Message> messages, int messageId, MessageStatus status) {
     var test =
         messages.firstWhere((element) => element.messageDate == messageId);
-    test.isSent = true;
+    if (status == MessageStatus.sent) {
+      test.isSent = true;
+    } else {
+      test.hasError = true;
+    }
     ChatSocketRepository.updateMessageInLocal(test);
   }
 
@@ -160,8 +165,10 @@ class _MessagesAreaState extends State<MessagesArea> {
               message.isSaved = true;
               ChatSocketRepository.saveMessageInLocal(message);
             } else {
-              validateSent(messages,
-                  (snapshot.data as Map<String, dynamic>)["messageId"]);
+              validateSent(
+                  messages,
+                  (snapshot.data as Map<String, dynamic>)["messageId"],
+                  (snapshot.data as Map<String, dynamic>)["status"]);
               if (kDebugMode) {
                 print((snapshot.data as Map<String, dynamic>)["messageId"]);
               }

@@ -11,6 +11,7 @@ import 'package:laraigo_chat/core/chat_socket.dart';
 import 'package:laraigo_chat/core/widget/message_input.dart';
 import 'package:laraigo_chat/core/widget/messages_area.dart';
 import 'package:laraigo_chat/helpers/color_convert.dart';
+import 'package:laraigo_chat/helpers/message_status.dart';
 import 'package:laraigo_chat/helpers/util.dart';
 import 'package:laraigo_chat/model/models.dart';
 import 'package:laraigo_chat/repository/chat_socket_repository.dart';
@@ -118,29 +119,37 @@ class _ChatPageState extends State<ChatPage> {
 
   sendCustomMessage(String customMessage) async {
     if (customMessage.isNotEmpty) {
+      var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
+
+      List<MessageResponseData> data = [];
+      data.add(MessageResponseData(
+        message: customMessage,
+      ));
+      var messageSent = MessageResponse(
+              type: MessageType.text.name,
+              isUser: true,
+              error: false,
+              message: MessageSingleResponse(
+                  createdAt: dateSent,
+                  data: data,
+                  type: MessageType.text.name,
+                  id: const Uuid().v4().toString()),
+              receptionDate: dateSent)
+          .toJson();
+
+      setState(() {
+        widget.socket.controller!.sink.add(messageSent);
+      });
+
       var response = await ChatSocketRepository.sendMessage(
           customMessage, "null", MessageType.text);
 
       if (response.statusCode != 500 || response.statusCode != 400) {
-        List<MessageResponseData> data = [];
-        data.add(MessageResponseData(
-          message: customMessage,
-        ));
-        var messageSent = MessageResponse(
-                type: MessageType.text.name,
-                isUser: true,
-                error: false,
-                message: MessageSingleResponse(
-                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
-                    data: data,
-                    type: MessageType.text.name,
-                    id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
-            .toJson();
-
-        setState(() {
-          widget.socket.controller!.sink.add(messageSent);
-        });
+        widget.socket.controller!.sink
+            .add({"messageId": dateSent, "status": MessageStatus.sent});
+      } else {
+        widget.socket.controller!.sink
+            .add({"messageId": dateSent, "status": MessageStatus.error});
       }
     }
   }

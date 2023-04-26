@@ -49,17 +49,17 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               SocketElevatedButton(
                 integrationId: '642de154273d5f64e3daf7e2',
-                customMessage: "Hola",
+                customMessage: "Averias",
                 child: const Text("Prueba"),
               ),
               SocketTextButton(
                 integrationId: '642de154273d5f64e3daf7e2',
-                customMessage: "Hola",
+                customMessage: "Averias",
                 child: const Text("Prueba"),
               ),
               SocketContainer(
                 integrationId: '642de154273d5f64e3daf7e2',
-                customMessage: "Hola",
+                customMessage: "Averias",
                 child: const Text("Prueba"),
               )
             ],
@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: SocketActionButton(
           integrationId: '642de154273d5f64e3daf7e2',
+          customMessage: "Averias",
           icon: const Icon(Icons.read_more),
         ));
   }

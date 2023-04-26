@@ -20,6 +20,7 @@ class Message {
       this.message,
       required this.messageDate,
       this.data,
+      required this.hasError,
       required this.isSaved,
       required this.isSent,
       required this.type});
@@ -38,6 +39,7 @@ class Message {
               isUser: json['isUser'],
               isSaved: true,
               isSent: json['isSent'],
+              hasError: json['hasError'],
               data: messages.map((e) => MessageResponseData.text(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.media.name ||
@@ -49,6 +51,7 @@ class Message {
               isUser: json['isUser'],
               isSaved: true,
               isSent: json['isSent'],
+              hasError: json['hasError'],
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.location.name) {
@@ -57,6 +60,7 @@ class Message {
               type: MessageType.location,
               isUser: json['isUser'],
               isSaved: true,
+              hasError: json['hasError'],
               isSent: json['isSent'],
               data:
                   messages.map((e) => MessageResponseData.location(e)).toList(),
@@ -66,6 +70,7 @@ class Message {
           message = Message(
               type: MessageType.file,
               isUser: json['isUser'],
+              hasError: json['hasError'],
               isSaved: true,
               isSent: json['isSent'],
               data: messages.map((e) => MessageResponseData.file(e)).toList(),
@@ -80,6 +85,7 @@ class Message {
               isSaved: true,
               isSent: false,
               isUser: json['isUser'],
+              hasError: json['hasError'],
               data: messages.map((e) => MessageResponseData.text(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.carousel.name) {
@@ -89,6 +95,7 @@ class Message {
               type: MessageType.carousel,
               isSaved: true,
               isUser: json['isUser'],
+              hasError: json['hasError'],
               data:
                   messages.map((e) => MessageResponseData.carousel(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
@@ -98,6 +105,7 @@ class Message {
               type: MessageType.button,
               isSaved: true,
               isSent: false,
+              hasError: json['hasError'],
               isUser: json['isUser'],
               data:
                   messages.map((e) => MessageResponseData.buttons(e)).toList(),
@@ -108,6 +116,7 @@ class Message {
           message = Message(
               type: MessageType.media,
               isSaved: true,
+              hasError: json['hasError'],
               isSent: false,
               isUser: json['isUser'],
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
@@ -119,6 +128,7 @@ class Message {
               isSaved: true,
               isSent: false,
               isUser: json['isUser'],
+              hasError: json['hasError'],
               data:
                   messages.map((e) => MessageResponseData.location(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
@@ -129,6 +139,7 @@ class Message {
               isSaved: true,
               isSent: false,
               isUser: json['isUser'],
+              hasError: json['hasError'],
               data: messages.map((e) => MessageResponseData.file(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
@@ -145,6 +156,7 @@ class Message {
                 isUser: json['isUser'],
                 isSaved: true,
                 isSent: false,
+                hasError: false,
                 data: [MessageResponseData.text(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
           } else if (json["type"] == MessageType.media.name ||
@@ -155,6 +167,7 @@ class Message {
                 isUser: json['isUser'],
                 isSaved: true,
                 isSent: true,
+                hasError: false,
                 data: [MessageResponseData.image(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
           } else if (json["type"] == MessageType.location.name) {
@@ -164,6 +177,7 @@ class Message {
                 isUser: json['isUser'],
                 isSaved: true,
                 isSent: true,
+                hasError: false,
                 data: [MessageResponseData.location(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
           } else {
@@ -173,6 +187,7 @@ class Message {
                 isUser: json['isUser'],
                 isSaved: true,
                 isSent: true,
+                hasError: false,
                 data: [MessageResponseData.file(messagedata.toJson())],
                 messageDate: json['messageDate'] ?? json['receptionDate']);
           }
@@ -185,6 +200,7 @@ class Message {
                 isUser: false,
                 isSaved: true,
                 isSent: false,
+                hasError: false,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
           } else if (response.type == MessageType.carousel.name) {
@@ -193,6 +209,7 @@ class Message {
                 isUser: false,
                 isSaved: true,
                 isSent: false,
+                hasError: false,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
           } else if (response.type == MessageType.button.name) {
@@ -201,6 +218,7 @@ class Message {
                 isUser: false,
                 isSent: false,
                 isSaved: true,
+                hasError: false,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
           } else if (response.type == MessageType.media.name ||
@@ -210,6 +228,7 @@ class Message {
                 isUser: false,
                 isSaved: true,
                 isSent: false,
+                hasError: false,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
           } else if (response.type == MessageType.file.name) {
@@ -218,6 +237,7 @@ class Message {
                 isUser: false,
                 isSent: false,
                 isSaved: true,
+                hasError: false,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
           } else {
@@ -226,6 +246,7 @@ class Message {
                 isUser: false,
                 isSaved: true,
                 isSent: false,
+                hasError: false,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
           }
@@ -239,6 +260,7 @@ class Message {
               isUser: false,
               isSaved: true,
               isSent: false,
+              hasError: false,
               data: response.message!.data,
               messageDate: response.receptionDate);
         } else if (response.type == MessageType.carousel.name) {
@@ -247,6 +269,7 @@ class Message {
               isUser: false,
               isSent: false,
               isSaved: true,
+              hasError: false,
               data: response.message!.data,
               messageDate: response.receptionDate);
         } else if (response.type == MessageType.button.name) {
@@ -254,6 +277,7 @@ class Message {
               type: MessageType.button,
               isUser: false,
               isSent: false,
+              hasError: false,
               data: response.message!.data,
               messageDate: response.receptionDate,
               isSaved: true);
@@ -264,6 +288,7 @@ class Message {
               isUser: false,
               isSaved: true,
               isSent: false,
+              hasError: false,
               data: response.message!.data,
               messageDate: response.receptionDate);
         } else if (response.type == MessageType.file.name) {
@@ -272,6 +297,7 @@ class Message {
               isUser: false,
               isSaved: true,
               isSent: false,
+              hasError: false,
               data: response.message!.data,
               messageDate: response.receptionDate);
         } else {
@@ -280,6 +306,7 @@ class Message {
               isUser: false,
               isSaved: true,
               isSent: false,
+              hasError: false,
               data: response.message!.data,
               messageDate: response.receptionDate);
         }
@@ -297,6 +324,7 @@ class Message {
     return {
       'isUser': isUser,
       'isSent': isSent,
+      'hasError': hasError,
       'message': messageToSend,
       'messageDate': messageDate,
       'type': type.name,

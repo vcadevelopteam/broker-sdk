@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
 import '../../helpers/identifier_type.dart';
+import '../../helpers/message_status.dart';
 import '../../helpers/message_type.dart';
 import '../../helpers/single_tap.dart';
 import '../../model/color_preference.dart';
@@ -66,13 +67,15 @@ class _MessageInputState extends State<MessageInput> {
       _textController.clear();
 
       if (response.statusCode != 500 || response.statusCode != 400) {
-        widget.socket.controller!.sink.add({
-          "messageId": dateSent,
-        });
+        widget.socket.controller!.sink
+            .add({"messageId": dateSent, "status": MessageStatus.sent});
         _textController.clear();
         if (messages.isEmpty) {
           messages = await ChatSocketRepository.getLocalMessages();
         }
+      } else {
+        widget.socket.controller!.sink
+            .add({"messageId": dateSent, "status": MessageStatus.error});
       }
     }
   }

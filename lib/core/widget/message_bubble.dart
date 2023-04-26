@@ -421,6 +421,17 @@ class _MessageBubbleState extends State<MessageBubble> {
                             style: TextStyle(color: Colors.grey[500]),
                           )
                         ],
+                      ),
+                    if (widget.message.hasError && widget.message.isUser!)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "No se logró enviar...",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(color: Colors.grey[500]),
+                          )
+                        ],
                       )
                   ],
                 ),
