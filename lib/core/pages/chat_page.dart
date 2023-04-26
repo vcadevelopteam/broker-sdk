@@ -102,7 +102,7 @@ class _ChatPageState extends State<ChatPage> {
       });
       await initChat();
       await fillWithChatHistory();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
       await sendCustomMessage(widget.customMessage);
     } catch (exception, _) {
       showDialog(
