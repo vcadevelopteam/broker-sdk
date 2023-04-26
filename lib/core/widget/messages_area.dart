@@ -140,8 +140,10 @@ class _MessagesAreaState extends State<MessagesArea> {
         if (snapshot.hasData) {
           //Valida si lo recibido es una lista o un mensaje
           //Si es una lista va a agregar a cada mensaje de la lista al arreglo local
-          if (snapshot.data.runtimeType == List) {
-            var recievedMessages = snapshot.data as List;
+          if ((snapshot.data as Map<String, dynamic>)["savedMessages"] !=
+              null) {
+            var recievedMessages = (snapshot.data
+                as Map<String, dynamic>)["savedMessages"] as List;
             for (var element in recievedMessages) {
               var message = Message.fromJson(element);
               messages.add(message);
