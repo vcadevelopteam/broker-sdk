@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
-import '../../helpers/identifier_type.dart';
 import '../../helpers/message_status.dart';
 import '../../helpers/message_type.dart';
 import '../../helpers/single_tap.dart';
