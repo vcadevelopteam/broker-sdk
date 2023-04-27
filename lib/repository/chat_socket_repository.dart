@@ -321,4 +321,14 @@ using internal databases as SQLite, Hive, etc.
     await file.writeAsBytes(bytes);
     return file;
   }
+
+  static Future<String> getSenderId() async {
+    final pref = await SharedPreferences.getInstance();
+    if (pref.getString(IdentifierType.userId.name) != null) {
+      return pref.getString(IdentifierType.userId.name)!;
+    }
+    final id = const Uuid().v4();
+    pref.setString(IdentifierType.userId.name, id);
+    return id;
+  }
 }
