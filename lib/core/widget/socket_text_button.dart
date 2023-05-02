@@ -14,12 +14,14 @@ class SocketTextButton extends StatefulWidget {
   Color? circularProgressIndicatorColor;
   double? height;
   double? width;
+  VoidCallback? onInitialized;
   String customMessage;
 
   SocketTextButton(
       {required this.child,
       required this.integrationId,
       this.circularProgressIndicatorColor,
+      this.onInitialized,
       this.width,
       this.customMessage = "",
       this.height});
@@ -45,6 +47,9 @@ class _SocketTextButtonState extends State<SocketTextButton> {
       colorPreference = socket!.integrationResponse!.metadata!.color!;
       setState(() {
         isInitialized = true;
+        if (widget.onInitialized != null) {
+          widget.onInitialized!();
+        }
       });
     } catch (exception, _) {
       Utils.retryFuture(initchatSocketInButton, 15000);

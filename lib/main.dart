@@ -50,17 +50,26 @@ class _MyHomePageState extends State<MyHomePage> {
               SocketElevatedButton(
                 integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Averias",
+                onInitialized: () {
+                  print("Se ha incializado");
+                },
                 child: const Text("Prueba"),
               ),
               SocketTextButton(
                 integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Averias",
                 child: const Text("Prueba"),
+                onInitialized: () {
+                  print("Se ha incializado");
+                },
               ),
               SocketContainer(
                 integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Averias",
                 child: const Text("Prueba"),
+                onInitialized: () {
+                  print("Se ha incializado");
+                },
               )
             ],
           ),
@@ -69,6 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
           integrationId: '642de154273d5f64e3daf7e2',
           customMessage: "Averias",
           icon: const Icon(Icons.read_more),
+          onInitialized: () {
+            print("fasdfadsfadsfads");
+          },
         ));
   }
 }

@@ -16,10 +16,13 @@ class SocketActionButton extends StatefulWidget {
   Color? backgroundColor;
   Icon icon;
   String customMessage;
+  VoidCallback? onInitialized;
+
   SocketActionButton(
       {super.key,
       required this.integrationId,
       required this.icon,
+      this.onInitialized,
       this.customMessage = "",
       this.backgroundColor});
 
@@ -43,6 +46,9 @@ class _SocketActionButtonState extends State<SocketActionButton> {
       colorPreference = socket!.integrationResponse!.metadata!.color!;
       setState(() {
         isInitialized = true;
+        if (widget.onInitialized != null) {
+          widget.onInitialized!();
+        }
       });
     } catch (exception, _) {
       Utils.retryFuture(initchatSocketInButton, 15000);

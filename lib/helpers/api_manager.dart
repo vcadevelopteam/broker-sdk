@@ -56,7 +56,7 @@ class ApiManager {
 
 /*A custom response to any of the previous requests*/
 http.Response decorateResponse(http.Response response) {
-  debugPrint('req: ${response.request!.url} ${response.statusCode}');
+  // debugPrint('req: ${response.request!.url} ${response.statusCode}');
   final code = response.statusCode;
   final body = response.body;
 

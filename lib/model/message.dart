@@ -38,8 +38,8 @@ class Message {
               type: MessageType.text,
               isUser: json['isUser'],
               isSaved: true,
-              isSent: json['isSent'],
-              hasError: json['hasError'],
+              isSent: json['isSent'] ?? false,
+              hasError: json['hasError'] ?? false,
               data: messages.map((e) => MessageResponseData.text(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.media.name ||
@@ -50,8 +50,8 @@ class Message {
               type: MessageType.media,
               isUser: json['isUser'],
               isSaved: true,
-              isSent: json['isSent'],
-              hasError: json['hasError'],
+              isSent: json['isSent'] ?? false,
+              hasError: json['hasError'] ?? false,
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.location.name) {
@@ -60,8 +60,8 @@ class Message {
               type: MessageType.location,
               isUser: json['isUser'],
               isSaved: true,
-              hasError: json['hasError'],
-              isSent: json['isSent'],
+              hasError: json['hasError'] ?? false,
+              isSent: json['isSent'] ?? false,
               data:
                   messages.map((e) => MessageResponseData.location(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
@@ -70,9 +70,9 @@ class Message {
           message = Message(
               type: MessageType.file,
               isUser: json['isUser'],
-              hasError: json['hasError'],
+              hasError: json['hasError'] ?? false,
               isSaved: true,
-              isSent: json['isSent'],
+              isSent: json['isSent'] ?? false,
               data: messages.map((e) => MessageResponseData.file(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }
@@ -85,7 +85,7 @@ class Message {
               isSaved: true,
               isSent: false,
               isUser: json['isUser'],
-              hasError: json['hasError'],
+              hasError: json['hasError'] ?? false,
               data: messages.map((e) => MessageResponseData.text(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         } else if (json["type"] == MessageType.carousel.name) {
@@ -95,7 +95,7 @@ class Message {
               type: MessageType.carousel,
               isSaved: true,
               isUser: json['isUser'],
-              hasError: json['hasError'],
+              hasError: json['hasError'] ?? false,
               data:
                   messages.map((e) => MessageResponseData.carousel(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
@@ -105,7 +105,7 @@ class Message {
               type: MessageType.button,
               isSaved: true,
               isSent: false,
-              hasError: json['hasError'],
+              hasError: json['hasError'] ?? false,
               isUser: json['isUser'],
               data:
                   messages.map((e) => MessageResponseData.buttons(e)).toList(),
@@ -116,7 +116,7 @@ class Message {
           message = Message(
               type: MessageType.media,
               isSaved: true,
-              hasError: json['hasError'],
+              hasError: json['hasError'] ?? false,
               isSent: false,
               isUser: json['isUser'],
               data: messages.map((e) => MessageResponseData.image(e)).toList(),
@@ -128,7 +128,7 @@ class Message {
               isSaved: true,
               isSent: false,
               isUser: json['isUser'],
-              hasError: json['hasError'],
+              hasError: json['hasError'] ?? false,
               data:
                   messages.map((e) => MessageResponseData.location(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
@@ -139,7 +139,7 @@ class Message {
               isSaved: true,
               isSent: false,
               isUser: json['isUser'],
-              hasError: json['hasError'],
+              hasError: json['hasError'] ?? false,
               data: messages.map((e) => MessageResponseData.file(e)).toList(),
               messageDate: json['messageDate'] ?? json['receptionDate']);
         }

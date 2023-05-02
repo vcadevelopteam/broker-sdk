@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:laraigo_chat/core/pages/chat_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/identifier_type.dart';
 import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
 import '../../repository/chat_socket_repository.dart';
@@ -15,12 +17,14 @@ class SocketContainer extends StatefulWidget {
   Color? circularProgressIndicatorColor;
   double? height;
   double? width;
+  VoidCallback? onInitialized;
   String customMessage;
 
   SocketContainer(
       {required this.child,
       required this.integrationId,
       this.circularProgressIndicatorColor,
+      this.onInitialized,
       this.width,
       this.customMessage = "",
       this.height});
@@ -46,6 +50,9 @@ class _SocketContainerState extends State<SocketContainer> {
       colorPreference = socket!.integrationResponse!.metadata!.color!;
       setState(() {
         isInitialized = true;
+        if (widget.onInitialized != null) {
+          widget.onInitialized!();
+        }
       });
     } catch (exception, _) {
       Utils.retryFuture(initchatSocketInButton, 15000);
