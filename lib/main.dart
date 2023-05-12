@@ -50,8 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
               SocketElevatedButton(
                 integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Averias",
+                onTap: () {
+                  print("se ha tapeado");
+                },
                 onInitialized: () {
-                  print("Se ha incializado");
+                  print("Se ha incializado ${DateTime.now()}");
                 },
                 child: const Text("Prueba"),
               ),
@@ -59,16 +62,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Averias",
                 child: const Text("Prueba"),
+                onTap: () {
+                  print("se ha tapeado");
+                },
                 onInitialized: () {
-                  print("Se ha incializado");
+                  print("Se ha incializado ${DateTime.now()}");
                 },
               ),
               SocketContainer(
                 integrationId: '642de154273d5f64e3daf7e2',
                 customMessage: "Averias",
                 child: const Text("Prueba"),
+                onTap: () {
+                  print("se ha tapeado");
+                },
                 onInitialized: () {
-                  print("Se ha incializado");
+                  print("Se ha incializado ${DateTime.now()}");
                 },
               )
             ],
@@ -78,8 +87,11 @@ class _MyHomePageState extends State<MyHomePage> {
           integrationId: '642de154273d5f64e3daf7e2',
           customMessage: "Averias",
           icon: const Icon(Icons.read_more),
+          onTap: () {
+            print("se ha tapeado");
+          },
           onInitialized: () {
-            print("fasdfadsfadsfads");
+            print("Se ha incializado ${DateTime.now()}");
           },
         ));
   }

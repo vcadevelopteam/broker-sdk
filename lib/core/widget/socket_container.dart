@@ -18,6 +18,8 @@ class SocketContainer extends StatefulWidget {
   double? height;
   double? width;
   VoidCallback? onInitialized;
+  Function? onTap;
+
   String customMessage;
 
   SocketContainer(
@@ -26,6 +28,7 @@ class SocketContainer extends StatefulWidget {
       this.circularProgressIndicatorColor,
       this.onInitialized,
       this.width,
+      this.onTap,
       this.customMessage = "",
       this.height});
 
@@ -48,10 +51,15 @@ class _SocketContainerState extends State<SocketContainer> {
     try {
       socket = await ChatSocket.getInstance(widget.integrationId!);
       colorPreference = socket!.integrationResponse!.metadata!.color!;
+      var prefs = await SharedPreferences.getInstance();
+
       setState(() {
         isInitialized = true;
-        if (widget.onInitialized != null) {
+        if (widget.onInitialized != null &&
+            (prefs.getBool("isIntialized") == false ||
+                prefs.getBool("isIntialized") == null)) {
           widget.onInitialized!();
+          prefs.setBool("isIntialized", isInitialized).then((value) => {});
         }
       });
     } catch (exception, _) {
@@ -66,6 +74,10 @@ class _SocketContainerState extends State<SocketContainer> {
         final connection = await ChatSocketRepository.hasNetwork();
 
         if (socket != null && connection) {
+          if (widget.onTap != null) {
+            widget.onTap!();
+          }
+
           Navigator.push(
               context,
               MaterialPageRoute(

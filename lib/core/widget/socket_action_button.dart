@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
@@ -16,6 +17,7 @@ class SocketActionButton extends StatefulWidget {
   Color? backgroundColor;
   Icon icon;
   String customMessage;
+  Function? onTap;
   VoidCallback? onInitialized;
 
   SocketActionButton(
@@ -23,6 +25,7 @@ class SocketActionButton extends StatefulWidget {
       required this.integrationId,
       required this.icon,
       this.onInitialized,
+      this.onTap,
       this.customMessage = "",
       this.backgroundColor});
 
@@ -44,10 +47,15 @@ class _SocketActionButtonState extends State<SocketActionButton> {
     try {
       socket = await ChatSocket.getInstance(widget.integrationId!);
       colorPreference = socket!.integrationResponse!.metadata!.color!;
+      var prefs = await SharedPreferences.getInstance();
+
       setState(() {
         isInitialized = true;
-        if (widget.onInitialized != null) {
+        if (widget.onInitialized != null &&
+            (prefs.getBool("isIntialized") == false ||
+                prefs.getBool("isIntialized") == null)) {
           widget.onInitialized!();
+          prefs.setBool("isIntialized", isInitialized).then((value) => {});
         }
       });
     } catch (exception, _) {
@@ -63,6 +71,9 @@ class _SocketActionButtonState extends State<SocketActionButton> {
       onPressed: () async {
         final connection = await ChatSocketRepository.hasNetwork();
         if (socket != null && connection) {
+          if (widget.onTap != null) {
+            widget.onTap!();
+          }
           Navigator.push(
               context,
               MaterialPageRoute(
