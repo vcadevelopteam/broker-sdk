@@ -399,15 +399,17 @@ class _MessageInputState extends State<MessageInput> {
                           sendMessage();
                         }
                       } else {
-                        showDialog(
-                            context: context,
-                            builder: ((context) {
-                              return const AlertDialog(
-                                title: Text('Error de conexión'),
-                                content: Text(
-                                    'Por favor verifique su conexión de internet e intentelo nuevamente'),
-                              );
-                            }));
+                        if (mounted) {
+                          showDialog(
+                              context: context,
+                              builder: ((context) {
+                                return const AlertDialog(
+                                  title: Text('Error de conexión'),
+                                  content: Text(
+                                      'Por favor verifique su conexión de internet e intentelo nuevamente'),
+                                );
+                              }));
+                        }
                       }
                     },
                     child: Platform.isIOS

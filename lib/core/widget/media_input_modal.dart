@@ -288,50 +288,56 @@ class _MediaInputModalState extends State<MediaInputModal> {
 
                                   if (result != null) {
                                     if (result.files.isNotEmpty) {
-                                      showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (dialogContext) {
-                                            return StatefulBuilder(builder:
-                                                (dialogContext,
-                                                    setStateCustom) {
-                                              return MediaDialog(
-                                                  result.files,
-                                                  setStateCustom,
-                                                  isSendingMessage);
-                                            });
-                                          }).then((valueInDialog) {
-                                        var dataToReturn = valueInDialog;
+                                      if (mounted) {
+                                        showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (dialogContext) {
+                                              return StatefulBuilder(builder:
+                                                  (dialogContext,
+                                                      setStateCustom) {
+                                                return MediaDialog(
+                                                    result.files,
+                                                    setStateCustom,
+                                                    isSendingMessage);
+                                              });
+                                            }).then((valueInDialog) {
+                                          var dataToReturn = valueInDialog;
 
-                                        try {
-                                          if (dataToReturn["data"].isNotEmpty) {
+                                          try {
+                                            if (dataToReturn["data"]
+                                                .isNotEmpty) {
+                                              Navigator.pop(
+                                                  context, dataToReturn);
+                                            }
+                                          } catch (e) {
                                             Navigator.pop(
                                                 context, dataToReturn);
                                           }
-                                        } catch (e) {
-                                          Navigator.pop(context, dataToReturn);
-                                        }
-                                      });
+                                        });
+                                      }
                                     }
                                   }
                                 } else {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (locationDialogContext) {
-                                        return AlertDialog(
-                                          title: const Text(
-                                              'Librería de archivos denegada'),
-                                          content: const Text(
-                                              'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su imagen.'),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('Cerrar'))
-                                          ],
-                                        );
-                                      });
+                                  if (mounted) {
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (locationDialogContext) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'Librería de archivos denegada'),
+                                            content: const Text(
+                                                'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su imagen.'),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cerrar'))
+                                            ],
+                                          );
+                                        });
+                                  }
                                 }
                               }
                               storageRequest = true;
@@ -394,52 +400,58 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                       ]);
                                   if (result != null) {
                                     if (result.files.isNotEmpty) {
-                                      showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (dialogContext) {
-                                            return StatefulBuilder(builder:
-                                                (dialogContext,
-                                                    setStateCustom) {
-                                              return fileDialog(
-                                                  _screenWidth,
-                                                  _screenHeight,
-                                                  result.files,
-                                                  dialogContext,
-                                                  setStateCustom);
-                                            });
-                                          }).then((valueInDialog) {
-                                        var dataToReturn = valueInDialog;
+                                      if (mounted) {
+                                        showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (dialogContext) {
+                                              return StatefulBuilder(builder:
+                                                  (dialogContext,
+                                                      setStateCustom) {
+                                                return fileDialog(
+                                                    _screenWidth,
+                                                    _screenHeight,
+                                                    result.files,
+                                                    dialogContext,
+                                                    setStateCustom);
+                                              });
+                                            }).then((valueInDialog) {
+                                          var dataToReturn = valueInDialog;
 
-                                        try {
-                                          if (dataToReturn["data"].isNotEmpty) {
+                                          try {
+                                            if (dataToReturn["data"]
+                                                .isNotEmpty) {
+                                              Navigator.pop(
+                                                  context, dataToReturn);
+                                            }
+                                          } catch (e) {
                                             Navigator.pop(
                                                 context, dataToReturn);
                                           }
-                                        } catch (e) {
-                                          Navigator.pop(context, dataToReturn);
-                                        }
-                                      });
+                                        });
+                                      }
                                     }
                                   }
                                 } else {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (locationDialogContext) {
-                                        return AlertDialog(
-                                          title: const Text(
-                                              'Librería de archivos denegada'),
-                                          content: const Text(
-                                              'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su archivo.'),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('Cerrar'))
-                                          ],
-                                        );
-                                      });
+                                  if (mounted) {
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (locationDialogContext) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'Librería de archivos denegada'),
+                                            content: const Text(
+                                                'Por favor brinde acceso a su librería de archivos desde los ajustes, para que pueda compartir su archivo.'),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cerrar'))
+                                            ],
+                                          );
+                                        });
+                                  }
                                 }
                               }
                               storageRequest = true;
@@ -484,31 +496,34 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                     ? await askGps()
                                     : await askGpsForIos();
                                 if (locationPermission) {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (locationDialogContext) {
-                                        return Dialog(
-                                          child: SizedBox(
-                                            width: _screenWidth * 0.2,
-                                            height: _screenHeight * 0.1,
-                                            child: const Center(
-                                                child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text("Obteniendo Ubicacion..."),
-                                                SizedBox(
-                                                  width: 15,
-                                                ),
-                                                CircularProgressIndicator()
-                                              ],
-                                            )),
-                                          ),
-                                        );
-                                      }).then((value) {
-                                    Navigator.pop(context, value);
-                                  });
+                                  if (mounted) {
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (locationDialogContext) {
+                                          return Dialog(
+                                            child: SizedBox(
+                                              width: _screenWidth * 0.2,
+                                              height: _screenHeight * 0.1,
+                                              child: const Center(
+                                                  child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                      "Obteniendo Ubicacion..."),
+                                                  SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  CircularProgressIndicator()
+                                                ],
+                                              )),
+                                            ),
+                                          );
+                                        }).then((value) {
+                                      Navigator.pop(context, value);
+                                    });
+                                  }
                                   Position location =
                                       await LocationManager.determinePosition();
 
@@ -517,23 +532,25 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                     "data": [location]
                                   });
                                 } else {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (locationDialogContext) {
-                                        return AlertDialog(
-                                          title:
-                                              const Text('Ubicación denegada'),
-                                          content: const Text(
-                                              'Por favor brinde acceso a su ubicación desde ajustes, para que pueda compartirla.'),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('Cerrar'))
-                                          ],
-                                        );
-                                      });
+                                  if (mounted) {
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (locationDialogContext) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'Ubicación denegada'),
+                                            content: const Text(
+                                                'Por favor brinde acceso a su ubicación desde ajustes, para que pueda compartirla.'),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cerrar'))
+                                            ],
+                                          );
+                                        });
+                                  }
                                 }
                               }
                               locationRequest = true;
