@@ -137,10 +137,11 @@ class _ChatPageState extends State<ChatPage> {
                   id: const Uuid().v4().toString()),
               receptionDate: dateSent)
           .toJson();
-      if (mounted)
+      if (mounted) {
         setState(() {
           widget.socket.controller!.sink.add(messageSent);
         });
+      }
 
       var response = await ChatSocketRepository.sendMessage(
           customMessage, "null", MessageType.text);
@@ -162,10 +163,11 @@ class _ChatPageState extends State<ChatPage> {
     var savedMessages = await ChatSocketRepository.getLocalMessages();
     //add messages list
     //Agrega una lista de mensajes
-    if (mounted)
+    if (mounted) {
       setState(() {
         widget.socket.controller!.sink.add({"savedMessages": savedMessages});
       });
+    }
   }
 
   initChat() async {
@@ -178,18 +180,20 @@ class _ChatPageState extends State<ChatPage> {
         if (kDebugMode) {
           print("Socket cerrado");
         }
-        if (mounted)
+        if (mounted) {
           setState(() {
             hasConnection = false;
           });
+        }
         isClosed = true;
 
         // prefs.setBool("cerradoManualmente", false);
       }, onError: (error, stacktrace) async {
-        if (mounted)
+        if (mounted) {
           setState(() {
             hasConnection = false;
           });
+        }
         isClosed = true;
       });
 
@@ -210,11 +214,12 @@ class _ChatPageState extends State<ChatPage> {
       //     );
       //   },
       // );
-      if (mounted)
+      if (mounted) {
         setState(() {
           hasConnection = false;
           isClosed = true;
         });
+      }
     }
   }
 
