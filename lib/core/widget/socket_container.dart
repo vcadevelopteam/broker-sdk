@@ -58,9 +58,11 @@ class _SocketContainerState extends State<SocketContainer> {
         widget.onInitialized!();
         await prefs.setBool("isIntialized", isInitialized);
       }
-      setState(() {
-        isInitialized = true;
-      });
+      if (mounted) {
+        setState(() {
+          isInitialized = true;
+        });
+      }
     } catch (exception, _) {
       Utils.retryFuture(initchatSocketInButton, 15000);
     }

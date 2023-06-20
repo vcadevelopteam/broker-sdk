@@ -119,9 +119,10 @@ class _MediaDialogState extends State<MediaDialog> {
                               child: const Text('Cancelar')),
                           TextButton(
                               onPressed: () async {
-                                setState(() {
-                                  widget.isSendingMessage = true;
-                                });
+                                if (mounted)
+                                  setState(() {
+                                    widget.isSendingMessage = true;
+                                  });
                                 var responseUrls = [];
                                 var compressedImages =
                                     await Utils.compressImages(widget.files);
@@ -135,9 +136,10 @@ class _MediaDialogState extends State<MediaDialog> {
                                 }
                                 await Future.delayed(
                                     const Duration(seconds: 2));
-                                setState(() {
-                                  widget.isSendingMessage = false;
-                                });
+                                if (mounted)
+                                  setState(() {
+                                    widget.isSendingMessage = false;
+                                  });
                                 //Pop is used for passing the data to the previous widget without any state manager
                                 // ignore: use_build_context_synchronously
                                 Navigator.pop(context, {

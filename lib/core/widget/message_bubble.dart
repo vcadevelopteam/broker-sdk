@@ -152,14 +152,18 @@ class _MessageBubbleState extends State<MessageBubble> {
                 String? dir = await ChatSocketRepository.getDownloadPath();
 
                 if (!File('$dir/${message.data![0].filename!}').existsSync()) {
-                  setState(() {
-                    isLoading = true;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      isLoading = true;
+                    });
+                  }
                   var file = await ChatSocketRepository.downloadFile(
                       message.data![0].mediaUrl!, message.data![0].filename!);
-                  setState(() {
-                    isLoading = false;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  }
                   await OpenFilex.open(file.path);
                 } else {
                   await OpenFilex.open('$dir/${message.data![0].filename!}');

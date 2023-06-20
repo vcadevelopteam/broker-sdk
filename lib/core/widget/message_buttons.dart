@@ -91,9 +91,11 @@ class _MessageButtonsState extends State<MessageButtons> {
                                           widget.color.messageClientColor!),
                                     )),
                                 onPressed: () {
-                                  setState(() {
-                                    taped = true;
-                                  });
+                                  if (mounted) {
+                                    setState(() {
+                                      taped = true;
+                                    });
+                                  }
                                   sendMessage(e.payload!, e.text!);
                                 },
                                 child: Text(

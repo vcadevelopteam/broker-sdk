@@ -52,27 +52,27 @@ class _ChatPageState extends State<ChatPage> {
       DeviceOrientation.portraitUp,
     ]);
     timer = Timer.periodic(
-        const Duration(seconds: 15), (Timer t) => checkConnection(t));
+        const Duration(seconds: 30), (Timer t) => checkConnection(t));
   }
 
   checkConnection(Timer t) async {
     if (kDebugMode) {
       print("Checking connection");
     }
-    setState(() {
-      Utils.hasNetwork().then((value) async {
-        hasConnection = value;
-        if (hasConnection && isClosed == true) {
-          widget.socket.disconnect();
+    if (mounted) {
+      setState(() {
+        Utils.hasNetwork().then((value) async {
+          hasConnection = value;
+          if (hasConnection && isClosed == true) {
+            widget.socket.disconnect();
 
-          await Future.delayed(const Duration(seconds: 15));
-          await initSocket();
-          setState(() {
+            await Future.delayed(const Duration(seconds: 15));
+            await initSocket();
             isClosed = false;
-          });
-        }
+          }
+        });
       });
-    });
+    }
   }
 
   @override
@@ -105,16 +105,16 @@ class _ChatPageState extends State<ChatPage> {
       await Future.delayed(const Duration(seconds: 1));
       await sendCustomMessage(widget.customMessage);
     } catch (exception, _) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text('Error general'),
-            content: Text(
-                'Por favor verifique su conexión de internet e intentelo nuevamente'),
-          );
-        },
-      );
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return const AlertDialog(
+      //       title: Text('Error general'),
+      //       content: Text(
+      //           'Por favor verifique su conexión de internet e intentelo nuevamente'),
+      //     );
+      //   },
+      // );
     }
   }
 
@@ -137,10 +137,10 @@ class _ChatPageState extends State<ChatPage> {
                   id: const Uuid().v4().toString()),
               receptionDate: dateSent)
           .toJson();
-
-      setState(() {
-        widget.socket.controller!.sink.add(messageSent);
-      });
+      if (mounted)
+        setState(() {
+          widget.socket.controller!.sink.add(messageSent);
+        });
 
       var response = await ChatSocketRepository.sendMessage(
           customMessage, "null", MessageType.text);
@@ -162,9 +162,10 @@ class _ChatPageState extends State<ChatPage> {
     var savedMessages = await ChatSocketRepository.getLocalMessages();
     //add messages list
     //Agrega una lista de mensajes
-    setState(() {
-      widget.socket.controller!.sink.add({"savedMessages": savedMessages});
-    });
+    if (mounted)
+      setState(() {
+        widget.socket.controller!.sink.add({"savedMessages": savedMessages});
+      });
   }
 
   initChat() async {
@@ -177,17 +178,19 @@ class _ChatPageState extends State<ChatPage> {
         if (kDebugMode) {
           print("Socket cerrado");
         }
-        setState(() {
-          hasConnection = false;
-          isClosed = true;
-        });
+        if (mounted)
+          setState(() {
+            hasConnection = false;
+          });
+        isClosed = true;
 
         // prefs.setBool("cerradoManualmente", false);
       }, onError: (error, stacktrace) async {
-        setState(() {
-          hasConnection = false;
-          isClosed = true;
-        });
+        if (mounted)
+          setState(() {
+            hasConnection = false;
+          });
+        isClosed = true;
       });
 
       await Future.delayed(const Duration(milliseconds: 50));
@@ -207,10 +210,11 @@ class _ChatPageState extends State<ChatPage> {
       //     );
       //   },
       // );
-      setState(() {
-        hasConnection = false;
-        isClosed = true;
-      });
+      if (mounted)
+        setState(() {
+          hasConnection = false;
+          isClosed = true;
+        });
     }
   }
 

@@ -188,9 +188,11 @@ class _MessageInputState extends State<MessageInput> {
           break;
       }
     }
-    setState(() {
-      widget.socket.controller!.sink.add({'data': messagesToSend});
-    });
+    if (mounted) {
+      setState(() {
+        widget.socket.controller!.sink.add({'data': messagesToSend});
+      });
+    }
   }
 
   void initSharedPreferences() async {
@@ -322,7 +324,7 @@ class _MessageInputState extends State<MessageInput> {
                               controller: _textController,
                               textAlign: TextAlign.left,
                               onChanged: (String val) {
-                                setState(() {});
+                                if (mounted) setState(() {});
                               },
                               autofocus: false,
                               style: TextStyle(

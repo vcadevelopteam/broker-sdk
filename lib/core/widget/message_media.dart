@@ -70,12 +70,14 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
         if (!await file.exists()) file = File(filePath);
         controller = VideoPlayerController.file(file);
         await controller!.initialize();
-        setState(() {
-          chewieController = ChewieController(
-              videoPlayerController: controller!,
-              allowFullScreen: true,
-              showControls: true);
-        });
+        if (mounted) {
+          setState(() {
+            chewieController = ChewieController(
+                videoPlayerController: controller!,
+                allowFullScreen: true,
+                showControls: true);
+          });
+        }
       } catch (e) {
         if (kDebugMode) {
           print('Error loading video: $e');

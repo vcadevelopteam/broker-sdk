@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_final_fields
 
+import 'package:flutter/foundation.dart';
 import 'package:laraigo_chat/core/widget/socket_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:laraigo_chat/core/widget/socket_container.dart';
@@ -48,50 +49,66 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SocketElevatedButton(
-                integrationId: '642de154273d5f64e3daf7e2',
+                integrationId: '63d8224c5c8a9dde22652275',
                 customMessage: "Averias",
                 onTap: () {
-                  print("se ha tapeado");
+                  if (kDebugMode) {
+                    print("se ha tapeado");
+                  }
                 },
                 onInitialized: () {
-                  print("Se ha incializado ${DateTime.now()}");
+                  if (kDebugMode) {
+                    print("Se ha incializado ${DateTime.now()}");
+                  }
                 },
                 child: const Text("Prueba"),
               ),
               SocketTextButton(
-                integrationId: '642de154273d5f64e3daf7e2',
+                integrationId: '63d8224c5c8a9dde22652275',
                 customMessage: "Averias",
                 child: const Text("Prueba"),
                 onTap: () {
-                  print("se ha tapeado");
+                  if (kDebugMode) {
+                    print("se ha tapeado");
+                  }
                 },
                 onInitialized: () {
-                  print("Se ha incializado ${DateTime.now()}");
+                  if (kDebugMode) {
+                    print("Se ha incializado ${DateTime.now()}");
+                  }
                 },
               ),
               SocketContainer(
-                integrationId: '642de154273d5f64e3daf7e2',
+                integrationId: '63d8224c5c8a9dde22652275',
                 customMessage: "Averias",
                 child: const Text("Prueba"),
                 onTap: () {
-                  print("se ha tapeado");
+                  if (kDebugMode) {
+                    print("se ha tapeado");
+                  }
                 },
                 onInitialized: () {
-                  print("Se ha incializado ${DateTime.now()}");
+                  if (kDebugMode) {
+                    print("Se ha incializado ${DateTime.now()}");
+                  }
                 },
               )
             ],
           ),
         ),
         floatingActionButton: SocketActionButton(
-          integrationId: '642de154273d5f64e3daf7e2',
+          integrationId: '63d8224c5c8a9dde22652275',
           customMessage: "Averias",
           icon: const Icon(Icons.read_more),
           onTap: () {
-            print("se ha tapeado");
+            if (kDebugMode) {
+              print("se ha tapeado");
+            }
           },
           onInitialized: () {
-            print("Se ha incializado ${DateTime.now()}");
+            if (kDebugMode) {
+              print("Se ha incializado ${DateTime.now()}");
+            }
           },
         ));
   }

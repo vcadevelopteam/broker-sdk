@@ -57,9 +57,11 @@ class _SocketElevatedButtonState extends State<SocketElevatedButton> {
         await prefs.setBool("isIntialized", isInitialized);
       }
 
-      setState(() {
-        isInitialized = true;
-      });
+      if (mounted) {
+        setState(() {
+          isInitialized = true;
+        });
+      }
     } catch (exception, _) {
       Utils.retryFuture(initchatSocketInButton, 15000);
     }

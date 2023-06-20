@@ -34,12 +34,14 @@ class _SingleMediaState extends State<SingleMedia> {
     if (!mimeType!.startsWith('image/')) {
       controller = VideoPlayerController.file(File(widget.path));
       await controller!.initialize();
-      setState(() {
-        chewieController = ChewieController(
-            videoPlayerController: controller!,
-            allowFullScreen: true,
-            showControls: true);
-      });
+      if (mounted) {
+        setState(() {
+          chewieController = ChewieController(
+              videoPlayerController: controller!,
+              allowFullScreen: true,
+              showControls: true);
+        });
+      }
     }
   }
 

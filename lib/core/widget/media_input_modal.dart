@@ -492,11 +492,11 @@ class _MediaInputModalState extends State<MediaInputModal> {
                                           child: SizedBox(
                                             width: _screenWidth * 0.2,
                                             height: _screenHeight * 0.1,
-                                            child: Center(
+                                            child: const Center(
                                                 child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
-                                              children: const [
+                                              children: [
                                                 Text("Obteniendo Ubicacion..."),
                                                 SizedBox(
                                                   width: 15,

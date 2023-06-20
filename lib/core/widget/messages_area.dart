@@ -53,15 +53,17 @@ class _MessagesAreaState extends State<MessagesArea> {
     if (!widget.focusNode.hasFocus) {
       if (scrollController?.position.userScrollDirection ==
           ScrollDirection.reverse) {
-        setState(() {
-          _visible = false;
-        });
+        if (mounted)
+          setState(() {
+            _visible = false;
+          });
       }
       if (scrollController?.position.userScrollDirection ==
           ScrollDirection.forward) {
-        setState(() {
-          _visible = true;
-        });
+        if (mounted)
+          setState(() {
+            _visible = true;
+          });
       }
     }
   }
@@ -92,9 +94,10 @@ class _MessagesAreaState extends State<MessagesArea> {
                       curve: Curves.easeOut,
                       duration: const Duration(milliseconds: 500),
                     );
-                    setState(() {
-                      _visible = false;
-                    });
+                    if (mounted)
+                      setState(() {
+                        _visible = false;
+                      });
                   },
                   icon: const Icon(
                     Icons.arrow_back,
@@ -182,9 +185,10 @@ class _MessagesAreaState extends State<MessagesArea> {
                   scrollController!.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 100),
                   curve: Curves.linear);
-              setState(() {
-                _visible = false;
-              });
+              if (mounted)
+                setState(() {
+                  _visible = false;
+                });
             }
           });
 
