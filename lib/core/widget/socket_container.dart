@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:laraigo_chat/core/pages/chat_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../helpers/identifier_type.dart';
 import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
 import '../../repository/chat_socket_repository.dart';
@@ -53,14 +52,14 @@ class _SocketContainerState extends State<SocketContainer> {
       colorPreference = socket!.integrationResponse!.metadata!.color!;
       var prefs = await SharedPreferences.getInstance();
 
+      if (widget.onInitialized != null &&
+          (prefs.getBool("isIntialized") == false ||
+              prefs.getBool("isIntialized") == null)) {
+        widget.onInitialized!();
+        await prefs.setBool("isIntialized", isInitialized);
+      }
       setState(() {
         isInitialized = true;
-        if (widget.onInitialized != null &&
-            (prefs.getBool("isIntialized") == false ||
-                prefs.getBool("isIntialized") == null)) {
-          widget.onInitialized!();
-          prefs.setBool("isIntialized", isInitialized).then((value) => {});
-        }
       });
     } catch (exception, _) {
       Utils.retryFuture(initchatSocketInButton, 15000);
@@ -75,7 +74,7 @@ class _SocketContainerState extends State<SocketContainer> {
 
         if (socket != null && connection) {
           if (widget.onTap != null) {
-            widget.onTap!();
+            await widget.onTap!();
           }
 
           Navigator.push(
