@@ -52,7 +52,8 @@ class _MessageBubbleState extends State<MessageBubble> {
   Widget _getMessage(Message message, screenHeight, screenWidth, context) {
     if (message.type == MessageType.text) {
       return Text(
-          message.data![0].title!.isNotEmpty
+          message.data![0].title!.isNotEmpty &&
+                  (message.data![0].title! != "null" ||  message.data![0].title == null)
               ? message.data![0].title!
               : message.data![0].message!,
           style: TextStyle(
