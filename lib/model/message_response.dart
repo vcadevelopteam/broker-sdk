@@ -23,12 +23,15 @@ class MessageResponse {
       required this.type});
 
   factory MessageResponse.fromJson(Map<String, dynamic> json) {
-    var message = MessageSingleResponse.fromJson(json["message"]);
+    var message = MessageSingleResponse.fromJson(json["message"] ?? json);
+    if (json["receptionDate"] == null && message.createdAt != null) {
+      json["receptionDate"] = message.createdAt;
+    }
     return MessageResponse(
         error: json["error"] ?? false,
         receptionDate: json["receptionDate"] ?? 0,
         method: json["method"] ?? "",
-        isUser: json["isUser"],
+        isUser: json["isUser"] ?? false,
         sender: json["sender"] ?? "",
         type: message.type.toString(),
         message: message);

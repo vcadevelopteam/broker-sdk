@@ -102,7 +102,7 @@ class _ChatPageState extends State<ChatPage> {
       });
       await initChat();
       await fillWithChatHistory();
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 2));
       await sendCustomMessage(widget.customMessage);
     } catch (exception, _) {
       // showDialog(
@@ -159,6 +159,10 @@ class _ChatPageState extends State<ChatPage> {
   fillWithChatHistory() async {
     //change state to update stream
     //Setea el estado para actualizar el stream a que responda
+    var newMessages = await ChatSocketRepository.getMessagesFromServer();
+    for (var element in newMessages) {
+      await ChatSocketRepository.saveMessageInLocal(element);
+    }
 
     var savedMessages = await ChatSocketRepository.getLocalMessages();
     //add messages list

@@ -289,6 +289,59 @@ using internal databases as SQLite, Hive, etc.
     return [];
   }
 
+  static Future<List> getMessagesFromServer() async {
+    final pref = await SharedPreferences.getInstance();
+    List savedMessages = await ChatSocketRepository.getLocalMessages();
+
+    try {
+      var requestBody = {
+        "query": [
+          {
+            "value": pref.getString(IdentifierType.integrationId.name),
+            "key": "integrationId"
+          },
+          {
+            "value": [
+              {
+                "recipientId": pref.getString(IdentifierType.userId.name),
+              },
+              {
+                "senderId": pref.getString(IdentifierType.userId.name),
+              },
+            ],
+            "key": "\$or",
+          },
+          {
+            "value": {
+              "\$gt": savedMessages[savedMessages.length - 1]["messageDate"]
+            },
+            "key": "createdAt",
+          },
+        ],
+        "sort": "DESC",
+        "pageSize": 20,
+        "page": 1,
+      };
+
+      var response = await ApiManager.post(
+          '${SocketUrls.baseBrokerEndpoint}${SocketUrls.obtainMessagesEndpoint}',
+          body: jsonEncode(requestBody));
+
+      if (response.statusCode == 200) {
+        var responseDcoded = jsonDecode(response.body)["data"] ?? [];
+        List newMessages =
+            responseDcoded.map((e) => Message.fromJson(e)).toList();
+
+        return newMessages;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("error aca");
+      return [];
+    }
+  }
+
   static Future<String?> getDownloadPath() async {
     Directory? directory;
     try {

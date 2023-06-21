@@ -48,39 +48,36 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SocketElevatedButton(
-                integrationId: '63d8224c5c8a9dde22652275',
-                customMessage: "Averias",
-                onTap: () {
-                  if (kDebugMode) {
-                    print("se ha tapeado");
-                  }
-                },
-                onInitialized: () {
-                  if (kDebugMode) {
-                    print("Se ha incializado ${DateTime.now()}");
-                  }
-                },
-                child: const Text("Prueba"),
-              ),
-              SocketTextButton(
-                integrationId: '63d8224c5c8a9dde22652275',
-                customMessage: "Averias",
-                child: const Text("Prueba"),
-                onTap: () {
-                  if (kDebugMode) {
-                    print("se ha tapeado");
-                  }
-                },
-                onInitialized: () {
-                  if (kDebugMode) {
-                    print("Se ha incializado ${DateTime.now()}");
-                  }
-                },
-              ),
+              // SocketElevatedButton(
+              //   integrationId: '63d8224c5c8a9dde22652275',
+              //   onTap: () {
+              //     if (kDebugMode) {
+              //       print("se ha tapeado");
+              //     }
+              //   },
+              //   onInitialized: () {
+              //     if (kDebugMode) {
+              //       print("Se ha incializado ${DateTime.now()}");
+              //     }
+              //   },
+              //   child: const Text("Prueba"),
+              // ),
+              // SocketTextButton(
+              //   integrationId: '63d8224c5c8a9dde22652275',
+              //   child: const Text("Prueba"),
+              //   onTap: () {
+              //     if (kDebugMode) {
+              //       print("se ha tapeado");
+              //     }
+              //   },
+              //   onInitialized: () {
+              //     if (kDebugMode) {
+              //       print("Se ha incializado ${DateTime.now()}");
+              //     }
+              //   },
+              // ),
               SocketContainer(
                 integrationId: '63d8224c5c8a9dde22652275',
-                customMessage: "Averias",
                 child: const Text("Prueba"),
                 onTap: () {
                   if (kDebugMode) {
@@ -98,7 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: SocketActionButton(
           integrationId: '63d8224c5c8a9dde22652275',
-          customMessage: "Averias",
           icon: const Icon(Icons.read_more),
           onTap: () {
             if (kDebugMode) {

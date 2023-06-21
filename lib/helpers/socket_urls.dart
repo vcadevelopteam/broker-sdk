@@ -15,4 +15,5 @@ class SocketUrls {
   static const chatBotUrl = "${baseResourceEndpoint}Image/Bot.png";
 
   static const sendMessageEndpoint = "messages/send";
+  static const obtainMessagesEndpoint = "messages/get";
 }

@@ -253,7 +253,7 @@ class Message {
         }
       } else {
         //RECIBIR LAS RESPUESTAS DEL SERVIDOR PARA NO CAER EN NULOS
-        MessageResponse response = MessageResponse.fromJson(json);
+        MessageResponse response = MessageResponse.fromJson(json );
         if (response.type == MessageType.text.name) {
           message = Message(
               type: MessageType.text,
