@@ -34,9 +34,9 @@ class ChatSocketRepository {
     //Saved into shared preferences as IntegrationId
     pref.setString(IdentifierType.integrationId.name, integrationId);
 
-    if (kDebugMode) {
-      print(IntegrationResponse.fromJson(jsonDecode(response.body)));
-    }
+    // if (kDebugMode) {
+    //   print(IntegrationResponse.fromJson(jsonDecode(response.body)));
+    // }
 
     return IntegrationResponse.fromJson(jsonDecode(response.body));
   }
@@ -224,6 +224,47 @@ using internal databases as SQLite, Hive, etc.
     }
   }
 
+  static Future<void> updateMessageInLocal(Message message) async {
+    final pref = await SharedPreferences.getInstance();
+    var validateMessages = pref.getString('messages');
+    List<Message> messagesToSave = [];
+    //The list of messages are intialized if the messages are null (no messages),
+    //a new array of messages is created and the message is added to it
+    if (validateMessages == null) {
+      messagesToSave.add(message);
+    } else {
+      //If the list is not null we create a new decoded list where stores all the messages
+      //that were previously saved in the device
+      List decodedList = jsonDecode(validateMessages);
+      try {
+        messagesToSave = decodedList.map((e) => Message.fromJson(e)).toList();
+      } catch (ex) {
+        messagesToSave = [];
+      }
+      //If the message has the same TimeStamp means that the same message is going to be added twice
+      //we filter those messages to not allow any unncesary adding
+      var messageFound = messagesToSave.firstWhere(
+        (element) => element.messageDate == message.messageDate,
+        orElse: () {
+          messagesToSave.add(message);
+          return message;
+        },
+      );
+
+      messagesToSave[messagesToSave.indexOf(messageFound)].isSent =
+          message.isSent;
+      messagesToSave[messagesToSave.indexOf(messageFound)].hasError =
+          message.hasError;
+    }
+    //Finally we encode the messages to save it
+    var encodedMessages = messagesToSave.map((e) => e.toJson()).toList();
+    pref.setString('messages', jsonEncode(encodedMessages));
+
+    if (kDebugMode) {
+      print("Size del arreglo ${encodedMessages.length}");
+    }
+  }
+
   static Future<bool> hasNetwork() async {
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -279,5 +320,30 @@ using internal databases as SQLite, Hive, etc.
     File file = File('$dir/$filename');
     await file.writeAsBytes(bytes);
     return file;
+  }
+
+  static Future<String> getSenderId() async {
+    final pref = await SharedPreferences.getInstance();
+    if (pref.getString(IdentifierType.userId.name) != null) {
+      return pref.getString(IdentifierType.userId.name)!;
+    }
+    final id = const Uuid().v4();
+    pref.setString(IdentifierType.userId.name, id);
+    return id;
+  }
+
+  static Future<void> resetUserInfo() async {
+    final pref = await SharedPreferences.getInstance();
+    if (pref.getString(IdentifierType.userId.name) != null ||
+        pref.getString(IdentifierType.integrationId.name) != null ||
+        pref.getString(IdentifierType.sessionId.name) != null ||
+        pref.getString("messages") != null ||
+        pref.getBool("isIntialized") != null) {
+      await pref.remove(IdentifierType.userId.name);
+      await pref.remove(IdentifierType.sessionId.name);
+      await pref.remove(IdentifierType.integrationId.name);
+      await pref.remove("messages");
+      await pref.remove("isIntialized");
+    }
   }
 }

@@ -1,14 +1,15 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, depend_on_referenced_packages
 
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path/path.dart' as path;
 
 import '../../model/message.dart';
 
@@ -23,8 +24,10 @@ class MediaMessageBubble extends StatefulWidget {
 
 class _MediaMessageBubbleState extends State<MediaMessageBubble> {
   VideoPlayerController? controller;
-  bool startedPlaying = false;
-  bool isImage = true;
+  ChewieController? chewieController;
+
+  File image = File('');
+  bool isImage = false;
 
   @override
   void initState() {
@@ -32,38 +35,62 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
     super.initState();
   }
 
-  loadImage() async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: true, type: FileType.media);
-  }
+  // loadImage() async {
+  //   FilePickerResult? result = await FilePicker.platform
+  //       .pickFiles(allowMultiple: true, type: FileType.media);
+  // }
 
   loadVideoPlayer() async {
+    final documentDirectory = await getApplicationDocumentsDirectory();
+
     final mimeType = lookupMimeType(widget.message.data![0].mediaUrl!);
 
-    if (!mimeType!.startsWith('image/')) {
-      isImage = false;
-      final documentDirectory = await getApplicationDocumentsDirectory();
-      var file = File("");
-      if (await File(documentDirectory.path +
-              widget.message.data![0].filename.toString())
-          .exists()) {
-        file = File(documentDirectory.path +
-            widget.message.data![0].filename.toString());
-      } else {
-        final response =
-            await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
+    final filePath = path.join(
+        documentDirectory.path, widget.message.data![0].filename.toString());
+    isImage = false;
+    var file = File("");
+    if (await File(filePath).exists()) {
+      file = File(filePath);
+    } else {
+      final response =
+          await http.get(Uri.parse(widget.message.data![0].mediaUrl!));
+      final filePath = path.join(
+          documentDirectory.path, widget.message.data![0].filename.toString());
+      file = File(filePath);
 
-        file = File(documentDirectory.path +
-            widget.message.data![0].filename.toString());
-
-        file.writeAsBytesSync(response.bodyBytes);
+      if (!await file.exists()) {
+        await file.create(recursive: true);
       }
+      file.writeAsBytesSync(response.bodyBytes);
+      file = File(filePath);
+    }
+    if (!await file.exists()) file = File(filePath);
+    if (!mimeType!.startsWith('image/')) {
+      try {
+        if (!await file.exists()) file = File(filePath);
+        controller = VideoPlayerController.file(file);
+        await controller!.initialize();
+        if (mounted) {
+          setState(() {
+            chewieController = ChewieController(
+                videoPlayerController: controller!,
+                allowFullScreen: true,
+                showControls: true);
+          });
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error loading video: $e');
+        }
+      }
+    } else {
+      isImage = true;
+      if (!await file.exists()) file = File(filePath);
+      image = file;
+    }
 
-      controller = VideoPlayerController.file(file);
-      controller!.initialize();
-      setState(() {
-        startedPlaying = true;
-      });
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -75,45 +102,46 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
     return isImage
         ? GestureDetector(
             onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Dialog(
-                        insetPadding: const EdgeInsets.all(0),
-                        backgroundColor: Colors.transparent,
-                        child: SizedBox(
-                          width: screenWidth,
-                          height: screenHeight,
-                          child: PageView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              controller:
-                                  PageController(viewportFraction: 0.95),
-                              itemCount: 1,
-                              itemBuilder: (ctx, indx) {
-                                return Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      image: DecorationImage(
-                                          fit: BoxFit.contain,
-                                          onError: (exception, stackTrace) {
-                                            if (kDebugMode) {
-                                              print("No Image loaded");
-                                            }
-                                          },
-                                          image: NetworkImage(widget
-                                              .message.data![0].mediaUrl!))),
-                                );
-                              }),
+              if (mounted) {
+                showDialog(
+                    context: context,
+                    builder: (ctx) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Dialog(
+                          insetPadding: const EdgeInsets.all(0),
+                          backgroundColor: Colors.transparent,
+                          child: SizedBox(
+                            width: screenWidth,
+                            height: screenHeight,
+                            child: PageView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                controller:
+                                    PageController(viewportFraction: 0.95),
+                                itemCount: 1,
+                                itemBuilder: (ctx, indx) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        image: DecorationImage(
+                                            fit: BoxFit.contain,
+                                            onError: (exception, stackTrace) {
+                                              if (kDebugMode) {
+                                                print("No Image loaded");
+                                              }
+                                            },
+                                            image: FileImage(image))),
+                                  );
+                                }),
+                          ),
                         ),
-                      ),
-                    );
-                  });
+                      );
+                    });
+              }
             },
             child: Container(
                 width: double.infinity,
@@ -121,52 +149,38 @@ class _MediaMessageBubbleState extends State<MediaMessageBubble> {
                 decoration: const BoxDecoration(),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(widget.message.data![0].mediaUrl!,
-                      fit: BoxFit.cover, frameBuilder:
-                          (context, child, frame, wasSynchronouslyLoaded) {
-                    return child;
-                  }, loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    } else {
+                  child: Image.file(
+                    image,
+                    errorBuilder: (context, error, stackTrace) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    }
-                  }),
+                    },
+                    fit: BoxFit.cover,
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
+                      return child;
+                    },
+                  ),
                 )
 
                 //  FadeInImage(image:NetworkImage(widget.message.data![0].mediaUrl!) ,placeholder: ,)
 
                 ))
-        : startedPlaying
-            ? GestureDetector(
-                onTap: () async {
-                  if (controller!.value.isPlaying) {
-                    controller!.pause();
-                    startedPlaying = false;
-                  } else {
-                    controller!.play();
-                    startedPlaying = true;
-                  }
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                      ),
-                      child: Column(children: [
-                        Expanded(
-                          child: AspectRatio(
-                            aspectRatio: controller!.value.aspectRatio,
-                            child: VideoPlayer(controller!),
-                          ),
-                        ),
-                      ])),
-                ),
-              )
+        : controller != null && chewieController != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: chewieController != null
+                    ? Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(15)),
+                        width: double.infinity,
+                        height: controller!.value.size.height,
+                        child: Chewie(
+                          controller: chewieController!,
+                        ))
+                    : null)
             : const CircularProgressIndicator();
   }
 }

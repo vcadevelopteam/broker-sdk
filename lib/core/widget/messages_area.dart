@@ -1,18 +1,15 @@
 // ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables, unused_local_variable, use_build_context_synchronously
 
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:laraigo_chat/core/widget/message_buttons.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:laraigo_chat/helpers/message_status.dart';
 
 import '../../helpers/message_type.dart';
-import '../../helpers/sender_type.dart';
-import '../../helpers/util.dart';
 import '../../model/color_preference.dart';
 import '../../model/message.dart';
 import '../../repository/chat_socket_repository.dart';
@@ -25,7 +22,8 @@ This widget is used as an showing area for all the messages, the messages are re
  */
 class MessagesArea extends StatefulWidget {
   ChatSocket socket;
-  MessagesArea(this.socket, {super.key});
+  FocusNode focusNode;
+  MessagesArea(this.socket, this.focusNode, {super.key});
 
   @override
   State<MessagesArea> createState() => _MessagesAreaState();
@@ -52,17 +50,23 @@ class _MessagesAreaState extends State<MessagesArea> {
   }
 
   void _scrollListener() {
-    if (scrollController?.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      setState(() {
-        _visible = false;
-      });
-    }
-    if (scrollController?.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      setState(() {
-        _visible = true;
-      });
+    if (!widget.focusNode.hasFocus) {
+      if (scrollController?.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (mounted) {
+          setState(() {
+            _visible = false;
+          });
+        }
+      }
+      if (scrollController?.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (mounted) {
+          setState(() {
+            _visible = true;
+          });
+        }
+      }
     }
   }
 
@@ -82,14 +86,21 @@ class _MessagesAreaState extends State<MessagesArea> {
                     padding: const EdgeInsets.all(0),
                   ),
                   onPressed: () {
-                    setState(() {
-                      _visible = false;
-                    });
+                    scrollController!.animateTo(
+                      scrollController!.position.pixels,
+                      curve: Curves.easeOut,
+                      duration: const Duration(milliseconds: 1),
+                    );
                     scrollController!.animateTo(
                       scrollController!.position.maxScrollExtent + 100,
                       curve: Curves.easeOut,
                       duration: const Duration(milliseconds: 500),
                     );
+                    if (mounted) {
+                      setState(() {
+                        _visible = false;
+                      });
+                    }
                   },
                   icon: const Icon(
                     Icons.arrow_back,
@@ -112,6 +123,17 @@ class _MessagesAreaState extends State<MessagesArea> {
     }
   }
 
+  validateSent(List<Message> messages, int messageId, MessageStatus status) {
+    var test =
+        messages.firstWhere((element) => element.messageDate == messageId);
+    if (status == MessageStatus.sent) {
+      test.isSent = true;
+    } else {
+      test.hasError = true;
+    }
+    ChatSocketRepository.updateMessageInLocal(test);
+  }
+
   initStreamBuilder() async {
     scrollController = ScrollController()..addListener(_scrollListener);
     bool counterExceptions = false;
@@ -124,8 +146,10 @@ class _MessagesAreaState extends State<MessagesArea> {
         if (snapshot.hasData) {
           //Valida si lo recibido es una lista o un mensaje
           //Si es una lista va a agregar a cada mensaje de la lista al arreglo local
-          if (snapshot.data.runtimeType == List) {
-            var recievedMessages = snapshot.data as List;
+          if ((snapshot.data as Map<String, dynamic>)["savedMessages"] !=
+              null) {
+            var recievedMessages = (snapshot.data
+                as Map<String, dynamic>)["savedMessages"] as List;
             for (var element in recievedMessages) {
               var message = Message.fromJson(element);
               messages.add(message);
@@ -142,11 +166,21 @@ class _MessagesAreaState extends State<MessagesArea> {
           } else {
             //Si no es una lista solo va a agregar el mensaje al arreglo
 
-            var message =
-                Message.fromJson((snapshot.data as Map<String, dynamic>));
-            messages.add(message);
-            message.isSaved = true;
-            ChatSocketRepository.saveMessageInLocal(message);
+            if ((snapshot.data as Map<String, dynamic>)["messageId"] == null) {
+              var message =
+                  Message.fromJson((snapshot.data as Map<String, dynamic>));
+              messages.add(message);
+              message.isSaved = true;
+              ChatSocketRepository.saveMessageInLocal(message);
+            } else {
+              validateSent(
+                  messages,
+                  (snapshot.data as Map<String, dynamic>)["messageId"],
+                  (snapshot.data as Map<String, dynamic>)["status"]);
+              if (kDebugMode) {
+                print((snapshot.data as Map<String, dynamic>)["messageId"]);
+              }
+            }
           }
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             if (messages.isNotEmpty) {
@@ -154,6 +188,11 @@ class _MessagesAreaState extends State<MessagesArea> {
                   scrollController!.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 100),
                   curve: Curves.linear);
+              if (mounted) {
+                setState(() {
+                  _visible = false;
+                });
+              }
             }
           });
 
@@ -167,8 +206,6 @@ class _MessagesAreaState extends State<MessagesArea> {
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
                     reverse: false,
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
                     itemCount: messages.length,
                     itemBuilder: (ctx, indx) {
                       Widget separator = const SizedBox();
@@ -235,48 +272,11 @@ class _MessagesAreaState extends State<MessagesArea> {
               ),
             ],
           );
-          // : SizedBox(
-          //     height: MediaQuery.of(context).size.height - kToolbarHeight,
-          //     width: MediaQuery.of(context).size.width,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Icon(
-          //           Icons.message,
-          //           color: Theme.of(context).textTheme.bodyLarge!.color,
-          //         ),
-          //         const SizedBox(
-          //           width: 10,
-          //         ),
-          //         const Text("No ha enviado mensajes")
-          //       ],
-          //     ),
-          //   );
         } else {
           return const Center(child: CircularProgressIndicator());
         }
       },
     );
-  }
-
-  _retryConnectSocket() async {
-    try {
-      await widget.socket.connect();
-    } catch (exception, _) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text('Error de conexión'),
-            content: Text(
-                'Por favor verifique su conexión de internet e intentelo nuevamente'),
-          );
-        },
-      );
-      print("sigue sin conectarse");
-      Navigator.pop(context);
-    }
   }
 
   final f = DateFormat('MMMM dd, hh:mm a');

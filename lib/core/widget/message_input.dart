@@ -7,9 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mime/mime.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
+import '../../helpers/message_status.dart';
 import '../../helpers/message_type.dart';
 import '../../helpers/single_tap.dart';
 import '../../model/color_preference.dart';
@@ -24,7 +26,8 @@ This widget is used as an input for the whole chat page
 
 class MessageInput extends StatefulWidget {
   ChatSocket socket;
-  MessageInput(this.socket, {super.key});
+  FocusNode focusNode;
+  MessageInput(this.socket, this.focusNode, {super.key});
 
   @override
   State<MessageInput> createState() => _MessageInputState();
@@ -32,35 +35,46 @@ class MessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<MessageInput> {
   final _textController = TextEditingController();
+  late SharedPreferences prefs;
+  late List<dynamic> messages;
 
   void sendMessage() async {
     if (_textController.text.isNotEmpty) {
+      List<MessageResponseData> data = [];
+      data.add(MessageResponseData(
+        message: _textController.text,
+      ));
+      var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
+      var messageSent = MessageResponse(
+              type: MessageType.text.name,
+              isUser: true,
+              error: false,
+              message: MessageSingleResponse(
+                  createdAt: dateSent,
+                  data: data,
+                  type: MessageType.text.name,
+                  id: const Uuid().v4().toString()),
+              receptionDate: dateSent)
+          .toJson();
+      widget.socket.controller!.sink.add(messageSent);
+      if (messages.isEmpty) {
+        widget.focusNode.unfocus();
+      }
+
       var response = await ChatSocketRepository.sendMessage(
           _textController.text, "null", MessageType.text);
+      _textController.clear();
 
       if (response.statusCode != 500 || response.statusCode != 400) {
-        List<MessageResponseData> data = [];
-        data.add(MessageResponseData(
-          message: _textController.text,
-        ));
-        var messageSent = MessageResponse(
-                type: MessageType.text.name,
-                isUser: true,
-                error: false,
-                message: MessageSingleResponse(
-                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
-                    data: data,
-                    type: MessageType.text.name,
-                    id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
-            .toJson();
-
-        setState(() {
-          widget.socket.controller!.sink.add(messageSent);
-          FocusManager.instance.primaryFocus?.unfocus();
-        });
-
+        widget.socket.controller!.sink
+            .add({"messageId": dateSent, "status": MessageStatus.sent});
         _textController.clear();
+        if (messages.isEmpty) {
+          messages = await ChatSocketRepository.getLocalMessages();
+        }
+      } else {
+        widget.socket.controller!.sink
+            .add({"messageId": dateSent, "status": MessageStatus.error});
       }
     }
   }
@@ -72,24 +86,25 @@ class _MessageInputState extends State<MessageInput> {
 
       var response = await ChatSocketRepository.sendMediaMessage(media, type);
       var position = media["data"][0] as Position;
+      var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
       data.add(MessageResponseData(
           lat: position.latitude,
           long: position.longitude,
           message: "Se envió data de localización"));
-      if (response.statusCode != 500 || response.statusCode != 400) {
-        var messageSent = MessageResponse(
-                type: type.name,
-                isUser: true,
-                error: false,
-                message: MessageSingleResponse(
-                    createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
-                    data: data,
-                    type: type.name,
-                    id: const Uuid().v4().toString()),
-                receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
-            .toJson();
+      var messageSent = MessageResponse(
+              type: type.name,
+              isUser: true,
+              error: false,
+              message: MessageSingleResponse(
+                  createdAt: dateSent,
+                  data: data,
+                  type: type.name,
+                  id: const Uuid().v4().toString()),
+              receptionDate: dateSent)
+          .toJson();
 
-        messagesToSend.add(messageSent);
+      messagesToSend.add(messageSent);
+      if (response.statusCode != 500 || response.statusCode != 400) {
         widget.socket.controller!.sink.add({'data': messagesToSend});
       }
       return;
@@ -173,9 +188,22 @@ class _MessageInputState extends State<MessageInput> {
           break;
       }
     }
-    setState(() {
-      widget.socket.controller!.sink.add({'data': messagesToSend});
-    });
+    if (mounted) {
+      setState(() {
+        widget.socket.controller!.sink.add({'data': messagesToSend});
+      });
+    }
+  }
+
+  void initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    messages = await ChatSocketRepository.getLocalMessages();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPreferences();
   }
 
   @override
@@ -211,7 +239,7 @@ class _MessageInputState extends State<MessageInput> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          FocusScope.of(context).unfocus();
+                          widget.focusNode.unfocus();
                           showModalBottomSheet(
                                   backgroundColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
@@ -292,10 +320,11 @@ class _MessageInputState extends State<MessageInput> {
                           height: 51,
                           child: Center(
                             child: TextFormField(
+                              focusNode: widget.focusNode,
                               controller: _textController,
                               textAlign: TextAlign.left,
                               onChanged: (String val) {
-                                setState(() {});
+                                if (mounted) setState(() {});
                               },
                               autofocus: false,
                               style: TextStyle(
@@ -370,15 +399,17 @@ class _MessageInputState extends State<MessageInput> {
                           sendMessage();
                         }
                       } else {
-                        showDialog(
-                            context: context,
-                            builder: ((context) {
-                              return const AlertDialog(
-                                title: Text('Error de conexión'),
-                                content: Text(
-                                    'Por favor verifique su conexión de internet e intentelo nuevamente'),
-                              );
-                            }));
+                        if (mounted) {
+                          showDialog(
+                              context: context,
+                              builder: ((context) {
+                                return const AlertDialog(
+                                  title: Text('Error de conexión'),
+                                  content: Text(
+                                      'Por favor verifique su conexión de internet e intentelo nuevamente'),
+                                );
+                              }));
+                        }
                       }
                     },
                     child: Platform.isIOS

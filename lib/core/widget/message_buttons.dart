@@ -2,10 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:laraigo_chat/helpers/single_tap.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../helpers/color_convert.dart';
+import '../../helpers/message_status.dart';
+import '../../helpers/message_type.dart';
 import '../../model/color_preference.dart';
 import '../../model/message_response.dart';
+import '../../repository/chat_socket_repository.dart';
 import '../chat_socket.dart';
 
 /*
@@ -23,9 +27,33 @@ class MessageButtons extends StatefulWidget {
 }
 
 class _MessageButtonsState extends State<MessageButtons> {
-  sendMessage(String text, String title) async {
-    var messageSent = await ChatSocket.sendMessage(text, title);
+  void sendMessage(String text, String title) async {
+    var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
+
+    List<MessageResponseData> data = [];
+    data.add(MessageResponseData(message: text, title: title));
+    var messageSent = MessageResponse(
+            type: MessageType.text.name,
+            isUser: true,
+            error: false,
+            message: MessageSingleResponse(
+                createdAt: dateSent,
+                data: data,
+                type: MessageType.text.name,
+                id: const Uuid().v4().toString()),
+            receptionDate: dateSent)
+        .toJson();
     widget._socket.controller!.sink.add(messageSent);
+
+    var response =
+        await ChatSocketRepository.sendMessage(text, title, MessageType.text);
+    if (response.statusCode != 500 || response.statusCode != 400) {
+      widget._socket.controller!.sink
+          .add({"messageId": dateSent, "status": MessageStatus.sent});
+    } else {
+      widget._socket.controller!.sink
+          .add({"messageId": dateSent, "status": MessageStatus.error});
+    }
   }
 
   bool taped = false;
@@ -63,9 +91,11 @@ class _MessageButtonsState extends State<MessageButtons> {
                                           widget.color.messageClientColor!),
                                     )),
                                 onPressed: () {
-                                  setState(() {
-                                    taped = true;
-                                  });
+                                  if (mounted) {
+                                    setState(() {
+                                      taped = true;
+                                    });
+                                  }
                                   sendMessage(e.payload!, e.text!);
                                 },
                                 child: Text(

@@ -15,13 +15,18 @@ class SocketElevatedButton extends StatefulWidget {
   Color? circularProgressIndicatorColor;
   double? height;
   double? width;
+  VoidCallback? onInitialized;
+  Function? onTap;
+
   String customMessage;
 
   SocketElevatedButton(
       {required this.child,
       required this.integrationId,
       this.circularProgressIndicatorColor,
+      this.onInitialized,
       this.width,
+      this.onTap,
       this.customMessage = "",
       this.height});
 
@@ -44,9 +49,19 @@ class _SocketElevatedButtonState extends State<SocketElevatedButton> {
     try {
       socket = await ChatSocket.getInstance(widget.integrationId!);
       colorPreference = socket!.integrationResponse!.metadata!.color!;
-      setState(() {
-        isInitialized = true;
-      });
+      var prefs = await SharedPreferences.getInstance();
+      if (widget.onInitialized != null &&
+          (prefs.getBool("isIntialized") == false ||
+              prefs.getBool("isIntialized") == null)) {
+        widget.onInitialized!();
+        await prefs.setBool("isIntialized", isInitialized);
+      }
+
+      if (mounted) {
+        setState(() {
+          isInitialized = true;
+        });
+      }
     } catch (exception, _) {
       Utils.retryFuture(initchatSocketInButton, 15000);
     }
@@ -59,6 +74,9 @@ class _SocketElevatedButtonState extends State<SocketElevatedButton> {
         final connection = await ChatSocketRepository.hasNetwork();
 
         if (socket != null && connection) {
+          if (widget.onTap != null) {
+            await widget.onTap!();
+          }
           Navigator.push(
               context,
               MaterialPageRoute(

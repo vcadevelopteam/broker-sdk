@@ -1,21 +1,16 @@
 // ignore_for_file: body_might_complete_normally_nullable, unused_field, avoid_init_to_null
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:laraigo_chat/helpers/util.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../helpers/identifier_type.dart';
-import '../helpers/message_type.dart';
 import '../helpers/socket_urls.dart';
 import '../model/integration_response.dart';
-import '../model/message_response.dart';
 import '../repository/chat_socket_repository.dart';
 
 /*
@@ -71,24 +66,4 @@ class ChatSocket {
   }
 
   //Method to send text messages
-  static Future<Map?> sendMessage(String text, String title) async {
-    var response =
-        await ChatSocketRepository.sendMessage(text, title, MessageType.text);
-    if (response.statusCode != 500 || response.statusCode != 400) {
-      List<MessageResponseData> data = [];
-      data.add(MessageResponseData(message: text, title: title));
-      var messageSent = MessageResponse(
-              type: MessageType.text.name,
-              isUser: true,
-              error: false,
-              message: MessageSingleResponse(
-                  createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
-                  data: data,
-                  type: MessageType.text.name,
-                  id: const Uuid().v4().toString()),
-              receptionDate: DateTime.now().toUtc().millisecondsSinceEpoch)
-          .toJson();
-      return messageSent;
-    }
-  }
 }

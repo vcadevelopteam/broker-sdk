@@ -69,17 +69,19 @@ class _SingleTapEventElevatedButtonState
                     if (kDebugMode) {
                       print("en el delay esta $singleTap");
                     }
-
-                    setState(() {
-                      singleTap = true;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        singleTap = true;
+                      });
+                    }
 
                     Future.delayed(const Duration(seconds: 10)).then((value) {
                       if (!mounted) return;
-
-                      setState(() {
-                        singleTap = false;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          singleTap = false;
+                        });
+                      }
                       if (kDebugMode) {
                         print("en el delay esta $singleTap");
                       }
