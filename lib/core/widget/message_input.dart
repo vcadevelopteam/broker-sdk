@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, must_be_immutable
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -61,18 +62,25 @@ class _MessageInputState extends State<MessageInput> {
         widget.focusNode.unfocus();
       }
 
-      var response = await ChatSocketRepository.sendMessage(
-          _textController.text, "null", MessageType.text);
-      _textController.clear();
-
-      if (response.statusCode != 500 || response.statusCode != 400) {
-        widget.socket.controller!.sink
-            .add({"messageId": dateSent, "status": MessageStatus.sent});
+      try {
+        var response = await ChatSocketRepository.sendMessage(
+            _textController.text, "null", MessageType.text);
         _textController.clear();
-        if (messages.isEmpty) {
-          messages = await ChatSocketRepository.getLocalMessages();
+
+        if (response.statusCode != 500 || response.statusCode != 400) {
+          var id = jsonDecode(response.body)["messageId"];
+
+          widget.socket.controller!.sink.add(
+              {"messageId": dateSent, "status": MessageStatus.sent, "id": id});
+          _textController.clear();
+          if (messages.isEmpty) {
+            messages = await ChatSocketRepository.getLocalMessages();
+          }
+        } else {
+          widget.socket.controller!.sink
+              .add({"messageId": dateSent, "status": MessageStatus.error});
         }
-      } else {
+      } catch (e) {
         widget.socket.controller!.sink
             .add({"messageId": dateSent, "status": MessageStatus.error});
       }

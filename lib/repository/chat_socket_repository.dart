@@ -208,7 +208,9 @@ using internal databases as SQLite, Hive, etc.
       //If the message has the same TimeStamp means that the same message is going to be added twice
       //we filter those messages to not allow any unncesary adding
       messagesToSave.firstWhere(
-        (element) => element.messageDate == message.messageDate,
+        (element) =>
+            (element.messageId == message.messageId) ||
+            (element.messageDate == message.messageDate),
         orElse: () {
           messagesToSave.add(message);
           return message;
@@ -220,7 +222,7 @@ using internal databases as SQLite, Hive, etc.
     pref.setString('messages', jsonEncode(encodedMessages));
 
     if (kDebugMode) {
-      print("Size del arreglo ${encodedMessages.length}");
+      print("Size del arreglo ${encodedMessages[encodedMessages.length - 1]}");
     }
   }
 
@@ -253,6 +255,8 @@ using internal databases as SQLite, Hive, etc.
 
       messagesToSave[messagesToSave.indexOf(messageFound)].isSent =
           message.isSent;
+      messagesToSave[messagesToSave.indexOf(messageFound)].messageId =
+          message.messageId;
       messagesToSave[messagesToSave.indexOf(messageFound)].hasError =
           message.hasError;
     }

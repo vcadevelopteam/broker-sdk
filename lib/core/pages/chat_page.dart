@@ -160,8 +160,10 @@ class _ChatPageState extends State<ChatPage> {
     //change state to update stream
     //Setea el estado para actualizar el stream a que responda
     var newMessages = await ChatSocketRepository.getMessagesFromServer();
-    for (var element in newMessages) {
-      await ChatSocketRepository.saveMessageInLocal(element);
+    if (newMessages.isNotEmpty) {
+      for (var element in newMessages) {
+        await ChatSocketRepository.saveMessageInLocal(element);
+      }
     }
 
     var savedMessages = await ChatSocketRepository.getLocalMessages();

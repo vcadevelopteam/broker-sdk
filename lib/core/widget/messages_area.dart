@@ -123,11 +123,13 @@ class _MessagesAreaState extends State<MessagesArea> {
     }
   }
 
-  validateSent(List<Message> messages, int messageId, MessageStatus status) {
+  validateSent(
+      List<Message> messages, int messageId, MessageStatus status, String? id) {
     var test =
         messages.firstWhere((element) => element.messageDate == messageId);
     if (status == MessageStatus.sent) {
       test.isSent = true;
+      test.messageId = id;
     } else {
       test.hasError = true;
     }
@@ -165,7 +167,6 @@ class _MessagesAreaState extends State<MessagesArea> {
             }
           } else {
             //Si no es una lista solo va a agregar el mensaje al arreglo
-
             if ((snapshot.data as Map<String, dynamic>)["messageId"] == null) {
               var message =
                   Message.fromJson((snapshot.data as Map<String, dynamic>));
@@ -176,7 +177,8 @@ class _MessagesAreaState extends State<MessagesArea> {
               validateSent(
                   messages,
                   (snapshot.data as Map<String, dynamic>)["messageId"],
-                  (snapshot.data as Map<String, dynamic>)["status"]);
+                  (snapshot.data as Map<String, dynamic>)["status"],
+                  (snapshot.data as Map<String, dynamic>)["id"]);
               if (kDebugMode) {
                 print((snapshot.data as Map<String, dynamic>)["messageId"]);
               }

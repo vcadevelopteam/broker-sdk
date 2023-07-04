@@ -53,7 +53,8 @@ class _MessageBubbleState extends State<MessageBubble> {
     if (message.type == MessageType.text) {
       return Text(
           message.data![0].title!.isNotEmpty &&
-                  (message.data![0].title! != "null" ||  message.data![0].title == null)
+                  (message.data![0].title! != "null" ||
+                      message.data![0].title == null)
               ? message.data![0].title!
               : message.data![0].message!,
           style: TextStyle(
@@ -427,7 +428,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                           )
                         ],
                       ),
-                    if (widget.message.hasError && widget.message.isUser!)
+                    if ((widget.message.hasError && widget.message.isUser!))
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [

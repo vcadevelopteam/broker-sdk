@@ -49,6 +49,7 @@ class MessageResponse {
       messageToSend = message!.toJson();
     }
     return {
+      'id': message!.id.toString(),
       'isUser': isUser,
       'message': messageToSend,
       'error': error,

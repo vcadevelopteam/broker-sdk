@@ -10,6 +10,7 @@ class Message {
   bool haveIcon = false;
   bool isSent = false;
   bool hasError = false;
+  String? messageId;
   bool haveTitle = false;
   int? messageDate;
   String? message;
@@ -23,6 +24,7 @@ class Message {
       required this.hasError,
       required this.isSaved,
       required this.isSent,
+      this.messageId,
       required this.type});
 
   static Message fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class Message {
         if (json["type"] == MessageType.text.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"],
               type: MessageType.text,
               isUser: json['isUser'],
               isSaved: true,
@@ -47,6 +50,7 @@ class Message {
             json["type"] == MessageType.image.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"],
               type: MessageType.media,
               isUser: json['isUser'],
               isSaved: true,
@@ -57,6 +61,7 @@ class Message {
         } else if (json["type"] == MessageType.location.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"],
               type: MessageType.location,
               isUser: json['isUser'],
               isSaved: true,
@@ -68,6 +73,7 @@ class Message {
         } else {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"],
               type: MessageType.file,
               isUser: json['isUser'],
               hasError: json['hasError'] ?? false,
@@ -81,6 +87,7 @@ class Message {
         if (json["type"] == MessageType.text.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"] ?? "No ID BOT",
               type: MessageType.text,
               isSaved: true,
               isSent: false,
@@ -91,6 +98,7 @@ class Message {
         } else if (json["type"] == MessageType.carousel.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"] ?? "No ID BOT",
               isSent: false,
               type: MessageType.carousel,
               isSaved: true,
@@ -102,6 +110,7 @@ class Message {
         } else if (json["type"] == MessageType.button.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"] ?? "No ID BOT",
               type: MessageType.button,
               isSaved: true,
               isSent: false,
@@ -114,6 +123,7 @@ class Message {
             json["type"] == MessageType.image.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"] ?? "No ID BOT",
               type: MessageType.media,
               isSaved: true,
               hasError: json['hasError'] ?? false,
@@ -124,6 +134,7 @@ class Message {
         } else if (json["type"] == MessageType.location.name) {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"] ?? "No ID BOT",
               type: MessageType.location,
               isSaved: true,
               isSent: false,
@@ -135,6 +146,7 @@ class Message {
         } else {
           var messages = json["message"] as List;
           message = Message(
+              messageId: json["messageId"] ?? "No ID BOT",
               type: MessageType.file,
               isSaved: true,
               isSent: false,
@@ -152,6 +164,7 @@ class Message {
           if (json["type"] == MessageType.text.name) {
             var messagedata = json['message'] as MessageResponseData;
             message = Message(
+                messageId: json["id"],
                 type: MessageType.text,
                 isUser: json['isUser'],
                 isSaved: true,
@@ -163,6 +176,7 @@ class Message {
               json["type"] == MessageType.image.name) {
             var messagedata = json['message'] as MessageResponseData;
             message = Message(
+                messageId: json["id"],
                 type: MessageType.media,
                 isUser: json['isUser'],
                 isSaved: true,
@@ -173,6 +187,7 @@ class Message {
           } else if (json["type"] == MessageType.location.name) {
             var messagedata = json['message'] as MessageResponseData;
             message = Message(
+                messageId: json["id"],
                 type: MessageType.location,
                 isUser: json['isUser'],
                 isSaved: true,
@@ -183,6 +198,7 @@ class Message {
           } else {
             var messagedata = json['message'] as MessageResponseData;
             message = Message(
+                messageId: json["id"],
                 type: MessageType.file,
                 isUser: json['isUser'],
                 isSaved: true,
@@ -199,6 +215,7 @@ class Message {
                 type: MessageType.text,
                 isUser: false,
                 isSaved: true,
+                messageId: response.message!.id,
                 isSent: false,
                 hasError: false,
                 data: response.message!.data,
@@ -208,12 +225,14 @@ class Message {
                 type: MessageType.carousel,
                 isUser: false,
                 isSaved: true,
+                messageId: response.message!.id,
                 isSent: false,
                 hasError: false,
                 data: response.message!.data,
                 messageDate: response.receptionDate);
           } else if (response.type == MessageType.button.name) {
             message = Message(
+                messageId: response.message!.id,
                 type: MessageType.button,
                 isUser: false,
                 isSent: false,
@@ -224,6 +243,7 @@ class Message {
           } else if (response.type == MessageType.media.name ||
               response.type == MessageType.video.name) {
             message = Message(
+                messageId: response.message!.id,
                 type: MessageType.media,
                 isUser: false,
                 isSaved: true,
@@ -233,6 +253,7 @@ class Message {
                 messageDate: response.receptionDate);
           } else if (response.type == MessageType.file.name) {
             message = Message(
+                messageId: response.message!.id,
                 type: MessageType.file,
                 isUser: false,
                 isSent: false,
@@ -242,6 +263,7 @@ class Message {
                 messageDate: response.receptionDate);
           } else {
             message = Message(
+                messageId: response.message!.id,
                 type: MessageType.location,
                 isUser: false,
                 isSaved: true,
@@ -253,9 +275,10 @@ class Message {
         }
       } else {
         //RECIBIR LAS RESPUESTAS DEL SERVIDOR PARA NO CAER EN NULOS
-        MessageResponse response = MessageResponse.fromJson(json );
+        MessageResponse response = MessageResponse.fromJson(json);
         if (response.type == MessageType.text.name) {
           message = Message(
+              messageId: response.message!.id,
               type: MessageType.text,
               isUser: false,
               isSaved: true,
@@ -265,6 +288,7 @@ class Message {
               messageDate: response.receptionDate);
         } else if (response.type == MessageType.carousel.name) {
           message = Message(
+              messageId: response.message!.id,
               type: MessageType.carousel,
               isUser: false,
               isSent: false,
@@ -274,6 +298,7 @@ class Message {
               messageDate: response.receptionDate);
         } else if (response.type == MessageType.button.name) {
           message = Message(
+              messageId: response.message!.id,
               type: MessageType.button,
               isUser: false,
               isSent: false,
@@ -284,6 +309,7 @@ class Message {
         } else if (response.type == MessageType.media.name ||
             response.type == MessageType.image.name) {
           message = Message(
+              messageId: response.message!.id,
               type: MessageType.media,
               isUser: false,
               isSaved: true,
@@ -293,6 +319,7 @@ class Message {
               messageDate: response.receptionDate);
         } else if (response.type == MessageType.file.name) {
           message = Message(
+              messageId: response.message!.id,
               type: MessageType.file,
               isUser: false,
               isSaved: true,
@@ -302,6 +329,7 @@ class Message {
               messageDate: response.receptionDate);
         } else {
           message = Message(
+              messageId: response.message!.id,
               type: MessageType.location,
               isUser: false,
               isSaved: true,
@@ -322,6 +350,7 @@ class Message {
     messageToSend = data;
 
     return {
+      'messageId': messageId,
       'isUser': isUser,
       'isSent': isSent,
       'hasError': hasError,
