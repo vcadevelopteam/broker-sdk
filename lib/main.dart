@@ -4,9 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:laraigo_chat/core/widget/socket_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:laraigo_chat/core/widget/socket_container.dart';
-import 'package:laraigo_chat/core/widget/socket_text_button.dart';
-
-import 'core/widget/socket_elevated_button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,7 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
               //   },
               // ),
               SocketContainer(
-                integrationId: '63d8224c5c8a9dde22652275',
+                // integrationId: '642de154273d5f64e3daf7e2',
+                integrationId: '6567ade24933f425469910e1',
+                // integrationId: '63d8224c5c8a9dde22652275',
                 child: const Text("Prueba"),
                 onTap: () {
                   if (kDebugMode) {
@@ -94,7 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         floatingActionButton: SocketActionButton(
-          integrationId: '63d8224c5c8a9dde22652275',
+          // integrationId: '642de154273d5f64e3daf7e2',
+          integrationId: '6567ade24933f425469910e1',
+          // integrationId: '63d8224c5c8a9dde22652275',
           icon: const Icon(Icons.read_more),
           onTap: () {
             if (kDebugMode) {

@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class _MediaDialogState extends State<MediaDialog> {
                 controller: PageController(viewportFraction: 0.95),
                 itemCount: widget.files.length,
                 itemBuilder: (ctx, indx) {
+                  log('data:media-dialog -> ${widget.files[indx]}');
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,

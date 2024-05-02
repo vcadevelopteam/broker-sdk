@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:laraigo_chat/helpers/single_tap.dart';
 import 'package:uuid/uuid.dart';
@@ -28,10 +30,12 @@ class MessageButtons extends StatefulWidget {
 
 class _MessageButtonsState extends State<MessageButtons> {
   void sendMessage(String text, String title) async {
+    log('message_buttons: text: $text, title: $title');
     var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
 
     List<MessageResponseData> data = [];
     data.add(MessageResponseData(message: text, title: title));
+    log('message_buttons ->data: $data');
     var messageSent = MessageResponse(
             type: MessageType.text.name,
             isUser: true,
@@ -43,6 +47,7 @@ class _MessageButtonsState extends State<MessageButtons> {
                 id: const Uuid().v4().toString()),
             receptionDate: dateSent)
         .toJson();
+    log('message_buttons ->messageSend: $messageSent');
     widget._socket.controller!.sink.add(messageSent);
 
     var response =
@@ -64,50 +69,94 @@ class _MessageButtonsState extends State<MessageButtons> {
     return taped == true
         ? const SizedBox()
         : Padding(
-            padding: const EdgeInsets.only(left: 35),
-            child: SizedBox(
-                width: size.width,
-                child: Wrap(
-                  alignment: WrapAlignment.end,
-                  children: widget.data[0].buttons!
-                      .map(
-                        (e) => Container(
-                            margin: const EdgeInsets.all(4),
-                            child: SingleTapEventElevatedButton(
-                                dissapear: true,
-                                style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(50, 35),
-                                    padding: EdgeInsets.zero,
-                                    elevation: 0,
-                                    backgroundColor: HexColor(
-                                            widget.color.messageClientColor!)
-                                        .withOpacity(0.2),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    side: BorderSide(
-                                      width: 1.0,
-                                      color: HexColor(
-                                          widget.color.messageClientColor!),
-                                    )),
-                                onPressed: () {
-                                  if (mounted) {
-                                    setState(() {
-                                      taped = true;
-                                    });
-                                  }
-                                  sendMessage(e.payload!, e.text!);
-                                },
-                                child: Text(
-                                  e.text!,
-                                  style: TextStyle(
-                                    color: HexColor(
-                                        widget.color.messageClientColor!),
-                                  ),
-                                ))),
-                      )
-                      .toList(),
-                )),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            child: Material(
+              color: HexColor(widget.color.chatBackgroundColor.toString()),
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                  topLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    constraints: BoxConstraints(
+                      maxWidth: size.width * 0.8,
+                      minHeight: 10,
+                      maxHeight: size.height * 0.6,
+                      minWidth: 10,
+                    ),
+                    decoration: BoxDecoration(
+                        color: HexColor(widget.color.messageBotColor.toString())
+                            .withOpacity(1.0),
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10))),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(widget.data[0].message ?? '',
+                            style: TextStyle(
+                                color: HexColor(widget.color.messageClientColor
+                                                .toString())
+                                            .computeLuminance() >
+                                        0.5
+                                    ? Colors.white
+                                    : Colors.black)),
+                        Wrap(
+                          alignment: WrapAlignment.end,
+                          children: widget.data[0].buttons!
+                              .map(
+                                (e) => Container(
+                                    margin: const EdgeInsets.all(4),
+                                    child: SingleTapEventElevatedButton(
+                                        dissapear: true,
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size(50, 35),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5),
+                                            elevation: 0,
+                                            backgroundColor: HexColor(widget
+                                                    .color.messageClientColor!)
+                                                .withOpacity(0.2),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                            side: BorderSide(
+                                              width: 1.0,
+                                              color: HexColor(widget
+                                                  .color.messageClientColor!),
+                                            )),
+                                        onPressed: () {
+                                          if (mounted) {
+                                            setState(() {
+                                              taped = true;
+                                            });
+                                          }
+                                          sendMessage(e.payload!, e.text!);
+                                        },
+                                        child: Text(
+                                          e.text!,
+                                          style: TextStyle(
+                                            color: HexColor(widget
+                                                .color.messageClientColor!),
+                                          ),
+                                        ))),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
   }
 }
