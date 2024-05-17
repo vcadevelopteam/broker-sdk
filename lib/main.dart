@@ -74,8 +74,10 @@ class _MyHomePageState extends State<MyHomePage> {
               //   },
               // ),
               SocketContainer(
+                // integrationId: '6567ade24933f425469910e1', //LuzDelSur Testing
+                integrationId:
+                    '663c0d3fb17ddfc43122d76c', //Testing interno Android
                 // integrationId: '642de154273d5f64e3daf7e2',
-                integrationId: '6567ade24933f425469910e1',
                 // integrationId: '63d8224c5c8a9dde22652275',
                 child: const Text("Prueba"),
                 onTap: () {
@@ -93,8 +95,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         floatingActionButton: SocketActionButton(
+          // integrationId: '6567ade24933f425469910e1', //LuzDelSur Testing
+          integrationId: '663c0d3fb17ddfc43122d76c', //Testing interno Android
           // integrationId: '642de154273d5f64e3daf7e2',
-          integrationId: '6567ade24933f425469910e1',
           // integrationId: '63d8224c5c8a9dde22652275',
           icon: const Icon(Icons.read_more),
           onTap: () {

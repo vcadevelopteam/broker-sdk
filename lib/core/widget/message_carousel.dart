@@ -144,7 +144,7 @@ class MessageCarousel extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
       width: double.infinity,
-      height: 320,
+      height: data.length != 1 ? 270 : 390,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

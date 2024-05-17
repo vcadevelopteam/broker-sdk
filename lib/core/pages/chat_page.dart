@@ -66,7 +66,7 @@ class _ChatPageState extends State<ChatPage> {
           if (hasConnection && isClosed == true) {
             widget.socket.disconnect();
 
-            await Future.delayed(const Duration(seconds: 15));
+            await Future.delayed(const Duration(seconds: 5));
             await initSocket();
             isClosed = false;
           }
@@ -105,53 +105,58 @@ class _ChatPageState extends State<ChatPage> {
       await Future.delayed(const Duration(seconds: 2));
       await sendCustomMessage(widget.customMessage);
     } catch (exception, _) {
-      // showDialog(
-      //   context: context,
-      //   builder: (context) {
-      //     return const AlertDialog(
-      //       title: Text('Error general'),
-      //       content: Text(
-      //           'Por favor verifique su conexión de internet e intentelo nuevamente'),
-      //     );
-      //   },
-      // );
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              title: Text('Error general'),
+              content: Text(
+                  'Por favor verifique su conexión de internet e intentelo nuevamente'),
+            );
+          },
+        );
+      }
     }
   }
 
   sendCustomMessage(String customMessage) async {
-    if (customMessage.isNotEmpty) {
-      var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
+    var savedMessages = await ChatSocketRepository.getLocalMessages();
+    if (savedMessages.isEmpty) {
+      if (customMessage.isNotEmpty) {
+        var dateSent = DateTime.now().toUtc().millisecondsSinceEpoch;
 
-      List<MessageResponseData> data = [];
-      data.add(MessageResponseData(
-        message: customMessage,
-      ));
-      var messageSent = MessageResponse(
-              type: MessageType.text.name,
-              isUser: true,
-              error: false,
-              message: MessageSingleResponse(
-                  createdAt: dateSent,
-                  data: data,
-                  type: MessageType.text.name,
-                  id: const Uuid().v4().toString()),
-              receptionDate: dateSent)
-          .toJson();
-      if (mounted) {
-        setState(() {
-          widget.socket.controller!.sink.add(messageSent);
-        });
-      }
+        List<MessageResponseData> data = [];
+        data.add(MessageResponseData(
+          message: customMessage,
+        ));
+        var messageSent = MessageResponse(
+                type: MessageType.text.name,
+                isUser: true,
+                error: false,
+                message: MessageSingleResponse(
+                    createdAt: dateSent,
+                    data: data,
+                    type: MessageType.text.name,
+                    id: const Uuid().v4().toString()),
+                receptionDate: dateSent)
+            .toJson();
+        if (mounted) {
+          setState(() {
+            widget.socket.controller!.sink.add(messageSent);
+          });
+        }
 
-      var response = await ChatSocketRepository.sendMessage(
-          customMessage, "null", MessageType.text);
+        var response = await ChatSocketRepository.sendMessage(
+            customMessage, "null", MessageType.text);
 
-      if (response.statusCode != 500 || response.statusCode != 400) {
-        widget.socket.controller!.sink
-            .add({"messageId": dateSent, "status": MessageStatus.sent});
-      } else {
-        widget.socket.controller!.sink
-            .add({"messageId": dateSent, "status": MessageStatus.error});
+        if (response.statusCode != 500 || response.statusCode != 400) {
+          widget.socket.controller!.sink
+              .add({"messageId": dateSent, "status": MessageStatus.sent});
+        } else {
+          widget.socket.controller!.sink
+              .add({"messageId": dateSent, "status": MessageStatus.error});
+        }
       }
     }
   }

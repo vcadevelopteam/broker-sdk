@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables, unused_local_variable, use_build_context_synchronously
 
+import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -242,12 +243,18 @@ class _MessagesAreaState extends State<MessagesArea> {
                                 .chatHeaderImage!);
                       }
                       if (messages[indx].type == MessageType.button) {
+                        log(messages[indx].toJson().toString());
                         if (indx == (messages.length - 2)) {
                           counterExceptions = true;
                         }
 
-                        return MessageButtons(messages[indx].data!,
-                            colorPreference, widget.socket);
+                        return MessageButtons(
+                            messages[indx],
+                            widget.socket.integrationResponse!.metadata!.icons!
+                                .chatHeaderImage!,
+                            messages[indx].data!,
+                            colorPreference,
+                            widget.socket);
                       } else {
                         messages[indx].haveIcon = false;
                         messages[indx].haveTitle = false;
