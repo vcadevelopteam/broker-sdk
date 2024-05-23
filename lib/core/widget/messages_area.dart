@@ -243,7 +243,6 @@ class _MessagesAreaState extends State<MessagesArea> {
                                 .chatHeaderImage!);
                       }
                       if (messages[indx].type == MessageType.button) {
-                        log(messages[indx].toJson().toString());
                         if (indx == (messages.length - 2)) {
                           counterExceptions = true;
                         }
